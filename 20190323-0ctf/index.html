@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<!-- This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek). -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>vim</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="https://github.com/r3kapig/CTF-challenge">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / ctf_writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=star&count=true&size=large" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+        
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                vim
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#题目背景">题目背景</a>
+    
+                <a class="dropdown-item" href="#关键位置">关键位置</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                lua-沙箱
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#题目背景-1">题目背景-1</a>
+    
+                <a class="dropdown-item" href="#关键位置-1">关键位置-1</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                babyaegis
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#题目背景-2">题目背景-2</a>
+    
+                <a class="dropdown-item" href="#关键位置-2">关键位置-2</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                babyheap
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#题目背景-3">题目背景-3</a>
+    
+                <a class="dropdown-item" href="#关键位置-3">关键位置-3</a>
+    
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">vim</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            <a href="#题目背景" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">题目背景</span>
+            </a>
+    
+<a href="#关键位置" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">关键位置</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">lua-沙箱</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#题目背景-1" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">题目背景-1</span>
+            </a>
+    
+<a href="#关键位置-1" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">关键位置-1</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">babyaegis</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            <a href="#题目背景-2" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">题目背景-2</span>
+            </a>
+    
+<a href="#关键位置-2" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">关键位置-2</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">babyheap</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            <a href="#题目背景-3" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">题目背景-3</span>
+            </a>
+    
+<a href="#关键位置-3" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">关键位置-3</span>
+            </a>
+    
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h2 id="vim"><a class="header-link" href="#vim"></a>vim</h2>
+<h3 id="题目背景"><a class="header-link" href="#题目背景"></a>题目背景</h3>
+<ol class="list">
+<li>实现了 vim 的第四种加密解密方式，运用了 <code>vimcrypt</code> 功能。在 vim 打开时如果以 <code>VimCrypt~0_</code> （下划线为 0 到 3 的数字，表示不同的加密）时会自动调用解密，正常情况会询问密钥，在题目中被固定了。</li>
+</ol>
+<h3 id="关键位置"><a class="header-link" href="#关键位置"></a>关键位置</h3>
+<ol class="list">
+<li>在解密过程计算中，存在类似 <code>(idx + step) % size</code> 的运算来计算下一个赋值的位置， <code>step</code> 可控导致可以整数溢出。（溢出后取模依然为负数）</li>
+<li>以 <code>idx &gt;= 0</code> 开始为写入内容，所以需要在溢出后使得其 <code>&gt;= 0</code> 来赋值需要写入的内容。这里需要考虑到再逐字节下溢时，可以覆盖到最高位（符号位），导致 <code>idx</code> 变为正值再逐步减小。</li>
+<li>写入时 got 表可写，但是由于题目在用 vim 打开文件后就关闭，vim 为 tui 程序，无法使用正常 stdin 和 stdout ，需要找一个合适的 gadget 来 <code>cat flag</code> 并且输出。</li>
+</ol>
+<h2 id="lua-沙箱"><a class="header-link" href="#lua-沙箱"></a>lua 沙箱</h2>
+<h3 id="题目背景-1"><a class="header-link" href="#题目背景-1"></a>题目背景</h3>
+<ol class="list">
+<li>lua 5.0.3 沙箱，保留了 <code>loadstring</code> 功能，删除了文件访问和 execute one gadget.</li>
+</ol>
+<h3 id="关键位置-1"><a class="header-link" href="#关键位置-1"></a>关键位置</h3>
+<ol class="list">
+<li>lua 5.0 在加载时相比 5.1 更加严格，存在字节码校验，使用了 &quot;symbexec&quot; （符号执行？），其实就是计算了各种 size ，保证了指令执行的时候用到的数值对应的栈、常量表索引均不会越界。</li>
+<li>然而对比 check 和 vm 中的执行过程，可以找到一条指令没有进行校验，用该指令加载字符串作为对象（越界）即可。</li>
+<li>堆风水 TBC.</li>
+</ol>
+<h2 id="babyaegis"><a class="header-link" href="#babyaegis"></a>babyaegis</h2>
+<h3 id="题目背景-2"><a class="header-link" href="#题目背景-2"></a>题目背景</h3>
+<ol class="list">
+<li>题目开启了 address sanitizer</li>
+<li>delete 函数可存在 UAF</li>
+</ol>
+<h3 id="关键位置-2"><a class="header-link" href="#关键位置-2"></a>关键位置</h3>
+<ol class="list">
+<li>secret 函数写一个地方为0</li>
+<li>通过一些操作，制造出一个 UAF</li>
+<li>利用 uaf 进行任意地址读写</li>
+<li>__sanitizer::Die()函数内部call rax 可挟持程序流程 </li>
+</ol>
+<h2 id="babyheap"><a class="header-link" href="#babyheap"></a>babyheap</h2>
+<h3 id="题目背景-3"><a class="header-link" href="#题目背景-3"></a>题目背景</h3>
+<ol class="list">
+<li>题目实现了一个简单的堆分配，有Allocate，Update，Delete，View四个功能</li>
+<li>题目限制了堆块大小只能是0x00 - 0x58</li>
+</ol>
+<h3 id="关键位置-3"><a class="header-link" href="#关键位置-3"></a>关键位置</h3>
+<ol class="list">
+<li>题目漏洞在于Update中，存在着一个null off by one，但是这里没有unsorted bin，而想要unsorted bin需要触发malloc_consolidate来让多余的fast bin合并成unsorted bin，这一第一个问题就是，top比较大，很难触发malloc_consolidate，解决思路：利用null off by one来缩小top chunk，当top小到无法满足分配的时候，就会触发malloc_consolidate。</li>
+<li>由于是libc 2.28的库，在null off by one攻击之后，可以使堆块重叠，如何获取shell是一个难题，在libc 2.28中，io vtable被废，所以劫持unsorted bin没有作用，而又不能申请0x60的块，这样无法直接分配到malloc hook位置，解决方案，任然选择利用fastbin attack，这里利用堆块高位0x55和0x53来最为合法的size，直接分配堆块到main arena，而top的指针就在fastbin下面，这样可以修改top指针，指向某个合法的位置，达到任意内存分配。</li>
+<li>这里利用思路一般直接改malloc hook 到one gadget，但是这题所有的one gadget都不行，所以有两种利用思路</li>
+<li>第一个是修改top到free hook上方，虽然比较远，但是可以分配到free hook的位置</li>
+<li>第二个是修改malloc hook到call realloc的位置调用realloc，然后修改realloc hook到one gadget这样就可以触发one gadget了，而realloc hook就在malloc hook - 0x8的位置，所以可以两个一起改。</li>
+</ol>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

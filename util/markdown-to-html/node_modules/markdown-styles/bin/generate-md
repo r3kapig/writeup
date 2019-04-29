@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+var fs = require('fs'),
+    path = require('path'),
+    opts = require('yargs'),
+    resolveArgs = require('../lib/resolve-args'),
+    render = require('../lib/render');
+
+opts.options({
+    'layouts': { },
+    'help': { },
+    'header-links': { 'default': true },
+    'layout': { },
+    'input': { },
+    'output': { },
+    'v': { },
+    'version': { }
+  })
+  .boolean('layouts').boolean('help').boolean('v').boolean('version').boolean('header-links');
+
+var argv = opts.parse(process.argv);
+
+if (argv.v || argv.version) {
+  console.log(require('../package.json').version);
+  process.exit();
+}
+
+if (argv.help || argv.h) {
+  console.log(fs.readFileSync(__dirname + '/usage.txt').toString());
+  process.exit();
+}
+
+argv = resolveArgs(argv);
+
+var layoutDir = __dirname + '/../layouts/';
+
+if (argv.help ||
+    argv.layouts ||
+    (!argv['export'] && !fs.existsSync(argv.input))) {
+  if(!fs.existsSync(argv.input)) {
+    console.log(argv.input + ' does not exist');
+  }
+  // show layouts
+  console.log('Available layouts:\n'+
+      fs.readdirSync(layoutDir)
+        .sort(function(a, b) { return a.localeCompare(b); })
+        .map(function(name) { return '\t' + name})
+        .join('\n')
+    );
+  process.exit();
+}
+
+console.log('Layout: ' + argv.layout);
+console.log('Input: ' + argv.input);
+console.log('Output: ' + argv.output);
+
+
+if(argv.highlight && Object.keys(argv.highlight).length > 0) {
+  console.log('Highlighters:');
+  Object.keys(argv.highlight).forEach(function(ext) {
+    console.log('\t' + ext, argv['highlight-' + ext]);
+  });
+}
+
+render(argv);
