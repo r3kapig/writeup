@@ -6,8 +6,8 @@ For more information, please refer to [our website](https://r3kapig.github.io/).
 
 ## Table of Contents
 
-- [20190413-plaidctf](20190413-plaidctf/)
-- [20190323-0ctf](2019/0ctf)
+
+- [20190323-0ctf](20190323-0ctf)
 
 
 ## Questions
