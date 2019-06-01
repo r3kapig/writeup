@@ -9,12 +9,12 @@ Anyway, thanks for participating BCTF. It's a tough task to keep all the challen
 Challenges from us include:
 
 trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.
-
-## trispl
+## Challenge Writeup
+### trispl
 
 Fast correlation attack based on LFSR sampling is investigated. The geffe generator is used to carry out fast correlation attacks, but all three LFSRs are sampled. Firstly, you need to do a fast correlation attack to establish the equation. Secondly, the sampling sequence is need to be reversed to the original sequence.The chaotic sequence established by fast correlation attack is related to the first and third sampling sequence respectively. All three LFSRs use primitive polynomials, which are not decomposable and can not use decomposition attack. After fast correlation attack, we use anti-sampling to find the initial state, which is flag.
 
-## Ruscas
+### Ruscas
 
 ```Rust
 //! # Intro
@@ -199,9 +199,9 @@ let () =
 ;;
 ```
 
-## echos
+### echos
 
-### 1. program info
+#### 1. program info
 this challenge is modified base the SUCTF 2018's noend challenge. The detail information of noend is in the Neo God's [blog](https://changochen.github.io/2018-05-28-suctf.html).
 
 In this chanllenge, I add the following code to prevent the noend's solution. 
@@ -216,10 +216,10 @@ if(s)
 }
 ```
 
-### 2. bug
+#### 2. bug
 The bug is still same with the noend. when malloc fail, it can cause arbitrary-address-wrrite-zeo.
 
-### 3. exploit
+#### 3. exploit
 The leak is easy, and I will skip that part.
 
 when call malloc, when the main_arean region is not enough, it will use mmap to map a region which is  close to the libc library address.
@@ -312,11 +312,11 @@ hack()
 
 ```
 
-## myheart
+### myheart
 
 Firstly, you need to reverse the binary, and you can find this is a stream cipher. It's similar to toyocrypto, which can be attacked by the algebraic attack. There is an easy OOB-read vulnerability to leak the plaintext. You can xor the plaintext and the ciphertext to get the lfsr's output. From an option, you can get enough output to finish the algebraic attack. But it's important to note that, we modified the S10*S23*S32*S42 to S11*S22*S33*S53. So the new annihilation is needed.
 
-## Snake
+### Snake
 
 This is a gameboy re challenge. We can get the gameboy rom from the browser when we access the game website. 
 
@@ -326,22 +326,22 @@ From the code we can see that there is a variable controlling whether to display
 
 You can check out many amazing resources about gameboy at <https://github.com/gbdev/awesome-gbdev>
 
-## lut
+### lut
 
 todo
 
-## lut revenge 
+### lut revenge 
 
 todo
 
-## speedapp1
+### speedapp1
 
 todo
 
-## speedapp2
+### speedapp2
 
 Todo
 
-## router
+### router
 
 And for the challenge "router", for the reason that we all know, writeup and exploit will not be available.
