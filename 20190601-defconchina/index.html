@@ -144,8 +144,30 @@
 <p>Happy Children&#39;s Day, hackers! I know you all hacked the time, so you may stay young forever, haha.</p>
 <p>Anyway, thanks for participating BCTF. It&#39;s a tough task to keep all the challenges as good as possible in such a short time. As we are not the only one writing challenges, here is the list of challenges that from our hands. Other challenges will not be covered in this writeup, as it&#39;s not our work. Really hope you guys enjoyed the challenges, and please do contact us if you have anything to complain about the challenges.</p>
 <p>Challenges from us include:</p>
-<p>trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.
-[TOC]</p>
+<p>trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.</p>
+<ul class="list">
+<li><a href="#defcon-china-ctfbctf">Defcon China CTF(BCTF)</a><ul class="list">
+<li><a href="#challenge-writeup">Challenge Writeup</a><ul class="list">
+<li><a href="#trispl">trispl</a></li>
+<li><a href="#ruscas">Ruscas</a></li>
+<li><a href="#echos">echos</a><ul class="list">
+<li><a href="#1-program-info">1. program info</a></li>
+<li><a href="#2-bug">2. bug</a></li>
+<li><a href="#3-exploit">3. exploit</a></li>
+</ul>
+</li>
+<li><a href="#myheart">myheart</a></li>
+<li><a href="#snake">Snake</a></li>
+<li><a href="#lut">lut</a></li>
+<li><a href="#lut-revenge">lut revenge</a></li>
+<li><a href="#speedapp1">speedapp1</a></li>
+<li><a href="#speedapp2">speedapp2</a></li>
+<li><a href="#router">router</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <h2 id="challenge-writeup"><a class="header-link" href="#challenge-writeup"></a>Challenge Writeup</h2>
 <h3 id="trispl"><a class="header-link" href="#trispl"></a>trispl</h3>
 <p>Fast correlation attack based on LFSR sampling is investigated. The geffe generator is used to carry out fast correlation attacks, but all three LFSRs are sampled. Firstly, you need to do a fast correlation attack to establish the equation. Secondly, the sampling sequence is need to be reversed to the original sequence.The chaotic sequence established by fast correlation attack is related to the first and third sampling sequence respectively. All three LFSRs use primitive polynomials, which are not decomposable and can not use decomposition attack. After fast correlation attack, we use anti-sampling to find the initial state, which is flag.</p>

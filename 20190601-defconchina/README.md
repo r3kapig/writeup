@@ -9,7 +9,22 @@ Anyway, thanks for participating BCTF. It's a tough task to keep all the challen
 Challenges from us include:
 
 trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.
-[TOC]
+ - [Defcon China CTF(BCTF)](#defcon-china-ctfbctf)
+   - [Challenge Writeup](#challenge-writeup)
+     - [trispl](#trispl)
+     - [Ruscas](#ruscas)
+     - [echos](#echos)
+       - [1. program info](#1-program-info)
+       - [2. bug](#2-bug)
+       - [3. exploit](#3-exploit)
+     - [myheart](#myheart)
+     - [Snake](#snake)
+     - [lut](#lut)
+     - [lut revenge](#lut-revenge)
+     - [speedapp1](#speedapp1)
+     - [speedapp2](#speedapp2)
+     - [router](#router)
+
 ## Challenge Writeup
 ### trispl
 
