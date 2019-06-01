@@ -145,9 +145,10 @@
 <p>Anyway, thanks for participating BCTF. It&#39;s a tough task to keep all the challenges as good as possible in such a short time. As we are not the only one writing challenges, here is the list of challenges that from our hands. Other challenges will not be covered in this writeup, as it&#39;s not our work. Really hope you guys enjoyed the challenges, and please do contact us if you have anything to complain about the challenges.</p>
 <p>Challenges from us include:</p>
 <p>trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.</p>
-<h2 id="trispl"><a class="header-link" href="#trispl"></a>trispl</h2>
+<h2 id="challenge-writeup"><a class="header-link" href="#challenge-writeup"></a>Challenge Writeup</h2>
+<h3 id="trispl"><a class="header-link" href="#trispl"></a>trispl</h3>
 <p>Fast correlation attack based on LFSR sampling is investigated. The geffe generator is used to carry out fast correlation attacks, but all three LFSRs are sampled. Firstly, you need to do a fast correlation attack to establish the equation. Secondly, the sampling sequence is need to be reversed to the original sequence.The chaotic sequence established by fast correlation attack is related to the first and third sampling sequence respectively. All three LFSRs use primitive polynomials, which are not decomposable and can not use decomposition attack. After fast correlation attack, we use anti-sampling to find the initial state, which is flag.</p>
-<h2 id="ruscas"><a class="header-link" href="#ruscas"></a>Ruscas</h2>
+<h3 id="ruscas"><a class="header-link" href="#ruscas"></a>Ruscas</h3>
 <pre class="hljs"><code><span class="hljs-comment">//! # Intro</span>
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! Compile using `rustc -O`, report wrong if result is less than 0</span>
@@ -322,8 +323,8 @@ EOF
     print_endline <span class="hljs-string">"start"</span>;
     getflag <span class="hljs-string">""</span> ~host:<span class="hljs-string">"localhost"</span> ~port:<span class="hljs-number">50806</span> |&gt;
         print_endline;
-;;</code></pre><h2 id="echos"><a class="header-link" href="#echos"></a>echos</h2>
-<h3 id="1.-program-info"><a class="header-link" href="#1.-program-info"></a>1. program info</h3>
+;;</code></pre><h3 id="echos"><a class="header-link" href="#echos"></a>echos</h3>
+<h4 id="1.-program-info"><a class="header-link" href="#1.-program-info"></a>1. program info</h4>
 <p>this challenge is modified base the SUCTF 2018&#39;s noend challenge. The detail information of noend is in the Neo God&#39;s <a href="https://changochen.github.io/2018-05-28-suctf.html">blog</a>.</p>
 <p>In this chanllenge, I add the following code to prevent the noend&#39;s solution. </p>
 <pre class="hljs"><code><span class="hljs-keyword">if</span>(s)
@@ -333,9 +334,9 @@ EOF
     {
         <span class="hljs-keyword">exit</span>(<span class="hljs-number">0</span>);
     }
-}</code></pre><h3 id="2.-bug"><a class="header-link" href="#2.-bug"></a>2. bug</h3>
+}</code></pre><h4 id="2.-bug"><a class="header-link" href="#2.-bug"></a>2. bug</h4>
 <p>The bug is still same with the noend. when malloc fail, it can cause arbitrary-address-wrrite-zeo.</p>
-<h3 id="3.-exploit"><a class="header-link" href="#3.-exploit"></a>3. exploit</h3>
+<h4 id="3.-exploit"><a class="header-link" href="#3.-exploit"></a>3. exploit</h4>
 <p>The leak is easy, and I will skip that part.</p>
 <p>when call malloc, when the main_arean region is not enough, it will use mmap to map a region which is  close to the libc library address.</p>
 <p>So, we can modify some pointer of the libc library, and let the pointer point to the mmaped region.</p>
@@ -420,22 +421,22 @@ libc = ELF(<span class="hljs-string">'./libc-2.23.so'</span>)
 
 p = process(pc)
 hack()
-</code></pre><h2 id="myheart"><a class="header-link" href="#myheart"></a>myheart</h2>
+</code></pre><h3 id="myheart"><a class="header-link" href="#myheart"></a>myheart</h3>
 <p>Firstly, you need to reverse the binary, and you can find this is a stream cipher. It&#39;s similar to toyocrypto, which can be attacked by the algebraic attack. There is an easy OOB-read vulnerability to leak the plaintext. You can xor the plaintext and the ciphertext to get the lfsr&#39;s output. From an option, you can get enough output to finish the algebraic attack. But it&#39;s important to note that, we modified the S10<em>S23</em>S32<em>S42 to S11</em>S22<em>S33</em>S53. So the new annihilation is needed.</p>
-<h2 id="snake"><a class="header-link" href="#snake"></a>Snake</h2>
+<h3 id="snake"><a class="header-link" href="#snake"></a>Snake</h3>
 <p>This is a gameboy re challenge. We can get the gameboy rom from the browser when we access the game website. </p>
 <p>We can easily find out that this game is the classic Snake. How can we get the flag then? We have to reverse  engineer the game of course. Load it into ida32 and set the processor to z80 then we can see the assembly.</p>
 <p>From the code we can see that there is a variable controlling whether to display &quot;GAME OVER&quot; or &quot;FLAG IS&quot;.After locating where it is used, we can easily locate the memory that saves the flag and how it is generated. Play it and get the flag.</p>
 <p>You can check out many amazing resources about gameboy at <a href="https://github.com/gbdev/awesome-gbdev">https://github.com/gbdev/awesome-gbdev</a></p>
-<h2 id="lut"><a class="header-link" href="#lut"></a>lut</h2>
+<h3 id="lut"><a class="header-link" href="#lut"></a>lut</h3>
 <p>todo</p>
-<h2 id="lut-revenge"><a class="header-link" href="#lut-revenge"></a>lut revenge</h2>
+<h3 id="lut-revenge"><a class="header-link" href="#lut-revenge"></a>lut revenge</h3>
 <p>todo</p>
-<h2 id="speedapp1"><a class="header-link" href="#speedapp1"></a>speedapp1</h2>
+<h3 id="speedapp1"><a class="header-link" href="#speedapp1"></a>speedapp1</h3>
 <p>todo</p>
-<h2 id="speedapp2"><a class="header-link" href="#speedapp2"></a>speedapp2</h2>
+<h3 id="speedapp2"><a class="header-link" href="#speedapp2"></a>speedapp2</h3>
 <p>Todo</p>
-<h2 id="router"><a class="header-link" href="#router"></a>router</h2>
+<h3 id="router"><a class="header-link" href="#router"></a>router</h3>
 <p>And for the challenge &quot;router&quot;, for the reason that we all know, writeup and exploit will not be available.</p>
         </article>
       </div>
