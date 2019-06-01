@@ -347,7 +347,7 @@ EOF
     getflag <span class="hljs-string">""</span> ~host:<span class="hljs-string">"localhost"</span> ~port:<span class="hljs-number">50806</span> |&gt;
         print_endline;
 ;;</code></pre><h3 id="echos"><a class="header-link" href="#echos"></a>echos</h3>
-<h4 id="1.-program-info"><a class="header-link" href="#1.-program-info"></a>1. program info</h4>
+<p><strong>1. program info</strong></p>
 <p>this challenge is modified base the SUCTF 2018&#39;s noend challenge. The detail information of noend is in the Neo God&#39;s <a href="https://changochen.github.io/2018-05-28-suctf.html">blog</a>.</p>
 <p>In this chanllenge, I add the following code to prevent the noend&#39;s solution. </p>
 <pre class="hljs"><code><span class="hljs-keyword">if</span>(s)
@@ -357,9 +357,9 @@ EOF
     {
         <span class="hljs-keyword">exit</span>(<span class="hljs-number">0</span>);
     }
-}</code></pre><h4 id="2.-bug"><a class="header-link" href="#2.-bug"></a>2. bug</h4>
+}</code></pre><p><strong>2. bug</strong></p>
 <p>The bug is still same with the noend. when malloc fail, it can cause arbitrary-address-wrrite-zeo.</p>
-<h4 id="3.-exploit"><a class="header-link" href="#3.-exploit"></a>3. exploit</h4>
+<p><strong>3. exploit</strong></p>
 <p>The leak is easy, and I will skip that part.</p>
 <p>when call malloc, when the main_arean region is not enough, it will use mmap to map a region which is  close to the libc library address.</p>
 <p>So, we can modify some pointer of the libc library, and let the pointer point to the mmaped region.</p>
