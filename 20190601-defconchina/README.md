@@ -9,6 +9,7 @@ Anyway, thanks for participating BCTF. It's a tough task to keep all the challen
 Challenges from us include:
 
 trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.
+[TOC]
 ## Challenge Writeup
 ### trispl
 
