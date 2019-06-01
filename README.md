@@ -14,5 +14,5 @@ For more information, please refer to [our website](https://r3kapig.github.io/).
 
 ## Questions
 
-If you have any question regarding our writeups, please feel free to [create an issue](https://github.com/r3kapig/ctf_challenge/issues) in the writeup repository.
+If you have any question regarding our writeups, please feel free to [create an issue](https://github.com/r3kapig/CTF-challenge/issues) in the writeup repository.
 
