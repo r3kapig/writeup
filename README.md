@@ -9,6 +9,7 @@ For more information, please refer to [our website](https://r3kapig.github.io/).
 
 - [20190323-0ctf](20190323-0ctf)
 - [20190528-qwb](20190528-qwb)
+- [20190601-defconchina](20190601-defconchina)
 
 
 ## Questions
