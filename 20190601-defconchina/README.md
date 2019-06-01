@@ -217,7 +217,8 @@ let () =
 
 ### echos
 
-#### 1. program info
+**1. program info**
+
 this challenge is modified base the SUCTF 2018's noend challenge. The detail information of noend is in the Neo God's [blog](https://changochen.github.io/2018-05-28-suctf.html).
 
 In this chanllenge, I add the following code to prevent the noend's solution. 
@@ -232,10 +233,12 @@ if(s)
 }
 ```
 
-#### 2. bug
+**2. bug**
+
 The bug is still same with the noend. when malloc fail, it can cause arbitrary-address-wrrite-zeo.
 
-#### 3. exploit
+**3. exploit**
+
 The leak is easy, and I will skip that part.
 
 when call malloc, when the main_arean region is not enough, it will use mmap to map a region which is  close to the libc library address.
