@@ -355,12 +355,37 @@ todo
 
 ### speedapp1
 
-todo
+Speedapp is an android app that only provides login and simple calculation functions. The main feature is that it works on the spdy protocol. My design is inspired by a realistic application with spdy protocol for some core endpoints. So When analyzing this app, how to reuse its spdy protocol is a key technology point.
+
+We put two flags in this challenge. If you implement the spdy protocol, combine with the OSS information leak, you can easily get the first flag.
+
+According to `strings.xml` in the apk,   you can get some alibaba cloud object storage service info if you have a sharp nose.  Owning AccessKey, and endpoint(area) to download leak info(source code) by osscmd.
+
+Next point is to overcome communication with server. you can't use tools such as browser, python requests, curl, burpsuite etc, because they dosen't support spdy protocol.  
+
+Reverse analysis and google search is a good way to find out this app is using spdy protocol by java okhttp library. Latest okhttp3.x no longer supports the spdy3.1 protocol,  you have to find a okhttp version that supports the spdy protocol. 
+
+Okhttp2 is okay, but still comes up some exceptions. You need to patch sth, and then communicate with server successfully. Request to `/api/there_is_The_F14g` , and get flag1🚩.
+
+> You can also use other libraries, but may not do well.
 
 ### speedapp2
 
-Todo
+This part is normal and interesting web challenge. Just review the code, and you will find the following problems. 
+- Blind nosql injection to get admin username.
+- Fake jwt authentication based on username and leaked token.
+- Node vm library escape to RCE.
+
+The last two is easily to exploit if you debug and test it locally, so the first and important one is to privilege by sql injection. Intended solution is to blind sql injection in `/api/user/login` to get username. In addition, you should send request post params with **sign**. The sign algorithm is in so file of apk, which is not difficult to reverse.
+
+When exploiting sql injection, there exists an interesting point is that sign with sqli payload. Due to source code, you must regard received params as string when signing. However, sqli payload is parsed as a json object, like this format, `{"username": {"$regex": "%s"}, xxxx`. So you should sign this with `[object Object]` string. Unfortunately, it appears an unintended solution is that easy sql injection in jwt decryption to auth successfully,  like this, `username: { '$gt': '' }`. 
+
+After bypass authentication, you can use calc function, which implemented by node vm library. It is unsafe sandbox, and you can easily construct payload to RCE. There is one example.
+```plain
+this.constructor.constructor('return this.process')().mainModule.require('child_process').execSync('ls /').toString()
+```
+Then enjoy flag2🚩. 
 
 ### router
 
-And for the challenge "router", for the reason that we all know, writeup and exploit will not be available.
+And for the challenge "router", for the reason that we all know, writeup and exploit maybe not be available.

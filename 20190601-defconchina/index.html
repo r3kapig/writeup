@@ -123,7 +123,38 @@
       </a>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav my-2 my-lg-0">
-            <!-- toc2html-mobile -->
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=star&count=true&size=large" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+        
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                challenge-writeup
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#trispl">trispl</a>
+    
+                <a class="dropdown-item" href="#ruscas">ruscas</a>
+    
+                <a class="dropdown-item" href="#echos">echos</a>
+    
+                <a class="dropdown-item" href="#myheart">myheart</a>
+    
+                <a class="dropdown-item" href="#snake">snake</a>
+    
+                <a class="dropdown-item" href="#lut">lut</a>
+    
+                <a class="dropdown-item" href="#lut-revenge">lut-revenge</a>
+    
+                <a class="dropdown-item" href="#speedapp1">speedapp1</a>
+    
+                <a class="dropdown-item" href="#speedapp2">speedapp2</a>
+    
+                <a class="dropdown-item" href="#router">router</a>
+    
+              </div>
+            </li>
+    
         </ul>
       </div>
       <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
@@ -136,7 +167,57 @@
     <div class="row" id="body-row">
       <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
         <ul class="list-group sticky-top sticky-offset">
-          <!-- toc2html-desktop -->
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">challenge-writeup</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            <a href="#trispl" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">trispl</span>
+            </a>
+    
+<a href="#ruscas" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">ruscas</span>
+            </a>
+    
+<a href="#echos" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">echos</span>
+            </a>
+    
+<a href="#myheart" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">myheart</span>
+            </a>
+    
+<a href="#snake" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">snake</span>
+            </a>
+    
+<a href="#lut" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">lut</span>
+            </a>
+    
+<a href="#lut-revenge" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">lut-revenge</span>
+            </a>
+    
+<a href="#speedapp1" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">speedapp1</span>
+            </a>
+    
+<a href="#speedapp2" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">speedapp2</span>
+            </a>
+    
+<a href="#router" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">router</span>
+            </a>
+    
+          </div>
+    
         </ul>
       </div>
       <div class="col-10 py-3">
@@ -456,11 +537,28 @@ hack()
 <h3 id="lut-revenge"><a class="header-link" href="#lut-revenge"></a>lut revenge</h3>
 <p>todo</p>
 <h3 id="speedapp1"><a class="header-link" href="#speedapp1"></a>speedapp1</h3>
-<p>todo</p>
+<p>Speedapp is an android app that only provides login and simple calculation functions. The main feature is that it works on the spdy protocol. My design is inspired by a realistic application with spdy protocol for some core endpoints. So When analyzing this app, how to reuse its spdy protocol is a key technology point.</p>
+<p>We put two flags in this challenge. If you implement the spdy protocol, combine with the OSS information leak, you can easily get the first flag.</p>
+<p>According to <code>strings.xml</code> in the apk,   you can get some alibaba cloud object storage service info if you have a sharp nose.  Owning AccessKey, and endpoint(area) to download leak info(source code) by osscmd.</p>
+<p>Next point is to overcome communication with server. you can&#39;t use tools such as browser, python requests, curl, burpsuite etc, because they dosen&#39;t support spdy protocol.  </p>
+<p>Reverse analysis and google search is a good way to find out this app is using spdy protocol by java okhttp library. Latest okhttp3.x no longer supports the spdy3.1 protocol,  you have to find a okhttp version that supports the spdy protocol. </p>
+<p>Okhttp2 is okay, but still comes up some exceptions. You need to patch sth, and then communicate with server successfully. Request to <code>/api/there_is_The_F14g</code> , and get flag1🚩.</p>
+<blockquote>
+<p>You can also use other libraries, but may not do well.</p>
+</blockquote>
 <h3 id="speedapp2"><a class="header-link" href="#speedapp2"></a>speedapp2</h3>
-<p>Todo</p>
+<p>This part is normal and interesting web challenge. Just review the code, and you will find the following problems. </p>
+<ul class="list">
+<li>Blind nosql injection to get admin username.</li>
+<li>Fake jwt authentication based on username and leaked token.</li>
+<li>Node vm library escape to RCE.</li>
+</ul>
+<p>The last two is easily to exploit if you debug and test it locally, so the first and important one is to privilege by sql injection. Intended solution is to blind sql injection in <code>/api/user/login</code> to get username. In addition, you should send request post params with <strong>sign</strong>. The sign algorithm is in so file of apk, which is not difficult to reverse.</p>
+<p>When exploiting sql injection, there exists an interesting point is that sign with sqli payload. Due to source code, you must regard received params as string when signing. However, sqli payload is parsed as a json object, like this format, <code>{&quot;username&quot;: {&quot;$regex&quot;: &quot;%s&quot;}, xxxx</code>. So you should sign this with <code>[object Object]</code> string. Unfortunately, it appears an unintended solution is that easy sql injection in jwt decryption to auth successfully,  like this, <code>username: { &#39;$gt&#39;: &#39;&#39; }</code>. </p>
+<p>After bypass authentication, you can use calc function, which implemented by node vm library. It is unsafe sandbox, and you can easily construct payload to RCE. There is one example.</p>
+<pre class="hljs"><code>this.<span class="hljs-keyword">constructor</span>.<span class="hljs-function"><span class="hljs-keyword">constructor</span><span class="hljs-params">(<span class="hljs-string">'return this.process'</span>)</span><span class="hljs-params">()</span>.<span class="hljs-title">mainModule</span>.<span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">'child_process'</span>)</span>.<span class="hljs-title">execSync</span><span class="hljs-params">(<span class="hljs-string">'ls /'</span>)</span>.<span class="hljs-title">toString</span><span class="hljs-params">()</span></span></code></pre><p>Then enjoy flag2🚩. </p>
 <h3 id="router"><a class="header-link" href="#router"></a>router</h3>
-<p>And for the challenge &quot;router&quot;, for the reason that we all know, writeup and exploit will not be available.</p>
+<p>And for the challenge &quot;router&quot;, for the reason that we all know, writeup and exploit maybe not be available.</p>
         </article>
       </div>
     </div>
