@@ -1,6 +1,6 @@
 # MTP write up
 
-Last week I solved an interesting challenge, which is actually an 0day bug.  
+Last week I solved an interesting challenge, which is actually a 0day bug.  
 
 We were given a software called [MathType](!https://www.dessci.com/en/products/mathtype/), and we need to pop a calc by using a wmf file with the modified version of this software.
 
@@ -48,7 +48,7 @@ MSDN also offers the [specification](https://docs.microsoft.com/en-us/openspecs/
 
 Thank god someone wrote a parser in 010editor. Which really helps us for understanding WMF file.
 
-As we can see the structure of WMF file is relatively simple.
+We can see the structure of WMF file is relatively simple.
 
 ![](img/7.jpg)
 
@@ -62,7 +62,7 @@ OK, seems a very simple checksum algorithm. Simply xor each byte.
 
 ## Construction & Exploitation 
 
-Now we saw a unlimited heap overflow bug by reversing program, but how to trigger it?
+Now we saw an unlimited heap overflow bug by reversing program, but how to trigger it?
 
 Let's review the code.
 
@@ -72,7 +72,7 @@ I bet u know nothing about what the heck is 1574 record function and what is 15 
 
 Let's seek our answer in [MSDN](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/cfc88064-d86d-4b52-9374-3ce27d456179).
 
-1574 is actually 0x626 in hex which represent a ESCAPE record, and function 15 refers a META_ESCAPE_ENHANCED_METAFILE record.
+1574 is actually 0x626 in hex which represents an ESCAPE record, and function 15 refers a META_ESCAPE_ENHANCED_METAFILE record.
 
 > The **META_ESCAPE_ENHANCED_METAFILE Record** is used to embed an [EMF](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_d9d0bff9-d270-4528-9081-fe51db809c36) [metafile](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_ae5f028e-7e28-4a0b-bec6-2c87913f7db7) within a [WMF](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_48849cf6-d55c-47e5-b041-13b65854de2b) metafile. The EMF metafile is broken up into sections, each represented by one **META_ESCAPE_ENHANCED_METAFILE**.
 
@@ -100,13 +100,13 @@ Hmm, a modified wmf process function.
 
 ![](img/12.jpg)
 
-They also added some interesting functions which I have no idea what they does.
+They also added some interesting functions which I have no idea what they do.
 
 ![](img/13.jpg)
 
 ![](img/14.jpg)
 
-Also there's new function that can arrange heap layout to what we want.
+Also, there's new function that can arrange heap layout to what we want.
 
 ![](img/15.jpg)
 

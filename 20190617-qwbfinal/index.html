@@ -244,7 +244,7 @@
       </div>
       <div class="col-10 py-3">
         <article class="markdown-body"><h1 id="mtp-write-up"><a class="header-link" href="#mtp-write-up"></a>MTP write up</h1>
-<p>Last week I solved an interesting challenge, which is actually an 0day bug.  </p>
+<p>Last week I solved an interesting challenge, which is actually a 0day bug.  </p>
 <p>We were given a software called <a href="!https://www.dessci.com/en/products/mathtype/">MathType</a>, and we need to pop a calc by using a wmf file with the modified version of this software.</p>
 <p>It also said it is an unpatched heap overflow bug, so let&#39;s begin!</p>
 <h2 id="reversing"><a class="header-link" href="#reversing"></a>Reversing</h2>
@@ -270,19 +270,19 @@
 </blockquote>
 <p>MSDN also offers the <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4813e7fd-52d0-4f42-965f-228c8b7488d2">specification</a> for wmf file.</p>
 <p>Thank god someone wrote a parser in 010editor. Which really helps us for understanding WMF file.</p>
-<p>As we can see the structure of WMF file is relatively simple.</p>
+<p>We can see the structure of WMF file is relatively simple.</p>
 <p class="img-container"><img src="img/7.jpg" alt=""></p>
 <p>A special header and a normal header, records follows after.</p>
 <p>Wait WTF is that checksum? How we compute it?</p>
 <p class="img-container"><img src="img/8.jpg" alt=""></p>
 <p>OK, seems a very simple checksum algorithm. Simply xor each byte.</p>
 <h2 id="construction-&-exploitation"><a class="header-link" href="#construction-&-exploitation"></a>Construction &amp; Exploitation</h2>
-<p>Now we saw a unlimited heap overflow bug by reversing program, but how to trigger it?</p>
+<p>Now we saw an unlimited heap overflow bug by reversing program, but how to trigger it?</p>
 <p>Let&#39;s review the code.</p>
 <p class="img-container"><img src="img/6.jpg" alt=""></p>
 <p>I bet u know nothing about what the heck is 1574 record function and what is 15 escape function. :)</p>
 <p>Let&#39;s seek our answer in <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/cfc88064-d86d-4b52-9374-3ce27d456179">MSDN</a>.</p>
-<p>1574 is actually 0x626 in hex which represent a ESCAPE record, and function 15 refers a META_ESCAPE_ENHANCED_METAFILE record.</p>
+<p>1574 is actually 0x626 in hex which represents an ESCAPE record, and function 15 refers a META_ESCAPE_ENHANCED_METAFILE record.</p>
 <blockquote>
 <p>The <strong>META_ESCAPE_ENHANCED_METAFILE Record</strong> is used to embed an <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_d9d0bff9-d270-4528-9081-fe51db809c36">EMF</a> <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_ae5f028e-7e28-4a0b-bec6-2c87913f7db7">metafile</a> within a <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_48849cf6-d55c-47e5-b041-13b65854de2b">WMF</a> metafile. The EMF metafile is broken up into sections, each represented by one <strong>META_ESCAPE_ENHANCED_METAFILE</strong>.</p>
 </blockquote>
@@ -298,10 +298,10 @@
 <p class="img-container"><img src="img/11.jpg" alt=""></p>
 <p>Hmm, a modified wmf process function.</p>
 <p class="img-container"><img src="img/12.jpg" alt=""></p>
-<p>They also added some interesting functions which I have no idea what they does.</p>
+<p>They also added some interesting functions which I have no idea what they do.</p>
 <p class="img-container"><img src="img/13.jpg" alt=""></p>
 <p class="img-container"><img src="img/14.jpg" alt=""></p>
-<p>Also there&#39;s new function that can arrange heap layout to what we want.</p>
+<p>Also, there&#39;s new function that can arrange heap layout to what we want.</p>
 <p class="img-container"><img src="img/15.jpg" alt=""></p>
 <p>So ideally we allocate some buffer with 0x108 size to fill the heap hole, and allocate vuln buffer with META_ESCAPE_ENHANCED_METAFILE record, but don&#39;t trigger oob. Buffer contains function pointer should be allocated right after our vuln buffer. Next time we can oob the heap and overwrite the function pointer to achieve RCE.</p>
 <p class="img-container"><img src="img/16.jpg" alt=""></p>
