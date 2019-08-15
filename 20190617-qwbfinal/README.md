@@ -2,7 +2,7 @@
 
 Last week I solved an interesting challenge, which is actually a 0day bug.  
 
-We were given a software called [MathType](!https://www.dessci.com/en/products/mathtype/), and we need to pop a calc by using a wmf file with the modified version of this software.
+We were given a software called [MathType](https://www.dessci.com/en/products/mathtype/), and we need to pop a calc by using a wmf file with the modified version of this software.
 
 It also said it is an unpatched heap overflow bug, so let's begin!
 
