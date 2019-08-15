@@ -2,7 +2,7 @@
 
 r3kapig is a united CTF Team mostly emerges from Eur3kA and FlappyPig since 
 
-For more information, please refer to [our website](https://r3kapig.github.io/).
+For more information, please refer to [our website](https://r3kapig.com).
 
 ## Table of Contents
 
@@ -15,5 +15,5 @@ For more information, please refer to [our website](https://r3kapig.github.io/).
 
 ## Questions
 
-If you have any question regarding our writeups, please feel free to [create an issue](https://github.com/r3kapig/CTF-challenge/issues) in the writeup repository.
+If you have any question regarding our writeups, please feel free to [create an issue](https://github.com/r3kapig/writeup/issues) in the writeup repository.
 

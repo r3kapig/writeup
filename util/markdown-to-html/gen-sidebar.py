@@ -48,8 +48,8 @@ def mobile_dropdown_list(name, item_string, is_first_dropdown_list):
     github_button_iframe = ''
     if is_first_dropdown_list:
         github_button_iframe = '''
-              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
-              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=CTF-challenge&type=star&count=true&size=large" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
         '''
     return f'''
             <li class="nav-item dropdown d-sm-block d-md-none">{github_button_iframe}
