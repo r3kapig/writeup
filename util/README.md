@@ -1,3 +1,33 @@
+# Usage
+
+## Automatic Mode
+
+### Install
+
+**Installation and Build requires `python3` and `nodejs`**
+
+1. Install latest [node and npm](https://nodejs.org/en/download/package-manager/)
+
+2. Install latest [python3](https://www.python.org/downloads/).
+
+3. Run `./install.sh`
+
+### Build
+
+1. Go to root directory
+
+2. Run `./build.sh`
+
+### Deploy (Run after build)
+
+3. `git add .; git commit -m "Add writeup"`
+
+4. `git push origin master`
+
+-----
+
+## Manual Mode
+
 ## Install
 
 ### markdown-toc-generator
@@ -32,7 +62,7 @@ Make sure your working directory is the root of Git repository.
 6. `./util/markdown-toc-generator/gen-toc.py YYYYMMDD-ctfname/README.md`
 
 
-## Troubleshooting
+# Markdown Format
 
 ### TOC
 
