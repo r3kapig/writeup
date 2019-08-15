@@ -40,7 +40,8 @@ mv README.html index.html
 ./util/markdown-to-html/gen-sidebar.py index.html
 
 # remove asset bug, remove sidebar
-sed -i 's/\.\.\//\.\//g' index.html
+sed -i 's/\.\.\//\.\//g' index.html # just patch the assets
+sed -i 's/\.\/\">/\.\.\/\">/g' index.html # keep out the header
 SIDEBAR_START=$(expr `sed -n '/\"sidebar\-container\"/=' index.html` - 1)
 SIDEBAR_END=$(expr `sed -n '/\"col-10\ py-3\"/=' index.html`)
 LAST_LINE=`cat index.html | wc -l`
