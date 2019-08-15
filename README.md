@@ -8,10 +8,10 @@ We are publishing our official writeups here. For more information, please refer
 
 ## Writeups
 
-- [20190323-0ctf](20190323-0ctf)
-- [20190528-qwb](20190528-qwb)
-- [20190601-defconchina](20190601-defconchina)
-- [20190617-qwbfinal](20190617-qwbfinal)
+- [20190323-0ctf](20190323-0ctf): 0CTF/TCTF 2019 Quals Writeup
+- [20190528-qwb](20190528-qwb): 强网杯线上赛 Writeup
+- [20190601-defconchina](20190601-defconchina): Defcon China CTF(BCTF) 1.0 Writeup
+- [20190617-qwbfinal](20190617-qwbfinal): MTP write up
 
 ## Questions
 

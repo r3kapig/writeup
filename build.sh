@@ -28,7 +28,8 @@ cat /dev/null > README_patched.md
 sed -n "1,${SIDEBAR_START}p;${SIDEBAR_START}q" README.md >> README_patched.md
 for DIR in $DIR_LIST
 do
-    echo "- [$DIR]($DIR)" >> README_patched.md
+    TITLE=`cat $DIR/index.html | grep -o "<title>[^<]*" | sed -e 's/<[^>]*>//g' | sed 's/..........$//'`
+    echo "- [$DIR]($DIR): $TITLE" >> README_patched.md
 done
 sed -n "${SIDEBAR_END},${LAST_LINE}p;${LAST_LINE}q" README.md >> README_patched.md
 mv README_patched.md README.md

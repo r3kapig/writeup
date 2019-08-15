@@ -1,4 +1,4 @@
-# Defcon China CTF(BCTF)
+# Defcon China CTF(BCTF) 1.0 Writeup
 
 Happy Children's Day, hackers! I know you all hacked the time, so you may stay young forever, haha.
 
