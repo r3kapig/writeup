@@ -857,18 +857,18 @@ This cipher algorithm is as follows.
 - genkey
   1. Generate 8x8 matrices $K1, K2, K3, P$.
   2. The first 4 rows of $K1$ and $K2$ and all elements of $P$ is generated randomly. The last 4 rows of $K1$ and $K2$ are linear correlated with their first 4 rows.
-  3. Find $K3$ that satisfies $K1*P*P+K2*P+K3=0$.
+  3. Find $K3$ that satisfies $K1 \times P \times P + K2 \times P \times K3 = 0$.
   4. $K1, K2, K3$ are public keys. $P$ is private key.
 - encrypt
   1. A = convert_to_matrix(text)
   2. Generate random matrix S.
-  3. $E1 = S * K1, E2 = S * K2, E3 = A + S * K3$
+  3. $E1 = S \times K1, E2 = S \times K2, E3 = A + S \times K3$
   4. $E1, E2, E3$ are encrypted text
 - decrypt
-  1. $A = E1*P*P + E2*P + E3$
+  1. $A = E1 \times P \times P + E2 \times P + E3$
   2. text = convert_to_text(A)
 
-We can solve $S$ through $S = (E1 + E2) * ((K1 + K2)^{-1})$. Then $A = E3 - S * K3$.
+We can solve $S$ through $S = (E1 + E2) \times ((K1 + K2)^{-1})$. Then $A = E3 - S \times K3$.
 
 
 

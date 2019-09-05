@@ -1130,24 +1130,24 @@ print(flag)
 <li>genkey<ol class="list">
 <li>Generate 8x8 matrices $K1, K2, K3, P$.</li>
 <li>The first 4 rows of $K1$ and $K2$ and all elements of $P$ is generated randomly. The last 4 rows of $K1$ and $K2$ are linear correlated with their first 4 rows.</li>
-<li>Find $K3$ that satisfies $K1<em>P</em>P+K2*P+K3=0$.</li>
+<li>Find $K3$ that satisfies $K1 \times P \times P + K2 \times P \times K3 = 0$.</li>
 <li>$K1, K2, K3$ are public keys. $P$ is private key.</li>
 </ol>
 </li>
 <li>encrypt<ol class="list">
 <li>A = convert_to_matrix(text)</li>
 <li>Generate random matrix S.</li>
-<li>$E1 = S <em> K1, E2 = S </em> K2, E3 = A + S * K3$</li>
+<li>$E1 = S \times K1, E2 = S \times K2, E3 = A + S \times K3$</li>
 <li>$E1, E2, E3$ are encrypted text</li>
 </ol>
 </li>
 <li>decrypt<ol class="list">
-<li>$A = E1<em>P</em>P + E2*P + E3$</li>
+<li>$A = E1 \times P \times P + E2 \times P + E3$</li>
 <li>text = convert_to_text(A)</li>
 </ol>
 </li>
 </ul>
-<p>We can solve $S$ through $S = (E1 + E2) <em> ((K1 + K2)^{-1})$. Then $A = E3 - S </em> K3$.</p>
+<p>We can solve $S$ through $S = (E1 + E2) \times ((K1 + K2)^{-1})$. Then $A = E3 - S \times K3$.</p>
 <h2 id="web"><a class="header-link" href="#web"></a>Web</h2>
 <h3 id="j2x2j"><a class="header-link" href="#j2x2j"></a>j2x2j</h3>
 <p>URL: <a href="http://j2x2j.chal.ctf.westerns.tokyo/">http://j2x2j.chal.ctf.westerns.tokyo/</a></p>
