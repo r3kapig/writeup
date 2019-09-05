@@ -17,3 +17,7 @@ We are publishing our official writeups here. For more information, please refer
 ## Questions
 
 If you have any question regarding our writeups, please feel free to [create an issue](https://github.com/r3kapig/writeup/issues) in the writeup repository.
+
+---
+
+<small>The writeup page is inspired by <a href="https://github.com/balsn/ctf_writeup">balsn/ctf_writeup</a>. Respective copyrights apply.</small>
