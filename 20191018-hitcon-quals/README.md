@@ -1850,7 +1850,7 @@ if __name__ == '__main__':
 sha1sum temp | awk '{ print $1 }'
 ```
 
-### EV3 Player  
+### EV3 Player [207pts]
 
 Analysis the .pklg file, there are three file in it. `fl.srf`, `ag.srf`, `hello.srf`，these files can open by Lego Mindstorms software. Load it, then we can hear the flag!
 
