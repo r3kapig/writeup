@@ -13,6 +13,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20190601-defconchina](20190601-defconchina): Defcon China CTF(BCTF) 1.0 Writeup
 - [20190617-qwbfinal](20190617-qwbfinal): MTP write up
 - [20190904-tokyowesterns](20190904-tokyowesterns): TokyoWesterns CTF 5th 2019 WriteUp
+- [20191018-hitcon-quals](20191018-hitcon-quals): HITCON CTF 2019 Writeup
 
 ## Questions
 
