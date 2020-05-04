@@ -252,7 +252,8 @@
         </ul>
       </div>
       <div class="col-10 py-3">
-        <article class="markdown-body"><h2 id="0x00-overview"><a class="header-link" href="#0x00-overview"></a>0x00 Overview</h2>
+        <article class="markdown-body"><p>Cloned from <a href="https://mem2019.github.io/jekyll/update/2020/05/04/Easy-PHP-UAF.html">Our member 2019&#39;s post</a>.</p>
+<h2 id="0x00-overview"><a class="header-link" href="#0x00-overview"></a>0x00 Overview</h2>
 <p>Although I failed to solve the challenge during CTF, but I think it is worthwhile to do a write-up.</p>
 <p>The challenge is to exploit a PHP script engine using <a href="https://github.com/mm0r1/exploits/blob/master/php7-backtrace-bypass/exploit.php">this bug</a>. We can execute arbitrary PHP code but we must bypass <code>disabled_function</code> restriction to execute shell command, using a UAF vulnerability. Therefore, this is actually more a Pwn challenge than a Web challenge.</p>
 <p>However, different from official PHP engine, a custom <code>libphp7.so</code> is provided. This engine does not provide any loop functionality such as <code>for/while/do-while/foreach</code>. Moreover, in remote server, the recursion depth is also restricted, and <code>strlen</code> function always returns <code>NULL</code>, even though these cases do not occur in my local environment.</p>
