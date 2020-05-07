@@ -1,12 +1,10 @@
 # BroadcastTest
 ## background
-We can reverse the apk and find it only have 4 classes: `MainActivity$Message` and `Receiver`1-3.
+We reverse the apk and find out that we only have 4 classes: `MainActivity$Message`, `Receiver`1-3. and `MainActivity$Message` implement from Parcelable class.
 
-and `MainActivity$Message` implement from Parcelable class.
+`Receiver1` is exported. It receive global broadcast and send the bundle to `Receiver2`.
 
-`Receiver1` is expoted. It receive global broadcast and send the bundle to `Receiver2`.
-
-`Receiver2` and `Recevier3` isn't expoted, so they can only receive broadcasts from this apk.
+`Receiver2` and `Recevier3` isn't exported, so they can only receive broadcasts from this apk.
 
 The procedure is 
 
@@ -17,9 +15,9 @@ The procedure is
 I search the parcel and bundle then find [this article](https://www.ms509.com/2018/07/03/bundle-mismatch) and CVE-2017-13288.
 
 ## theory
-Android can marshal a object by implementing from Parceable.
+Android can marshal an object by implementing from Parceable.
 The class must implement `writeToParcel` and `readFromParcel` method to describe how to marshal and unmarshal.
-Parcelable object need to be taken by Bundle, which is a hashmap.
+Parcelable object needs to be taken by Bundle, which is a hashmap.
 Bundle can be put key-value by `PutExtra(key, value)`. The type of value can be int, Boolean, String or Parcelable object etc. 
 
 ``` Java
@@ -71,6 +69,7 @@ parcel.setDataPosition(endPos);
 ```
 
 `writeValue` will write the type and value. If the type is Parceable, writing will call `writeParcelable` method, which call `writeToParcel` in `Parcelable` object.
+
 ```java
 public final void writeValue(Object v) {
         if (v == null) {
@@ -131,7 +130,7 @@ dest.writeInt((int) this.rttSpread);
 Through test I found that the first type-difference which in byte and int will not create influence, because of PAD_SIZE.
 So the second type-difference will cover 4 bytes after `Message` object every times `readFromParcel` and `writeToParcel`.
 
-The intent of this challenge is to hide a key-value pair `'command'='getflag'`, and expoes it when second reading.
+The intent of this challenge is to hide a key-value pair `'command'='getflag'`, and expose it when it reads again.
 
 The order of bundle is 'length of key, content of key, type of value, length of value, content of value'.
 
@@ -248,10 +247,10 @@ And there is a warning in logcat:
 >>W/ArrayMap: New hash -1841832101 is before end of array hash -1212575282 at index 1 key ��command��������getflag����
 ```
 
-So the question is Bundle use Arraymap, whose order is decisided by hash of key.
-We change the key, so the hash changed.
-It is lower than the hash of key of Message.
-We don't care it before.
+So the question is Bundle use Arraymap, whose order is decided by hash of the key.
+We change the key, the hash is changed.
+It needs to be lower than the hash of key of Message.
+
 Here is the source:
 
 ```java
@@ -273,7 +272,7 @@ Here is the source:
         }
 ```
 
-So I think pwn the vulnerability, the value of hash is important.
+So I think the value of hash is important to pwn the vulnerability.
 The value of hash of key is `-1841832101`, so we just need to find a key with lower hash.
 ``` java
         String key = "mismatch";

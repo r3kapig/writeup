@@ -238,10 +238,9 @@
       <div class="col-10 py-3">
         <article class="markdown-body"><h1 id="broadcasttest"><a class="header-link" href="#broadcasttest"></a>BroadcastTest</h1>
 <h2 id="background"><a class="header-link" href="#background"></a>background</h2>
-<p>We can reverse the apk and find it only have 4 classes: <code>MainActivity$Message</code> and <code>Receiver</code>1-3.</p>
-<p>and <code>MainActivity$Message</code> implement from Parcelable class.</p>
-<p><code>Receiver1</code> is expoted. It receive global broadcast and send the bundle to <code>Receiver2</code>.</p>
-<p><code>Receiver2</code> and <code>Recevier3</code> isn&#39;t expoted, so they can only receive broadcasts from this apk.</p>
+<p>We reverse the apk and find out that we only have 4 classes: <code>MainActivity$Message</code>, <code>Receiver</code>1-3. and <code>MainActivity$Message</code> implement from Parcelable class.</p>
+<p><code>Receiver1</code> is exported. It receive global broadcast and send the bundle to <code>Receiver2</code>.</p>
+<p><code>Receiver2</code> and <code>Recevier3</code> isn&#39;t exported, so they can only receive broadcasts from this apk.</p>
 <p>The procedure is </p>
 <ol class="list">
 <li><code>Receiver1</code> receive the data from broadcast, and decode it by base64, then marshall it to a bundle, and send it as a broadcast to <code>Receiver2</code>.</li>
@@ -250,9 +249,9 @@
 </ol>
 <p>I search the parcel and bundle then find <a href="https://www.ms509.com/2018/07/03/bundle-mismatch">this article</a> and CVE-2017-13288.</p>
 <h2 id="theory"><a class="header-link" href="#theory"></a>theory</h2>
-<p>Android can marshal a object by implementing from Parceable.
+<p>Android can marshal an object by implementing from Parceable.
 The class must implement <code>writeToParcel</code> and <code>readFromParcel</code> method to describe how to marshal and unmarshal.
-Parcelable object need to be taken by Bundle, which is a hashmap.
+Parcelable object needs to be taken by Bundle, which is a hashmap.
 Bundle can be put key-value by <code>PutExtra(key, value)</code>. The type of value can be int, Boolean, String or Parcelable object etc. </p>
 <pre class="hljs"><code><span class="hljs-comment">// Keep in sync with frameworks/native/include/private/binder/ParcelValTypes.h.</span>
     <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> VAL_NULL = -<span class="hljs-number">1</span>;
@@ -336,7 +335,7 @@ dest.writeInt((int) <span class="hljs-keyword">this</span>.rttSpread);</code></p
 </ol>
 <p>Through test I found that the first type-difference which in byte and int will not create influence, because of PAD_SIZE.
 So the second type-difference will cover 4 bytes after <code>Message</code> object every times <code>readFromParcel</code> and <code>writeToParcel</code>.</p>
-<p>The intent of this challenge is to hide a key-value pair <code>&#39;command&#39;=&#39;getflag&#39;</code>, and expoes it when second reading.</p>
+<p>The intent of this challenge is to hide a key-value pair <code>&#39;command&#39;=&#39;getflag&#39;</code>, and expose it when it reads again.</p>
 <p>The order of bundle is &#39;length of key, content of key, type of value, length of value, content of value&#39;.</p>
 <p>It means that the writing will cover <code>length of key</code> and make the first 4 bytes of origin <code>content of key</code> the new <code>length of key</code>.</p>
 <p>So we can construct this payload:</p>
@@ -528,11 +527,10 @@ I check it and find the order changed:
 <code>&#39;\7\0command...getflag\0\0&#39;=&#39;1&#39;, Message, &#39;command&#39;=&#39;gotflag&#39;</code>
 It means that the payload is correct but it covered <code>&#39;command&#39;=&#39;gotflag&#39;</code>.</p>
 <p>And there is a warning in logcat:</p>
-<pre class="hljs"><code>&gt;&gt;W/ArrayMap: New hash -1841832101 is before end of<span class="hljs-built_in"> array </span>hash -1212575282 at index 1 key ��command��������getflag����</code></pre><p>So the question is Bundle use Arraymap, whose order is decisided by hash of key.
-We change the key, so the hash changed.
-It is lower than the hash of key of Message.
-We don&#39;t care it before.
-Here is the source:</p>
+<pre class="hljs"><code>&gt;&gt;W/ArrayMap: New hash -1841832101 is before end of<span class="hljs-built_in"> array </span>hash -1212575282 at index 1 key ��command��������getflag����</code></pre><p>So the question is Bundle use Arraymap, whose order is decided by hash of the key.
+We change the key, the hash is changed.
+It needs to be lower than the hash of key of Message.</p>
+<p>Here is the source:</p>
 <pre class="hljs"><code>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">append</span><span class="hljs-params">(K key, V value)</span> </span>{
         <span class="hljs-keyword">int</span> index = mSize;
         <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> hash = key == <span class="hljs-keyword">null</span> ? <span class="hljs-number">0</span>
@@ -548,7 +546,7 @@ Here is the source:</p>
                     + <span class="hljs-string">" at index "</span> + index + <span class="hljs-string">" key "</span> + key, e);
             put(key, value);
             <span class="hljs-keyword">return</span>;
-        }</code></pre><p>So I think pwn the vulnerability, the value of hash is important.
+        }</code></pre><p>So I think the value of hash is important to pwn the vulnerability.
 The value of hash of key is <code>-1841832101</code>, so we just need to find a key with lower hash.</p>
 <pre class="hljs"><code>        String key = <span class="hljs-string">"mismatch"</span>;
         <span class="hljs-keyword">while</span>(key.hashCode()&gt;=-<span class="hljs-number">1841832101</span>){
