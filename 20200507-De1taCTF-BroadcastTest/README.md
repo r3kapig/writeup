@@ -139,12 +139,10 @@ It means that the writing will cover `length of key` and make the first 4 bytes 
 
 So we can construct this payload:
 
-```
-Message|len_key|content_key|type_value|len_value|content_value|
---|--|--|--|--|--|
-pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|03 00 00 00| "pad" |
-pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00
-```
+|Message|len_key|content_key|type_value|len_value|content_value|
+|--|--|--|--|--|--|
+|pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|03 00 00 00| "pad" |
+|pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00|
 
 The format of string is UTF-16, two bytes every char.
 type=0 means `VAL_STRING`.
@@ -210,22 +208,19 @@ I search it and find that `writeString` method will put '\0' to the end of strin
 
 But if I remove the zero, `writeString("\7\0command\0\0\0\7\0getflag")`, the end zero will be at the end. It costs 44 bytes without padding.
 The structure is 
-```
-Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
---|--|--|--|--|--|--|--|--|--|--|
-pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|01 00 00 00| "1" | 07 00 00 00 | "command" | 00 00 00 00| 00 00 00 00 | null
-pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00 | 00 00 00 00 | 01 00 00 00 | "1" | 07 00 00 00 | "command"
-```
+
+|Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
+|--|--|--|--|--|--|--|--|--|--|--|
+|pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|01 00 00 00| "1" | 07 00 00 00 | "command" | 00 00 00 00| 00 00 00 00 | null|
+|pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00 | 00 00 00 00 | 01 00 00 00 | "1" | 07 00 00 00 | "command"|
 
 We can find the `type_value2` is error.
 So we need to construct `fake_value1=""`.
 
-```
-Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
---|--|--|--|--|--|--|--|--|--|--|
-pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|00 00 00 00| 00 00 00 00 | 07 00 00 00 | "command" | 00 00 00 00| 00 00 00 00 | null
-pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 07 00 00 00 | "command"
-```
+|Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
+|--|--|--|--|--|--|--|--|--|--|--|
+|pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|00 00 00 00| 00 00 00 00 | 07 00 00 00 | "command" | 00 00 00 00| 00 00 00 00 | null|
+|pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 07 00 00 00 | "command"|
 
 This is the payload2:
 ```java 
