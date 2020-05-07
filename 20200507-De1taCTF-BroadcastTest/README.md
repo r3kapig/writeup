@@ -1,10 +1,15 @@
 # BroadcastTest
 ## background
 We can reverse the apk and find it only have 4 classes: `MainActivity$Message` and `Receiver`1-3.
-And `MainActivity$Message` implement from Parcelable class.
+
+and `MainActivity$Message` implement from Parcelable class.
+
 `Receiver1` is expoted. It receive global broadcast and send the bundle to `Receiver2`.
+
 `Receiver2` and `Recevier3` isn't expoted, so they can only receive broadcasts from this apk.
+
 The procedure is 
+
 1. `Receiver1` receive the data from broadcast, and decode it by base64, then marshall it to a bundle, and send it as a broadcast to `Receiver2`.
 2. `Receiver2` check the "command", assert value != 'getflag', then send it to `Receiver3`.
 3. `Receiver3` check the "command", assert value == 'getflag.
@@ -109,7 +114,7 @@ byte[] raw = testData.marshall();
 `writeString`will put '\0' to the end of string. 
 PAD_SIZE will make the length of unit be the multipiles of 4.
 
-## Writeup
+## Exploit
 `MainActivity$Message` is a class implementing from `Parceable`.
 There are two type-difference:
 1. 
@@ -133,10 +138,13 @@ The order of bundle is 'length of key, content of key, type of value, length of 
 It means that the writing will cover `length of key` and make the first 4 bytes of origin `content of key` the new `length of key`.
 
 So we can construct this payload:
+
+```
 Message|len_key|content_key|type_value|len_value|content_value|
 --|--|--|--|--|--|
 pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|03 00 00 00| "pad" |
 pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00
+```
 
 The format of string is UTF-16, two bytes every char.
 type=0 means `VAL_STRING`.
@@ -200,20 +208,24 @@ a.writeString("1");//fake_value
 But marshaling shows that fake_key contains 3 zero char after 'getflag'. It costs 6 bytes.
 I search it and find that `writeString` method will put '\0' to the end of string, then pad size.
 
-But if I remove the zero, writeString("\7\0command\0\0\0\7\0getflag"), the end zero will at the end. It costs 44 bytes without padding.
+But if I remove the zero, `writeString("\7\0command\0\0\0\7\0getflag")`, the end zero will be at the end. It costs 44 bytes without padding.
 The structure is 
+```
 Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
 --|--|--|--|--|--|--|--|--|--|--|
 pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|01 00 00 00| "1" | 07 00 00 00 | "command" | 00 00 00 00| 00 00 00 00 | null
 pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00 | 00 00 00 00 | 01 00 00 00 | "1" | 07 00 00 00 | "command"
+```
 
 We can find the `type_value2` is error.
 So we need to construct `fake_value1=""`.
 
+```
 Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
 --|--|--|--|--|--|--|--|--|--|--|
 pad|15 00 00 00|07 00 00 00 "command" 00 00 00 00 00 00 07 00 00 00 "getflag" 00 00| 00 00 00 00|00 00 00 00| 00 00 00 00 | 07 00 00 00 | "command" | 00 00 00 00| 00 00 00 00 | null
 pad 15 00 00 00|07 00 00 00| "command" 00 00|00 00 00 00|07 00 00 00|"getflag" 00 00 | 00 00 00 00 | 00 00 00 00 | 00 00 00 00 | 07 00 00 00 | "command"
+```
 
 This is the payload2:
 ```java 
@@ -237,7 +249,9 @@ I check it and find the order changed:
 It means that the payload is correct but it covered `'command'='gotflag'`.
 
 And there is a warning in logcat:
+```
 >>W/ArrayMap: New hash -1841832101 is before end of array hash -1212575282 at index 1 key ��command��������getflag����
+```
 
 So the question is Bundle use Arraymap, whose order is decisided by hash of key.
 We change the key, so the hash changed.
@@ -275,4 +289,4 @@ The value of hash of key is `-1841832101`, so we just need to find a key with lo
 
 ```
 
-[This](./gen_payload.zip) is a project of AndroidStudio which can generate payload.
+[This](./gen_payload.zip) is a project of AndroidStudio which can generate the exploit payload.

