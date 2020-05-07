@@ -16,6 +16,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20191018-hitcon-quals](20191018-hitcon-quals): HITCON CTF 2019 Writeup
 - [20200504-Easy-PHP-UAF](20200504-Easy-PHP-UAF): Easy PHP UAF
 - [20200507-De1taCTF-BroadcastTest](20200507-De1taCTF-BroadcastTest): BroadcastTest
+- [20200508-de1ctf](20200508-de1ctf): 2020 de1ctf writeup
 
 ## Questions
 
