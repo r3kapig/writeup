@@ -15,6 +15,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20190904-tokyowesterns](20190904-tokyowesterns): TokyoWesterns CTF 5th 2019 WriteUp
 - [20191018-hitcon-quals](20191018-hitcon-quals): HITCON CTF 2019 Writeup
 - [20200504-Easy-PHP-UAF](20200504-Easy-PHP-UAF): Easy PHP UAF
+- [20200507-De1taCTF-BroadcastTest](20200507-De1taCTF-BroadcastTest): De1taCTF - BoradcastTest
 
 ## Questions
 
