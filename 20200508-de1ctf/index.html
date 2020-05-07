@@ -149,8 +149,6 @@
     
                 <a class="dropdown-item" href="#hard_pentest_1">hard_pentest_1</a>
     
-                <a class="dropdown-item" href="#hard_present_2">hard_present_2</a>
-    
                 <a class="dropdown-item" href="#animal-crossing">animal-crossing</a>
     
                 <a class="dropdown-item" href="#mixture">mixture</a>
@@ -247,10 +245,6 @@
     
 <a href="#hard_pentest_1" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">hard_pentest_1</span>
-            </a>
-    
-<a href="#hard_present_2" class="list-group-item list-group-item-action text-white bg-dark">
-              <span class="menu-collapsed">hard_present_2</span>
             </a>
     
 <a href="#animal-crossing" class="list-group-item list-group-item-action text-white bg-dark">
@@ -384,17 +378,6 @@ hp .jpg</code></pre><p>将<code>jpg</code>解析为php，绕过关键字过滤�
 <img src="https://i.imgur.com/7CI5tlJ.png" alt=""></p>
 <p>解密脚本参考文章：<a href="https://3gstudent.github.io/3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%88%A9%E7%94%A8SYSVOL%E8%BF%98%E5%8E%9F%E7%BB%84%E7%AD%96%E7%95%A5%E4%B8%AD%E4%BF%9D%E5%AD%98%E7%9A%84%E5%AF%86%E7%A0%81/">https://3gstudent.github.io/3gstudent.github.io/%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%88%A9%E7%94%A8SYSVOL%E8%BF%98%E5%8E%9F%E7%BB%84%E7%AD%96%E7%95%A5%E4%B8%AD%E4%BF%9D%E5%AD%98%E7%9A%84%E5%AF%86%E7%A0%81/</a></p>
 <p class="img-container"><img src="https://i.imgur.com/7EpeHuU.png" alt=""></p>
-<h3 id="hard_present_2"><a class="header-link" href="#hard_present_2"></a>Hard_present_2</h3>
-<p>赛后复现的题目。
-根据提示，我们首先要弄到De1ta用户的密码，Kerberoasting获得密码hash：b03094996601324646ac223bf30d0d07
-参考：<a href="https://blog.csdn.net/qq_18501087/article/details/101593766">https://blog.csdn.net/qq_18501087/article/details/101593766</a></p>
-<p>本地爆破，得到密码：3f23ea12。</p>
-<p>利用SharpHound，获取De1ta的SID：
-S-1-5-21-1806179181-549835139-1294087714-1106
-<img src="https://i.imgur.com/WMhHmt9.png" alt=""></p>
-<p>MS14-068生成票据并导入。</p>
-<pre class="hljs"><code>MS14-068.exe -u De1ta@De1CTF2020.lab -p 3f23ea12 <span class="hljs-_">-s</span> S-1-5-21-1806179181-549835139-1294087714-1106 <span class="hljs-_">-d</span> 192.168.0.12</code></pre><p>最后psexec提权即可。
-<img src="https://i.imgur.com/qMsPwZy.png" alt=""></p>
 <h3 id="animal-crossing"><a class="header-link" href="#animal-crossing"></a>Animal Crossing</h3>
 <p>比赛期间没做出来，结束了突然有点思路了</p>
 <p>绕ast+静态。window对象所有方法都能调，同时封锁了属性的调用</p>
