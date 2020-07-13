@@ -18,6 +18,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20200507-De1taCTF-BroadcastTest](20200507-De1taCTF-BroadcastTest): BroadcastTest
 - [20200508-de1ctf](20200508-de1ctf): 2020 de1ctf writeup
 - [20200702-0ctf-quals](20200702-0ctf-quals): 0CTF/TCTF 2020 Quals Writeup
+- [20200714-geekpwn](20200714-geekpwn): GeekPwn 云上挑战赛
 
 ## Questions
 
