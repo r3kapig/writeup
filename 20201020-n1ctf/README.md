@@ -265,7 +265,8 @@ print(a + b"_" + b + b"_" + c + b"_" + d + b"_" + e)
 ### easy apk
 ollvm，调试分析算法
 替换表的base64+aes_cbc
-```python=
+```python
+
 tbl = list(b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/")
 res = b"jZe3yJG3zJLHywu4otmZzwy/"
 a = b""
@@ -368,9 +369,11 @@ print ''.join([chr(x) for x in flag])
 #     summ += flag[i]
 # print summ
 ```
+
 ## Web
 ### Signln
-```
+```python
+
 import requests
 import string
 import re
@@ -426,10 +429,15 @@ powershell -exec bypass -encodedCommand blahblah...
 
 ### zabbix_fun
 首先`Admin` `zabbix`登录。查看下agent的ip地址
+
 ![](https://i.imgur.com/0V2kMt2.png)
+
 之后配置host，使能zbx
+
 ![](https://i.imgur.com/N35vcMr.png)
+
 再用监控项(item)读文件就行了
+
 ![](https://i.imgur.com/x2Bzi9J.png)
 
 ### easy_tp5
