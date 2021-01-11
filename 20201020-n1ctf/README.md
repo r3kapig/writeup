@@ -1,4 +1,4 @@
-# N1CTF 2020 writeup
+# N1CTF 2020 Writeup
 
 ## PWN
 ### Signin

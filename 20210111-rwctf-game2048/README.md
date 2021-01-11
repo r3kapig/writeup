@@ -1,4 +1,4 @@
-# RWCTF 2020 game 2048 writeup - r3kapig
+# Real World CTF 2020 Game2048 Writeup
 
 This is @[Anciety](https://github.com/Escapingbug) from [team r3kapig](https://r3kapig.com/)! We have achieved #7 in [Real World CTF](https://realworldctf.com/rank) this year. The experience is quite nice, although we have completed the challenge in a hard way.. Let's get into the hard way 2048!
 
