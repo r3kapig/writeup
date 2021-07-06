@@ -21,6 +21,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20200714-geekpwn](20200714-geekpwn): GeekPwn 云上挑战赛
 - [20201020-n1ctf](20201020-n1ctf): N1CTF 2020 Writeup
 - [20210111-rwctf-game2048](20210111-rwctf-game2048): Real World CTF 2020 Game2048 Writeup
+- [20210706-0ctf-quals](20210706-0ctf-quals): TCTF-quals-2021 writeup
 
 ## Questions
 
