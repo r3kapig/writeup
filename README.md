@@ -22,6 +22,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20201020-n1ctf](20201020-n1ctf): N1CTF 2020 Writeup
 - [20210111-rwctf-game2048](20210111-rwctf-game2048): Real World CTF 2020 Game2048 Writeup
 - [20210706-0ctf-quals](20210706-0ctf-quals): 0CTF/TCTF 2021 Quals Writeup
+- [20211011-0ctf-finals](20211011-0ctf-finals): 0CTF/TCTF 2021 Finals Writeup
 
 ## Questions
 
