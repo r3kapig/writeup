@@ -533,8 +533,7 @@ irt()</code></pre><h3 id="secure-jit-ii"><a class="header-link" href="#secure-ji
 <li>一路往下写写到stdout，泄露libc，之后free_hook进行rop。</li>
 <li>上一部分往下覆盖路过一个指针，如果指针指向内容不能读就会segfault，可以通过写另一个 fake size，然后利用free往上面打一个tcache的结构体地址，这样保证了那个地址可读</li>
 </ol>
-<pre class="hljs"><code>
-<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 
 context.log_level = <span class="hljs-string">'debug'</span>
 context.arch = <span class="hljs-string">'amd64'</span>
@@ -742,17 +741,18 @@ irt()</code></pre><h3 id="babaheap"><a class="header-link" href="#babaheap"></a>
 <p>题目的麻烦点在于信息泄露，这里需要利用到读取函数的置 0 操作，另外题目提供的 release 版本的 libc，没有符号信息，只能凭感觉来调试。
 每个 bin 入链了第一个 chunk 后，该 chunk 的 next 和 prev 也会指向 <code>bin_head - 0x10</code>，利用读取函数，我们能修改到已释放的 chunk 的 <code>next</code>，我们演示一下：</p>
 <ol class="list">
-<li>我们释放掉一个 <code>0x1b0</code> 大小的 chunk，此时它的 next 和 prev 都指向 <code>bin_head - 0x10</code>：
-<img src="https://md.byr.moe/uploads/upload_8eecafe216e9472e967f4481d1e4e0db.png" alt=""></li>
+<li>我们释放掉一个 <code>0x1b0</code> 大小的 chunk，此时它的 next 和 prev 都指向 <code>bin_head - 0x10</code>：</li>
 </ol>
+<p class="img-container"><img src="https://md.byr.moe/uploads/upload_8eecafe216e9472e967f4481d1e4e0db.png" alt=""></p>
 <ol start="2">
-<li>利用读取函数对该 chunk 进行写入操作：
-<img src="https://md.byr.moe/uploads/upload_97f8954ac6239b08b06d79df59219912.png" alt=""></li>
+<li>利用读取函数对该 chunk 进行写入操作：</li>
 </ol>
-<pre class="hljs"><code>此时，我们的 chunk `next` 指向了另一个 bin，恰好是 `0x120` 的 chunk 所在的 `bin_head - <span class="hljs-number">0</span>x10` 的位置。</code></pre><ol start="3">
-<li>我们释放掉 <code>0x120</code> 的 chunk，以使得 <code>0x00007ff51cb4bb00</code> 的位置有合法的 next 和 prev：
-<img src="https://md.byr.moe/uploads/upload_0c95bbe92d11c7318e5aac97c884aea3.png" alt=""></li>
+<p class="img-container"><img src="https://md.byr.moe/uploads/upload_97f8954ac6239b08b06d79df59219912.png" alt=""></p>
+<p>此时，我们的 chunk <code>next</code> 指向了另一个 bin，恰好是 <code>0x120</code> 的 chunk 所在的 <code>bin_head - 0x10</code> 的位置。</p>
+<ol start="3">
+<li>我们释放掉 <code>0x120</code> 的 chunk，以使得 <code>0x00007ff51cb4bb00</code> 的位置有合法的 next 和 prev：</li>
 </ol>
+<p class="img-container"><img src="https://md.byr.moe/uploads/upload_0c95bbe92d11c7318e5aac97c884aea3.png" alt=""></p>
 <ol start="4">
 <li>我们再一次申请这个 <code>0x1b0</code> 的 chunk，那么<code>bin_head</code> 就会指向 <code>0x120</code> 的<code>bin_head - 0x10</code> 的位置。</li>
 <li>我们再申请一个 <code>0x1b0</code>，就可以将 chunk 分配到 <code>0x120</code> 的 <code>bin_head - 0x10</code> 的位置，从而控制住这一片 <code>mal</code> 区域。</li>
@@ -765,8 +765,7 @@ irt()</code></pre><h3 id="babaheap"><a class="header-link" href="#babaheap"></a>
 <li>提前布置好 rop_chain，申请 chunk 得到 stdout 并在合适的位置上填写<strong>poc</strong>实现 FSOP，劫持 rip 和 rsp 读取到 flag。</li>
 </ol>
 <p>EXP：</p>
-<pre class="hljs"><code>
-<span class="hljs-comment">#encoding:utf-8</span>
+<pre class="hljs"><code><span class="hljs-comment">#encoding:utf-8</span>
 <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 <span class="hljs-keyword">import</span> re
 
@@ -1274,22 +1273,6 @@ table = {}
                 }<span class="hljs-comment">// guess: loop unrolling 24 - 26</span>
                 a[<span class="hljs-number">14</span>] = temp1872; <span class="hljs-comment">/* 1844 */</span>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             } <span class="hljs-comment">/* 997: phi 1844(745) */</span>
             <span class="hljs-keyword">if</span> (a[<span class="hljs-number">14</span>] != <span class="hljs-number">155</span> || a[<span class="hljs-number">0</span>] != <span class="hljs-number">187</span>||a[<span class="hljs-number">12</span>] != <span class="hljs-number">106</span>||a[<span class="hljs-number">8</span>] != <span class="hljs-number">131</span>||a[<span class="hljs-number">2</span>] != <span class="hljs-number">20</span>||a[<span class="hljs-number">1</span>] != <span class="hljs-number">169</span>||a[<span class="hljs-number">10</span>] != <span class="hljs-number">239</span>||a[<span class="hljs-number">5</span>] != <span class="hljs-number">94</span>||a[<span class="hljs-number">11</span>] != <span class="hljs-number">63</span>||a[<span class="hljs-number">3</span>] != <span class="hljs-number">23</span>||a[<span class="hljs-number">7</span>] != <span class="hljs-number">117</span>||a[<span class="hljs-number">6</span>] != <span class="hljs-number">107</span>||a[<span class="hljs-number">13</span>] != <span class="hljs-number">112</span>||a[<span class="hljs-number">4</span>] != <span class="hljs-number">100</span>||a[<span class="hljs-number">9</span>] != <span class="hljs-number">108</span>) { 
                 <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
@@ -1343,7 +1326,7 @@ table = {}
 <h3 id="halfhalf"><a class="header-link" href="#halfhalf"></a>halfhalf</h3>
 <p>逆向部分：</p>
 <p>PoW部分验证输入的前四字节的的sha256的后3字节与输出的内容相同。</p>
-<p>Magic Word部分将输入直接与常量比对，直接提取出来即可,为<code>🐶🍐🍳🏠🐣💀💺👈👉🏁🦅🔥🪓👃🎶📄</code>。</p>
+<p>Magic Word部分将输入直接与常量比对，直接提取出来即可,为<code>������������������������������������������������������������������������������������������������</code>。</p>
 <p>程序先初始化了质数p和q,和一个上限<code>1&lt;&lt;513-1</code>。在这个范围内随机生成了一个数v40。</p>
 <p>菜单说明：</p>
 <ol class="list">
@@ -1383,11 +1366,11 @@ pass_pow()
 
 <span class="hljs-comment"># magic word</span>
 io.recvuntil(<span class="hljs-string">"Tell me the magic words: "</span>)
-io.writeline(<span class="hljs-string">"🐶🍐🍳🏠🐣💀💺👈👉🏁🦅🔥🪓👃🎶📄"</span>)
+io.writeline(<span class="hljs-string">"������������������������������������������������������������������������������������������������"</span>)
 
 <span class="hljs-comment"># get n</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">convert_emoji_to_number</span><span class="hljs-params">(emojistr)</span>:</span>
-    d=<span class="hljs-string">"🍐🍳🎶🏁🏠🐣🐶👃👈👉💀💺📄🔥🦅🪓"</span>
+    d=<span class="hljs-string">"������������������������������������������������������������������������������������������������"</span>
     result=<span class="hljs-number">0</span>
     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> emojistr:
         <span class="hljs-comment">#print(i,d.index(i))</span>
@@ -1395,7 +1378,7 @@ io.writeline(<span class="hljs-string">"🐶🍐🍳🏠🐣💀💺👈👉🏁
     <span class="hljs-keyword">return</span> result
 io.recvuntil(<span class="hljs-string">"&gt; "</span>)
 io.writeline(<span class="hljs-string">"1"</span>)
-io.recvuntil(<span class="hljs-string">"🔒:"</span>)
+io.recvuntil(<span class="hljs-string">"������:"</span>)
 oo=str(io.readline().strip(),encoding=<span class="hljs-string">"utf8"</span>)
 n=convert_emoji_to_number(oo)
 
@@ -1409,7 +1392,7 @@ print(<span class="hljs-string">"##"</span>)
 
 <span class="hljs-comment"># io func</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">convert_number_to_emoji</span><span class="hljs-params">(number)</span>:</span>
-    d=<span class="hljs-string">"🍐🍳🎶🏁🏠🐣🐶👃👈👉💀💺📄🔥🦅🪓"</span>
+    d=<span class="hljs-string">"������������������������������������������������������������������������������������������������"</span>
     result=<span class="hljs-string">""</span>
     tmp=number
     <span class="hljs-keyword">while</span> tmp!=<span class="hljs-number">0</span>:
@@ -1456,7 +1439,7 @@ print("##")'''</span>
 <span class="hljs-comment"># get flag</span>
 io.recvuntil(<span class="hljs-string">"&gt; "</span>)
 io.writeline(<span class="hljs-string">"4"</span>)
-io.recvuntil(<span class="hljs-string">"🔑: "</span>)
+io.recvuntil(<span class="hljs-string">"������: "</span>)
 io.writeline(convert_number_to_emoji(up))
 io.interactive()</code></pre><h2 id="web"><a class="header-link" href="#web"></a>WEB</h2>
 <h3 id="buggyloader"><a class="header-link" href="#buggyloader"></a>buggyLoader</h3>
@@ -1946,12 +1929,12 @@ print(k, l)
 <span class="hljs-attr">d</span> = inverse(e, (p - <span class="hljs-number">1</span>) * (q - <span class="hljs-number">1</span>))
 print(long_to_bytes(pow(enc, d, pk[<span class="hljs-number">0</span>])))</code></pre><h2 id="misc"><a class="header-link" href="#misc"></a>Misc</h2>
 <h3 id="eeenginx"><a class="header-link" href="#eeenginx"></a>eeenginx</h3>
-<p>首先使用路径/proc/self/exe得到当前nginx的二進制可执行文件，导入IDA发现exec_shell函数，里面存在执行/readflag的代码
-<img src="https://md.byr.moe/uploads/upload_9425cda7850ed6b991723b42edd76fb3.png" alt="">
-交叉引用查找到ngx_http_eenginx_filter函数，得到执行条件
-<img src="https://md.byr.moe/uploads/upload_76302e85acbdb4b6574fc7c1a0b7071c.png" alt="">
-将cookies的session字段设置为图中即可
-<img src="https://md.byr.moe/uploads/upload_549b69b9bff1db393f6d5f31ea1dfc9f.png" alt=""></p>
+<p>首先使用路径/proc/self/exe得到当前nginx的二進制可执行文件，导入IDA发现exec_shell函数，里面存在执行/readflag的代码</p>
+<p class="img-container"><img src="https://md.byr.moe/uploads/upload_9425cda7850ed6b991723b42edd76fb3.png" alt=""></p>
+<p>交叉引用查找到ngx_http_eenginx_filter函数，得到执行条件</p>
+<p class="img-container"><img src="https://md.byr.moe/uploads/upload_76302e85acbdb4b6574fc7c1a0b7071c.png" alt=""></p>
+<p>将cookies的session字段设置为图中即可</p>
+<p class="img-container"><img src="https://md.byr.moe/uploads/upload_549b69b9bff1db393f6d5f31ea1dfc9f.png" alt=""></p>
 <h3 id="boynextdoor"><a class="header-link" href="#boynextdoor"></a>boynextdoor</h3>
 <p>AI人脸识别，构造对抗样本。
 构造一个图片让 embedding 尽量接近题目给的数值。</p>
