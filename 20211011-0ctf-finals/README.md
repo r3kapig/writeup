@@ -1044,7 +1044,7 @@ public class test {
 
 PoWéƒ¨åˆ†éªŒè¯è¾“å…¥çš„å‰å››å­—èŠ‚çš„çš„sha256çš„åŽ3å­—èŠ‚ä¸Žè¾“å‡ºçš„å†…å®¹ç›¸åŒã€‚
 
-Magic Wordéƒ¨åˆ†å°†è¾“å…¥ç›´æŽ¥ä¸Žå¸¸é‡æ¯”å¯¹ï¼Œç›´æŽ¥æå–å‡ºæ¥å³å¯,ä¸º`í ½í°¶í ¼í½í ¼í½³í ¼í¿ í ½í°£í ½í²€í ½í²ºí ½í±ˆí ½í±‰í ¼í¿í ¾í¶…í ½í´¥í ¾íº“í ½í±ƒí ¼í¾¶í ½í³„`ã€‚
+Magic Wordéƒ¨åˆ†å°†è¾“å…¥ç›´æŽ¥ä¸Žå¸¸é‡æ¯”å¯¹ï¼Œç›´æŽ¥æå–å‡ºæ¥å³å¯,ä¸º`ðŸ¶ðŸðŸ³ðŸ ðŸ£ðŸ’€ðŸ’ºðŸ‘ˆðŸ‘‰ðŸðŸ¦…ðŸ”¥ðŸª“ðŸ‘ƒðŸŽ¶ðŸ“„`ã€‚
 
 ç¨‹åºå…ˆåˆå§‹åŒ–äº†è´¨æ•°på’Œq,å’Œä¸€ä¸ªä¸Šé™`1<<513-1`ã€‚åœ¨è¿™ä¸ªèŒƒå›´å†…éšæœºç”Ÿæˆäº†ä¸€ä¸ªæ•°v40ã€‚
 
@@ -1088,11 +1088,11 @@ pass_pow()
 
 # magic word
 io.recvuntil("Tell me the magic words: ")
-io.writeline("í ½í°¶í ¼í½í ¼í½³í ¼í¿ í ½í°£í ½í²€í ½í²ºí ½í±ˆí ½í±‰í ¼í¿í ¾í¶…í ½í´¥í ¾íº“í ½í±ƒí ¼í¾¶í ½í³„")
+io.writeline("ðŸ¶ðŸðŸ³ðŸ ðŸ£ðŸ’€ðŸ’ºðŸ‘ˆðŸ‘‰ðŸðŸ¦…ðŸ”¥ðŸª“ðŸ‘ƒðŸŽ¶ðŸ“„")
 
 # get n
 def convert_emoji_to_number(emojistr):
-    d="í ¼í½í ¼í½³í ¼í¾¶í ¼í¿í ¼í¿ í ½í°£í ½í°¶í ½í±ƒí ½í±ˆí ½í±‰í ½í²€í ½í²ºí ½í³„í ½í´¥í ¾í¶…í ¾íº“"
+    d="ðŸðŸ³ðŸŽ¶ðŸðŸ ðŸ£ðŸ¶ðŸ‘ƒðŸ‘ˆðŸ‘‰ðŸ’€ðŸ’ºðŸ“„ðŸ”¥ðŸ¦…ðŸª“"
     result=0
     for i in emojistr:
         #print(i,d.index(i))
@@ -1100,7 +1100,7 @@ def convert_emoji_to_number(emojistr):
     return result
 io.recvuntil("> ")
 io.writeline("1")
-io.recvuntil("í ½í´’:")
+io.recvuntil("ðŸ”’:")
 oo=str(io.readline().strip(),encoding="utf8")
 n=convert_emoji_to_number(oo)
 
@@ -1114,7 +1114,7 @@ print("##")
 
 # io func
 def convert_number_to_emoji(number):
-    d="í ¼í½í ¼í½³í ¼í¾¶í ¼í¿í ¼í¿ í ½í°£í ½í°¶í ½í±ƒí ½í±ˆí ½í±‰í ½í²€í ½í²ºí ½í³„í ½í´¥í ¾í¶…í ¾íº“"
+    d="ðŸðŸ³ðŸŽ¶ðŸðŸ ðŸ£ðŸ¶ðŸ‘ƒðŸ‘ˆðŸ‘‰ðŸ’€ðŸ’ºðŸ“„ðŸ”¥ðŸ¦…ðŸª“"
     result=""
     tmp=number
     while tmp!=0:
@@ -1161,7 +1161,7 @@ print("##")'''
 # get flag
 io.recvuntil("> ")
 io.writeline("4")
-io.recvuntil("í ½í´‘: ")
+io.recvuntil("ðŸ”‘: ")
 io.writeline(convert_number_to_emoji(up))
 io.interactive()
 ```
