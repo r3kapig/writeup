@@ -1326,7 +1326,7 @@ table = {}
 <h3 id="halfhalf"><a class="header-link" href="#halfhalf"></a>halfhalf</h3>
 <p>逆向部分：</p>
 <p>PoW部分验证输入的前四字节的的sha256的后3字节与输出的内容相同。</p>
-<p>Magic Word部分将输入直接与常量比对，直接提取出来即可,为<code>������������������������������������������������������������������������������������������������</code>。</p>
+<p>Magic Word部分将输入直接与常量比对，直接提取出来即可,为<code>🐶🍐🍳🏠🐣💀💺👈👉🏁🦅🔥🪓👃🎶📄</code>。</p>
 <p>程序先初始化了质数p和q,和一个上限<code>1&lt;&lt;513-1</code>。在这个范围内随机生成了一个数v40。</p>
 <p>菜单说明：</p>
 <ol class="list">
@@ -1366,11 +1366,11 @@ pass_pow()
 
 <span class="hljs-comment"># magic word</span>
 io.recvuntil(<span class="hljs-string">"Tell me the magic words: "</span>)
-io.writeline(<span class="hljs-string">"������������������������������������������������������������������������������������������������"</span>)
+io.writeline(<span class="hljs-string">"🐶🍐🍳🏠🐣💀💺👈👉🏁🦅🔥🪓👃🎶📄"</span>)
 
 <span class="hljs-comment"># get n</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">convert_emoji_to_number</span><span class="hljs-params">(emojistr)</span>:</span>
-    d=<span class="hljs-string">"������������������������������������������������������������������������������������������������"</span>
+    d=<span class="hljs-string">"🍐🍳🎶🏁🏠🐣🐶👃👈👉💀💺📄🔥🦅🪓"</span>
     result=<span class="hljs-number">0</span>
     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> emojistr:
         <span class="hljs-comment">#print(i,d.index(i))</span>
@@ -1378,7 +1378,7 @@ io.writeline(<span class="hljs-string">"��������������
     <span class="hljs-keyword">return</span> result
 io.recvuntil(<span class="hljs-string">"&gt; "</span>)
 io.writeline(<span class="hljs-string">"1"</span>)
-io.recvuntil(<span class="hljs-string">"������:"</span>)
+io.recvuntil(<span class="hljs-string">"🔒:"</span>)
 oo=str(io.readline().strip(),encoding=<span class="hljs-string">"utf8"</span>)
 n=convert_emoji_to_number(oo)
 
@@ -1392,7 +1392,7 @@ print(<span class="hljs-string">"##"</span>)
 
 <span class="hljs-comment"># io func</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">convert_number_to_emoji</span><span class="hljs-params">(number)</span>:</span>
-    d=<span class="hljs-string">"������������������������������������������������������������������������������������������������"</span>
+    d=<span class="hljs-string">"🍐🍳🎶🏁🏠🐣🐶👃👈👉💀💺📄🔥🦅🪓"</span>
     result=<span class="hljs-string">""</span>
     tmp=number
     <span class="hljs-keyword">while</span> tmp!=<span class="hljs-number">0</span>:
@@ -1439,7 +1439,7 @@ print("##")'''</span>
 <span class="hljs-comment"># get flag</span>
 io.recvuntil(<span class="hljs-string">"&gt; "</span>)
 io.writeline(<span class="hljs-string">"4"</span>)
-io.recvuntil(<span class="hljs-string">"������: "</span>)
+io.recvuntil(<span class="hljs-string">"🔑: "</span>)
 io.writeline(convert_number_to_emoji(up))
 io.interactive()</code></pre><h2 id="web"><a class="header-link" href="#web"></a>WEB</h2>
 <h3 id="buggyloader"><a class="header-link" href="#buggyloader"></a>buggyLoader</h3>
