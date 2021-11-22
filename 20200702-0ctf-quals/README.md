@@ -1,4 +1,4 @@
-## 0CTF/TCTF 2020 Quals Writeup
+# 0CTF/TCTF 2020 Quals Writeup
 
 ## Misc/Cloud Computing
 

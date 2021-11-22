@@ -25,12 +25,11 @@ trispl, ruscas, echos, myheart, snake, lut, lut revenge, speedapp1, speedapp2 an
      - [speedapp2](#speedapp2)
      - [router](#router)
 
-## Challenge Writeup
-### trispl
+## trispl
 
 Fast correlation attack based on LFSR sampling is investigated. The geffe generator is used to carry out fast correlation attacks, but all three LFSRs are sampled. Firstly, you need to do a fast correlation attack to establish the equation. Secondly, the sampling sequence is need to be reversed to the original sequence.The chaotic sequence established by fast correlation attack is related to the first and third sampling sequence respectively. All three LFSRs use primitive polynomials, which are not decomposable and can not use decomposition attack. After fast correlation attack, we use anti-sampling to find the initial state, which is flag.
 
-### Ruscas
+## Ruscas
 
 ```Rust
 //! # Intro
@@ -215,7 +214,7 @@ let () =
 ;;
 ```
 
-### echos
+## echos
 
 **1. program info**
 
@@ -331,11 +330,11 @@ hack()
 
 ```
 
-### myheart
+## myheart
 
 Firstly, you need to reverse the binary, and you can find this is a stream cipher. It's similar to toyocrypto, which can be attacked by the algebraic attack. There is an easy OOB-read vulnerability to leak the plaintext. You can xor the plaintext and the ciphertext to get the lfsr's output. From an option, you can get enough output to finish the algebraic attack. But it's important to note that, we modified the S10*S23*S32*S42 to S11*S22*S33*S53. So the new annihilation is needed.
 
-### Snake
+## Snake
 
 This is a gameboy re challenge. We can get the gameboy rom from the browser when we access the game website. 
 
@@ -345,15 +344,15 @@ From the code we can see that there is a variable controlling whether to display
 
 You can check out many amazing resources about gameboy at <https://github.com/gbdev/awesome-gbdev>
 
-### lut
+## lut
 
 todo
 
-### lut revenge 
+## lut revenge 
 
 todo
 
-### speedapp1
+## speedapp1
 
 Speedapp is an android app that only provides login and simple calculation functions. The main feature is that it works on the spdy protocol. My design is inspired by a realistic application with spdy protocol for some core endpoints. So When analyzing this app, how to reuse its spdy protocol is a key technology point.
 
@@ -369,7 +368,7 @@ Okhttp2 is okay, but still comes up some exceptions. You need to patch sth, and 
 
 > You can also use other libraries, but may not do well.
 
-### speedapp2
+## speedapp2
 
 This part is normal and interesting web challenge. Just review the code, and you will find the following problems. 
 - Blind nosql injection to get admin username.
@@ -386,6 +385,6 @@ this.constructor.constructor('return this.process')().mainModule.require('child_
 ```
 Then enjoy flag2🚩. 
 
-### router
+## router
 
 And for the challenge "router", for the reason that we all know, writeup and exploit maybe not be available.
