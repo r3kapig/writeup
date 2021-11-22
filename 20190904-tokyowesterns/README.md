@@ -1,4 +1,4 @@
-# TokyoWesterns CTF 5th 2019 WriteUp
+# TokyoWesterns CTF 5th 2019 Writeup
 
 ## Pwn
 

@@ -1,4 +1,4 @@
-# MTP write up
+# MTP Writeup (0day)
 
 Last week I solved an interesting challenge, which is actually a 0day bug.  
 

@@ -1,4 +1,4 @@
-# 2020 de1ctf writeup
+# de1ctf 2020 Writeup
 
 ## web
 
