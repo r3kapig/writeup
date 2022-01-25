@@ -46,8 +46,7 @@ jobs:
 
     - name: git stash and pop
       run: |
-        git stash
-        git stash list
+        git stash --include-untracked
         git checkout -b release
         git stash pop
 
