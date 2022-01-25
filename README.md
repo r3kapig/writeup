@@ -3,7 +3,7 @@
 r3kapig is a united CTF Team mostly emerges from Eur3kA and FlappyPig since 2018.<br>
 r3kapig is a delicious dish that can be grilled and fried, and the mission of the team is to provide the most delicious food for the host. :P<br>
 
-We are publishing our official writeups here. For more information, please refer to [our website](https://r3kapig.com).
+We are publishing our official writeups here. Please check out [our website](https://r3kapig.com) for more information.
 
 ## Writeups
 - [20190323-0ctf](20190323-0ctf): 0CTF/TCTF 2019 Quals Writeup
