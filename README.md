@@ -25,6 +25,7 @@ We are publishing our official writeups here. For more information, please refer
 - [20211011-0ctf-finals](20211011-0ctf-finals): 0CTF/TCTF 2021 Finals Writeup
 - [20211102-hacklu](20211102-hacklu): Hack.lu CTF 2021 Writeup
 - [20211122-n1ctf](20211122-n1ctf): N1CTF 2021 Writeup
+- [20220125-rwctf4](20220125-rwctf4): RealWorld CTF 4th Writeup
 
 ## Questions
 
