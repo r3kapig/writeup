@@ -45,6 +45,7 @@ jobs:
         git fetch --all
 
     - name: git stash and pop
+      run: |
         git stash
         git stash save
         git stash list
