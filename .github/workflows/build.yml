@@ -39,11 +39,15 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     # git push to release
-    - name: git setup
+    - name: git fetch
       run: |
         git remote update
         git fetch --all
+
+    - name: git stash and pop
         git stash
+        git stash save
+        git stash list
         git checkout -b release
         git stash pop
 
