@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    ### ENV SETUP ###
     - name: Checkout!
       uses: actions/checkout@v2
 
@@ -25,5 +26,31 @@ jobs:
     - name: Install markdown-to-html
       run: cd util/ && ./install.sh && cd ../
 
+    ### BUILD ###
     - name: Build pages
       run: ./build.sh
+
+    ### GIT ###
+    # git auth
+    - uses: actions/labeler@v2
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    # git push to release
+    - name: git setup
+      run: |
+        git remote update
+        git fetch --all
+        git stash
+        git checkout -b release
+        git stash pop
+
+    # Auth and commit
+    - name: auth and commit
+      env: |
+        MY_EMAIL: writeup@r3kapig.com
+        MY_NAME: stypr-writeup-ci
+      run: |
+        git add .
+        git commit -m "Build Successful!"
+        git push -f --set-upstream origin release
