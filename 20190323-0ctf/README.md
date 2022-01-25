@@ -54,4 +54,3 @@
 4. 第一个是修改top到free hook上方，虽然比较远，但是可以分配到free hook的位置
 5. 第二个是修改malloc hook到call realloc的位置调用realloc，然后修改realloc hook到one gadget这样就可以触发one gadget了，而realloc hook就在malloc hook - 0x8的位置，所以可以两个一起改。
 
-2
