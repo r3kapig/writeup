@@ -12,6 +12,8 @@ jobs:
     ### ENV SETUP ###
     - name: Checkout!
       uses: actions/checkout@v2
+      with:
+        ref: writeup
 
     - name: Setup Node.js 14.x
       uses: actions/setup-node@v2
