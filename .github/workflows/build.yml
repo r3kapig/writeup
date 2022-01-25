@@ -47,7 +47,7 @@ jobs:
 
     # Auth and commit
     - name: auth and commit
-      env: |
+      env:
         MY_EMAIL: writeup@r3kapig.com
         MY_NAME: stypr-writeup-ci
       run: |
