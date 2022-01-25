@@ -1,0 +1,36 @@
+name: stypr writeup CI
+
+on:
+  push:
+    branches: [ writeup ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout!
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js 14.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+        cache: 'npm'
+
+    - name: Setup Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8.10'
+
+    - name: Setup Python 3.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+        cache: 'npm'
+
+    - name: Install markdown-to-html
+      run: cd util/ && ./install.sh && cd ../
+
+    - name: Build pages
+      run: ./build.sh
