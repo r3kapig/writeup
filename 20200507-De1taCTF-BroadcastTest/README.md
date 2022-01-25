@@ -1,5 +1,8 @@
 # BroadcastTest
-## background
+
+## Writeup
+
+### background
 We reverse the apk and find out that we only have 4 classes: `MainActivity$Message`, `Receiver`1-3. and `MainActivity$Message` implement from Parcelable class.
 
 `Receiver1` is exported. It receive global broadcast and send the bundle to `Receiver2`.
@@ -14,7 +17,7 @@ The procedure is
 
 I search the parcel and bundle then find [this article](https://www.ms509.com/2018/07/03/bundle-mismatch) and CVE-2017-13288.
 
-## theory
+### theory
 Android can marshal an object by implementing from Parceable.
 The class must implement `writeToParcel` and `readFromParcel` method to describe how to marshal and unmarshal.
 Parcelable object needs to be taken by Bundle, which is a hashmap.
@@ -113,7 +116,7 @@ byte[] raw = testData.marshall();
 `writeString`will put '\0' to the end of string. 
 PAD_SIZE will make the length of unit be the multipiles of 4.
 
-## Exploit
+### Exploit
 `MainActivity$Message` is a class implementing from `Parceable`.
 There are two type-difference:
 1. 
@@ -195,7 +198,7 @@ So one of the payloads is:
         Log.i("test", output);
 ```
 
-## Other
+### Other
 I use this payload1 in match:
 ``` java
 a.writeString("\7\0command\0\0\0\7\0getflag\0");

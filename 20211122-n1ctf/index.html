@@ -306,7 +306,7 @@
         <article class="markdown-body"><h1 id="n1ctf-2021-writeup"><a class="header-link" href="#n1ctf-2021-writeup"></a>N1CTF 2021 Writeup</h1>
 <p>本次比赛我们获得了第二名的成绩</p>
 <p class="img-container"><img src="https://i.imgur.com/DBz5XOb.png" alt=""></p>
-<p>现将师傅们的 wp 整理如下，分享给大家一起学习进步~ 同时也欢迎各位大佬加入 r3kapig 的大家庭，大家一起学习进步，相互分享~ 简历请投战队邮箱：<a href="mailto:&#x72;&#x6f;&#111;&#x74;&#64;&#114;&#51;&#x6b;&#x61;&#x70;&#105;&#x67;&#x2e;&#x63;&#111;&#109;">&#x72;&#x6f;&#111;&#x74;&#64;&#114;&#51;&#x6b;&#x61;&#x70;&#105;&#x67;&#x2e;&#x63;&#111;&#109;</a></p>
+<p>现将师傅们的 wp 整理如下，分享给大家一起学习进步~ 同时也欢迎各位大佬加入 r3kapig 的大家庭，大家一起学习进步，相互分享~ 简历请投战队邮箱：<a href="mailto:&#114;&#x6f;&#111;&#116;&#x40;&#114;&#x33;&#x6b;&#x61;&#112;&#x69;&#103;&#x2e;&#x63;&#111;&#109;">&#114;&#x6f;&#111;&#116;&#x40;&#114;&#x33;&#x6b;&#x61;&#112;&#x69;&#103;&#x2e;&#x63;&#111;&#109;</a></p>
 <h2 id="pwn"><a class="header-link" href="#pwn"></a>Pwn</h2>
 <h3 id="babyfmt"><a class="header-link" href="#babyfmt"></a>BabyFMT</h3>
 <p>修改了printf,和scanf。题目中有个fmtstr的漏洞，但是printf只剩下%r%m可以泄露，仔细看了下发现有个%\0的处理有问题会造成溢出所以泄露后把__free_hook链tache就可以getshell.</p>

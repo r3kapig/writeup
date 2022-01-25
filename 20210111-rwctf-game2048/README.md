@@ -1,8 +1,12 @@
 # Real World CTF 2020 Game2048 Writeup
 
+## Introduction
+
 This is @[Anciety](https://github.com/Escapingbug) from [team r3kapig](https://r3kapig.com/)! We have achieved #7 in [Real World CTF](https://realworldctf.com/rank) this year. The experience is quite nice, although we have completed the challenge in a hard way.. Let's get into the hard way 2048!
 
-## The Challenge
+## Writeup
+
+### The Challenge
 
 The challenge is a web server, it has functionalities below:
 
@@ -44,7 +48,7 @@ The libc given is of version `2.31`, which has tcache support, now we can levera
 
 This is the intended solution I suppose, since it is easy to write a exploit. Now let's get to the hard part.
 
-## Do That in A Hard Way
+### Do That in A Hard Way
 
 Since during the contest, we have totally ignored this double free, we found three more bugs in the program:
 
@@ -72,7 +76,7 @@ And the third one, the `comment` is not null terminated as well:
 
 These three bugs by itself cannot do anything interesting (except the comment, it can print out heap address and libc address, but again, leaking is not enough to exploit anything). But combining them, we got our profit..
 
-## Combine The Bugs
+### Combine The Bugs
 
 Since we have a stack overflow, our thought goes to trigger it by leaking the canary out. And gladly, we have two leaking bugs, a format string leaking and a leak on heap. However, non of them can leak canary out.
 
@@ -211,7 +215,7 @@ So, let's sum up!
 
 ![umut](./pngs/umut.png)
 
-## Full Exploit
+### Full Exploit
 
 ```python
 #!/usr/bin/env python3 

@@ -6,7 +6,9 @@ We were given a software called [MathType](https://www.dessci.com/en/products/ma
 
 It also said it is an unpatched heap overflow bug, so let's begin!
 
-## Reversing
+## Writeup
+
+### Reversing
 
 The first thought after I saw the challenge description was we need a fuzzing, but I wanna reverse and locate the code processing wmf file.
 
@@ -38,7 +40,7 @@ Let's dig deeper and see what this proc does.
 
 Well, we don't need to fuzz anymore :).
 
-## WMF format
+### WMF format
 
 So what the heck is wmf? 
 
@@ -60,7 +62,7 @@ Wait WTF is that checksum? How we compute it?
 
 OK, seems a very simple checksum algorithm. Simply xor each byte.
 
-## Construction & Exploitation 
+### Construction and Exploitation 
 
 Now we saw an unlimited heap overflow bug by reversing program, but how to trigger it?
 
@@ -120,7 +122,7 @@ By controlling eip, we can pivot the stack and do ROP, simply write a "calc" in 
 
 ![](img/18.jpg)
 
-## Full exploit code
+### Full exploit code
 
 ```python
 # -- coding:utf-8 --
@@ -327,7 +329,7 @@ AQABAAECAgICAAIAAQEBAAMAAQAEAAUACgAA
         f.write(bytes(h))
 ```
 
-## Final words
+### Final words
 
 Thanks for organizer! Such an interesting challenge!. Btw heap manipulation works the way that I don't think it works :).
 

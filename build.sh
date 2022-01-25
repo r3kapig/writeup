@@ -17,14 +17,14 @@ do
     # ./util/markdown-toc-generator/gen-toc.py $DIR/README.md 2>&1
 done
 
-
 # Update writeup list (README.md)
 echo "Updating Writeup list..."
-SIDEBAR_START=$(expr `sed -n '/##\ Writeups/=' README.md` + 1)
+SIDEBAR_START=$(expr `sed -n '/##\ Writeups/=' README.md`)
 SIDEBAR_END=$(expr `sed -n '/##\ Questions/=' README.md` - 1)
 LAST_LINE=`cat README.md | wc -l`
 cat /dev/null > README_patched.md
 # Write to patched
+
 sed -n "1,${SIDEBAR_START}p;${SIDEBAR_START}q" README.md >> README_patched.md
 for DIR in $DIR_LIST
 do

@@ -139,46 +139,19 @@
             
             <li class="nav-item dropdown d-sm-block d-md-none">
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                reversing
+                writeup
               </a>
               <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                                <a class="dropdown-item" href="#reversing">reversing</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                wmf-format
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                <a class="dropdown-item" href="#wmf-format">wmf-format</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                construction--exploitation
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                <a class="dropdown-item" href="#construction-and-exploitation">construction-and-exploitation</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                full-exploit-code
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                <a class="dropdown-item" href="#full-exploit-code">full-exploit-code</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                final-words
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
+                <a class="dropdown-item" href="#final-words">final-words</a>
+    
               </div>
             </li>
     
@@ -198,56 +171,31 @@
           <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
             <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
               <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">reversing</span>
+              <span class="menu-collapsed">writeup</span>
               <span class="submenu-icon ml-auto"></span>
             </div>
           </a>
           <div id="submenu0" class="collapse sidebar-submenu">
-            
-          </div>
+            <a href="#reversing" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">reversing</span>
+            </a>
     
-          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#wmf-format" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">wmf-format</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu1" class="collapse sidebar-submenu">
-            
-          </div>
+            </a>
     
-          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">construction--exploitation</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu2" class="collapse sidebar-submenu">
-            
-          </div>
+<a href="#construction-and-exploitation" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">construction-and-exploitation</span>
+            </a>
     
-          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#full-exploit-code" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">full-exploit-code</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu3" class="collapse sidebar-submenu">
-            
-          </div>
+            </a>
     
-          <a href="#submenu4" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#final-words" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">final-words</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu4" class="collapse sidebar-submenu">
-            
+            </a>
+    
           </div>
     
         </ul>
@@ -257,7 +205,8 @@
 <p>Last week I solved an interesting challenge, which is actually a 0day bug.  </p>
 <p>We were given a software called <a href="https://www.dessci.com/en/products/mathtype/">MathType</a>, and we need to pop a calc by using a wmf file with the modified version of this software.</p>
 <p>It also said it is an unpatched heap overflow bug, so let&#39;s begin!</p>
-<h2 id="reversing"><a class="header-link" href="#reversing"></a>Reversing</h2>
+<h2 id="writeup"><a class="header-link" href="#writeup"></a>Writeup</h2>
+<h3 id="reversing"><a class="header-link" href="#reversing"></a>Reversing</h3>
 <p>The first thought after I saw the challenge description was we need a fuzzing, but I wanna reverse and locate the code processing wmf file.</p>
 <p>Simply generating a wmf file by File-&gt;Save menu, attach with your debugger and put a breakpoint at <strong>CreateFileW</strong>(I believe they don&#39;t use some hack trick like NtCreateFile or direct syscall). </p>
 <p>Now load the file you just saved, breakpoint triggered immediately.</p>
@@ -273,7 +222,7 @@
 <p>Let&#39;s dig deeper and see what this proc does.</p>
 <p class="img-container"><img src="img/6.jpg" alt=""></p>
 <p>Well, we don&#39;t need to fuzz anymore :).</p>
-<h2 id="wmf-format"><a class="header-link" href="#wmf-format"></a>WMF format</h2>
+<h3 id="wmf-format"><a class="header-link" href="#wmf-format"></a>WMF format</h3>
 <p>So what the heck is wmf? </p>
 <blockquote>
 <p><strong>Windows Metafile</strong>(<strong>WMF</strong>) is an <a href="https://en.wikipedia.org/wiki/Image_file_format">image file format</a> originally designed for <a href="https://en.wikipedia.org/wiki/Microsoft_Windows">Microsoft Windows</a> in the 1990s. Windows Metafiles are intended to be portable between applications and may contain both <a href="https://en.wikipedia.org/wiki/Vector_graphics">vector graphics</a> and <a href="https://en.wikipedia.org/wiki/Bitmap">bitmap</a> components. It acts in a similar manner to <a href="https://en.wikipedia.org/wiki/SVG">SVG</a> files.</p>
@@ -286,7 +235,7 @@
 <p>Wait WTF is that checksum? How we compute it?</p>
 <p class="img-container"><img src="img/8.jpg" alt=""></p>
 <p>OK, seems a very simple checksum algorithm. Simply xor each byte.</p>
-<h2 id="construction--exploitation"><a class="header-link" href="#construction--exploitation"></a>Construction &amp; Exploitation</h2>
+<h3 id="construction-and-exploitation"><a class="header-link" href="#construction-and-exploitation"></a>Construction and Exploitation</h3>
 <p>Now we saw an unlimited heap overflow bug by reversing program, but how to trigger it?</p>
 <p>Let&#39;s review the code.</p>
 <p class="img-container"><img src="img/6.jpg" alt=""></p>
@@ -318,7 +267,7 @@
 <p>By controlling eip, we can pivot the stack and do ROP, simply write a &quot;calc&quot; in data segment and call WinExec .</p>
 <p class="img-container"><img src="img/17.jpg" alt=""></p>
 <p class="img-container"><img src="img/18.jpg" alt=""></p>
-<h2 id="full-exploit-code"><a class="header-link" href="#full-exploit-code"></a>Full exploit code</h2>
+<h3 id="full-exploit-code"><a class="header-link" href="#full-exploit-code"></a>Full exploit code</h3>
 <pre class="hljs"><code><span class="hljs-comment"># -- coding:utf-8 --</span>
 <span class="hljs-comment"># Python3 required</span>
 <span class="hljs-keyword">from</span> struct <span class="hljs-keyword">import</span> *
@@ -520,7 +469,7 @@ AQABAAECAgICAAIAAQEBAAMAAQAEAAUACgAA
     h + e
 
     <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;exp.wmf&#x27;</span>, <span class="hljs-string">&#x27;wb&#x27;</span>) <span class="hljs-keyword">as</span> f:
-        f.write(<span class="hljs-built_in">bytes</span>(h))</code></pre><h2 id="final-words"><a class="header-link" href="#final-words"></a>Final words</h2>
+        f.write(<span class="hljs-built_in">bytes</span>(h))</code></pre><h3 id="final-words"><a class="header-link" href="#final-words"></a>Final words</h3>
 <p>Thanks for organizer! Such an interesting challenge!. Btw heap manipulation works the way that I don&#39;t think it works :).</p>
         </article>
       </div>

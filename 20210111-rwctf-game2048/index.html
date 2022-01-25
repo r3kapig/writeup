@@ -139,7 +139,7 @@
             
             <li class="nav-item dropdown d-sm-block d-md-none">
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                the-challenge
+                introduction
               </a>
               <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
                 
@@ -148,28 +148,17 @@
     
             <li class="nav-item dropdown d-sm-block d-md-none">
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                do-that-in-a-hard-way
+                writeup
               </a>
               <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                                <a class="dropdown-item" href="#the-challenge">the-challenge</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                combine-the-bugs
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
-              </div>
-            </li>
+                <a class="dropdown-item" href="#do-that-in-a-hard-way">do-that-in-a-hard-way</a>
     
-            <li class="nav-item dropdown d-sm-block d-md-none">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                full-exploit
-              </a>
-              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
-                
+                <a class="dropdown-item" href="#combine-the-bugs">combine-the-bugs</a>
+    
+                <a class="dropdown-item" href="#full-exploit">full-exploit</a>
+    
               </div>
             </li>
     
@@ -189,7 +178,7 @@
           <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
             <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
               <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">the-challenge</span>
+              <span class="menu-collapsed">introduction</span>
               <span class="submenu-icon ml-auto"></span>
             </div>
           </a>
@@ -200,42 +189,37 @@
           <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
             <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
               <span class="fa fa-dashboard fa-fw mr-3"></span>
-              <span class="menu-collapsed">do-that-in-a-hard-way</span>
+              <span class="menu-collapsed">writeup</span>
               <span class="submenu-icon ml-auto"></span>
             </div>
           </a>
           <div id="submenu1" class="collapse sidebar-submenu">
-            
-          </div>
+            <a href="#the-challenge" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">the-challenge</span>
+            </a>
     
-          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#do-that-in-a-hard-way" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">do-that-in-a-hard-way</span>
+            </a>
+    
+<a href="#combine-the-bugs" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">combine-the-bugs</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu2" class="collapse sidebar-submenu">
-            
-          </div>
+            </a>
     
-          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
-            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
-              <span class="fa fa-dashboard fa-fw mr-3"></span>
+<a href="#full-exploit" class="list-group-item list-group-item-action text-white bg-dark">
               <span class="menu-collapsed">full-exploit</span>
-              <span class="submenu-icon ml-auto"></span>
-            </div>
-          </a>
-          <div id="submenu3" class="collapse sidebar-submenu">
-            
+            </a>
+    
           </div>
     
         </ul>
       </div>
       <div class="col-10 py-3">
         <article class="markdown-body"><h1 id="real-world-ctf-2020-game2048-writeup"><a class="header-link" href="#real-world-ctf-2020-game2048-writeup"></a>Real World CTF 2020 Game2048 Writeup</h1>
+<h2 id="introduction"><a class="header-link" href="#introduction"></a>Introduction</h2>
 <p>This is @<a href="https://github.com/Escapingbug">Anciety</a> from <a href="https://r3kapig.com/">team r3kapig</a>! We have achieved #7 in <a href="https://realworldctf.com/rank">Real World CTF</a> this year. The experience is quite nice, although we have completed the challenge in a hard way.. Let&#39;s get into the hard way 2048!</p>
-<h2 id="the-challenge"><a class="header-link" href="#the-challenge"></a>The Challenge</h2>
+<h2 id="writeup"><a class="header-link" href="#writeup"></a>Writeup</h2>
+<h3 id="the-challenge"><a class="header-link" href="#the-challenge"></a>The Challenge</h3>
 <p>The challenge is a web server, it has functionalities below:</p>
 <ul class="list">
 <li>register: register a new user, after registration, we will be directed to the 2048 page</li>
@@ -262,7 +246,7 @@
 </ol>
 <p>The libc given is of version <code>2.31</code>, which has tcache support, now we can leverage that to complete the double free exploit.</p>
 <p>This is the intended solution I suppose, since it is easy to write a exploit. Now let&#39;s get to the hard part.</p>
-<h2 id="do-that-in-a-hard-way"><a class="header-link" href="#do-that-in-a-hard-way"></a>Do That in A Hard Way</h2>
+<h3 id="do-that-in-a-hard-way"><a class="header-link" href="#do-that-in-a-hard-way"></a>Do That in A Hard Way</h3>
 <p>Since during the contest, we have totally ignored this double free, we found three more bugs in the program:</p>
 <p>First, a stack overflow in http parse (to be more specific, <code>add_get_param</code>):</p>
 <p class="img-container"><img src="./pngs/stackoverflow.png" alt="stack_overflow"></p>
@@ -276,7 +260,7 @@
 <p>And the third one, the <code>comment</code> is not null terminated as well:</p>
 <p class="img-container"><img src="./pngs/decode_null.png" alt="decode_null"></p>
 <p>These three bugs by itself cannot do anything interesting (except the comment, it can print out heap address and libc address, but again, leaking is not enough to exploit anything). But combining them, we got our profit..</p>
-<h2 id="combine-the-bugs"><a class="header-link" href="#combine-the-bugs"></a>Combine The Bugs</h2>
+<h3 id="combine-the-bugs"><a class="header-link" href="#combine-the-bugs"></a>Combine The Bugs</h3>
 <p>Since we have a stack overflow, our thought goes to trigger it by leaking the canary out. And gladly, we have two leaking bugs, a format string leaking and a leak on heap. However, non of them can leak canary out.</p>
 <p>Actually, if you think about it, the format string should leak canary out if the format string vulnerability is a normal one, but unfortunately it is not. Because the format string vulnerability is caused by concat garbage bytes after the template, we need to first control the garbage bytes. And the template is of 0x954 bytes (you can download the template by using <code>http:/xxxxx:xxxx/./submit.html</code>, is this a vulnerability as well? leaking the template? :P). Thus, when allocated out, the chunk is of 0x961 size, which we can only concat 4 bytes.</p>
 <p class="img-container"><img src="./pngs/961.png" alt="961"></p>
@@ -361,7 +345,7 @@ constraints:
 <p class="img-container"><img src="./pngs/flag.png" alt="flag"></p>
 <p>So, let&#39;s sum up!</p>
 <p class="img-container"><img src="./pngs/umut.png" alt="umut"></p>
-<h2 id="full-exploit"><a class="header-link" href="#full-exploit"></a>Full Exploit</h2>
+<h3 id="full-exploit"><a class="header-link" href="#full-exploit"></a>Full Exploit</h3>
 <pre class="hljs"><code><span class="hljs-comment">#!/usr/bin/env python3 </span>
 <span class="hljs-keyword">import</span> requests 
 <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> * 
