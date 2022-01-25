@@ -1,3 +1,5 @@
+# N1CTF 2021 Writeup (Web)
+
 Originally from https://harold.kim/blog/2021/11/n1ctf-writeup/.
 
 ## Introduction
@@ -549,7 +551,7 @@ us_english�pG'Changed language setting to us_english.
 ...
 ```
 
-We succeeded to get first blood on this challenge. Nice!
+We succeeded to get the first blood on this challenge. Nice!
 
 <img src=//harold.kim/static/blog/n1ctf-web-7.jpg>
 
