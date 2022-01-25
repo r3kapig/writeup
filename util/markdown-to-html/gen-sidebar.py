@@ -43,23 +43,23 @@ def generateSideBar(html):
         item_string = '\n'.join(items)
         desktop_menu_string += desktop_menu_list(chal_type, item_string, i)
 
-    if "welcome-to-our-writeup" in desktop_menu_string:
-        # find navbar-toggler
-        print("WTF?!")
+    if len(sys.argv) > 2:
+        # Remove buttons for index_page
+        if sys.argv[2] == "index_page":
+            html_find_button =  html[html.find('<button class="navbar-toggler navbar-toggler-right"'):].split("</button>")[0] + "</button>"
+            print(html_find_button)
+            return html.replace(html_find_button, "")
 
-        html_find_button =  html[html.find('<button class="navbar-toggler navbar-toggler-right"'):].split("</button>")[0] + "</button>"
-        print(html_find_button)
-        return html.replace(html_find_button, "")
-    else:
-        return html.replace('<!-- toc2html-mobile -->', mobile_dropdown_string).replace('<!-- toc2html-desktop -->', desktop_menu_string)
+    return html.replace('<!-- toc2html-mobile -->', mobile_dropdown_string).replace('<!-- toc2html-desktop -->', desktop_menu_string)
 
 def mobile_dropdown_list(name, item_string, is_first_dropdown_list):
     github_button_iframe = ''
     if is_first_dropdown_list:
-        github_button_iframe = '''
+        github_button_iframe = ''
+        """
               <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
               <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large" frameborder="0" scrolling="0" width="140px" height="30px"></iframe>
-        '''
+        """
     return f'''
             <li class="nav-item dropdown d-sm-block d-md-none">{github_button_iframe}
               <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -71,7 +71,7 @@ def mobile_dropdown_list(name, item_string, is_first_dropdown_list):
             </li>
     '''
 
-def mobile_dropdown_item(name, anchor): 
+def mobile_dropdown_item(name, anchor):
     assert anchor.startswith('#')
     return f'''                <a class="dropdown-item" href="{anchor}">{name}</a>
     '''
@@ -100,6 +100,7 @@ def desktop_menu_list(name, item_string, idx):
 def parseArgv():
     parser = argparse.ArgumentParser(prog=sys.argv[0])
     parser.add_argument('filename', type=str)
+    parser.add_argument('index_page', type=str, nargs='?', default=None)
     return parser.parse_args()
 
 if __name__ == '__main__':

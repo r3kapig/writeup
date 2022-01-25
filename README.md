@@ -1,13 +1,12 @@
-## Welcome to our writeup!
+<img src=https://r3kapig.com/assets/img/logo.png width=250>
 
-r3kapig is a united CTF Team mostly emerges from Eur3kA and FlappyPig since 2018.
-
-r3kapig is a delicious dish that can be grilled and fried, and the mission of the team is to provide the most delicious food for the host. :P
+r3kapig is a united CTF Team mostly emerges from Eur3kA and FlappyPig since 2018.<br>
+r3kapig is a delicious dish that can be grilled and fried, and the mission of the team is to provide the most delicious food for the host. :P<br>
 
 We are publishing our official writeups here. For more information, please refer to [our website](https://r3kapig.com).
 
 ## Writeups
-
+- [20190323-0ctf](20190323-0ctf): 0CTF/TCTF 2019 Quals Writeup
 - [20190323-0ctf](20190323-0ctf): 0CTF/TCTF 2019 Quals Writeup
 - [20190528-qwb](20190528-qwb): 强网杯线上赛 Writeup
 - [20190601-defconchina](20190601-defconchina): Defcon China CTF(BCTF) 1.0 Writeup
@@ -31,6 +30,8 @@ We are publishing our official writeups here. For more information, please refer
 
 If you have any question regarding our writeups, please feel free to [create an issue](https://github.com/r3kapig/writeup/issues) in the writeup repository.
 
----
+<hr style="margin:10px; width:0; height:0;">
 
-<small>The writeup page is inspired by <a href="https://github.com/balsn/ctf_writeup">balsn/ctf_writeup</a>. Respective copyrights apply.</small>
+<small style="position:fixed; width:100%; bottom:0; background: #f8f9fa; left:0; padding: 10px; text-align: right;">
+    The writeup page is a modified version of <a href="https://github.com/balsn/ctf_writeup">balsn/ctf_writeup</a>. Respective copyrights apply.
+</small>

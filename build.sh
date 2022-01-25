@@ -38,7 +38,7 @@ mv README_patched.md README.md
 echo "Generating Index..."
 ./util/markdown-to-html/node_modules/markdown-styles/bin/generate-md --layout r3kapig --input README.md --output .
 mv README.html index.html
-./util/markdown-to-html/gen-sidebar.py index.html
+./util/markdown-to-html/gen-sidebar.py index.html index_page
 
 # remove asset bug, remove sidebar
 sed -i 's/\.\.\//\.\//g' index.html # just patch the assets
