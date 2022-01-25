@@ -2,7 +2,6 @@
 # Description: Bash golfing build script by stypr
 # Maintainer: Harold Kim (root@stypr.com)
 
-
 DIR_LIST=`ls | grep -P '\d{8}-' --color=none`
 
 # Build writeup
