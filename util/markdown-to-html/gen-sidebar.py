@@ -42,7 +42,16 @@ def generateSideBar(html):
             items.append(desktop_menu_item(chal_name, chal_anchor))
         item_string = '\n'.join(items)
         desktop_menu_string += desktop_menu_list(chal_type, item_string, i)
-    return html.replace('<!-- toc2html-mobile -->', mobile_dropdown_string).replace('<!-- toc2html-desktop -->', desktop_menu_string)
+
+    if "welcome-to-our-writeup" in desktop_menu_string:
+        # find navbar-toggler
+        print("WTF?!")
+
+        html_find_button =  html[html.find('<button class="navbar-toggler navbar-toggler-right"'):].split("</button>")[0] + "</button>"
+        print(html_find_button)
+        return html.replace(html_find_button, "")
+    else:
+        return html.replace('<!-- toc2html-mobile -->', mobile_dropdown_string).replace('<!-- toc2html-desktop -->', desktop_menu_string)
 
 def mobile_dropdown_list(name, item_string, is_first_dropdown_list):
     github_button_iframe = ''
