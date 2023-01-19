@@ -3,7 +3,11 @@
 # Maintainer: Harold Kim (root@stypr.com)
 
 
-DIR_LIST=`ls | grep -P '\d{8}-' --color=none`
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    DIR_LIST=`ls | grep -Ei '\d{8}-' --color=none | tail -r 65535`
+else
+    DIR_LIST=`ls | grep -P '\d{8}-' --color=none | tail -r 65535`
+fi
 
 # Build writeup
 echo "Building Writeups..."
