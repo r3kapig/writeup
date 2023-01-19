@@ -25,6 +25,9 @@ We are publishing our official writeups here. Please check out [our website](htt
 - [20211102-hacklu](20211102-hacklu): Hack.lu CTF 2021 Writeup
 - [20211122-n1ctf](20211122-n1ctf): N1CTF 2021 Writeup
 - [20220125-rwctf4](20220125-rwctf4): RealWorld CTF 4th Writeup
+- [20230119-idek2022-Forensics](20230119-idek2022-Forensics): idek 2022* Forensics Writeup
+- [20230119-idek2022-pwn_reverse](20230119-idek2022-pwn_reverse): idek 2022* Pwn && Reverse Writeup
+- [20230119-idek2022-Misc_OSINT_BlockChain](20230119-idek2022-Misc_OSINT_BlockChain): idek 2022* MISC && OSINT && BlockChain Writeup
 
 ## Questions
 
