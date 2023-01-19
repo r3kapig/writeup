@@ -6,7 +6,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     DIR_LIST=`ls | grep -Ei '\d{8}-' --color=none | tail -r 65535`
 else
-    DIR_LIST=`ls | grep -P '\d{8}-' --color=none | tail -r 65535`
+    DIR_LIST=`ls | grep -P '\d{8}-' --color=none | tac`
 fi
 
 # Build writeup
