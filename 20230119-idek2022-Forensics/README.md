@@ -1,4 +1,4 @@
-# idek 2022* Forensics Writeup by r3kapig
+# idek 2022* Forensics Writeup
 
 ## 前言:
 

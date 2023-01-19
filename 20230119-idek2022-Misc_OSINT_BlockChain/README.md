@@ -1,4 +1,4 @@
-# idek 2022* ctf MISC && OSINT && BlockChain Writeup by r3kapig
+# idek 2022* ctf MISC && OSINT && BlockChain Writeup
 
 ## 前言 
 

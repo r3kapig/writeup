@@ -1,4 +1,4 @@
-# idek 2022* Pwn && Reverse Writeup by r3kapig
+# idek 2022* Pwn && Reverse Writeup
 
 ## 前言:
 
