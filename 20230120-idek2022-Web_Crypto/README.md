@@ -733,7 +733,12 @@ b"It is UNBREAKABLE, I tell you!! I'll even bet a flag on it, here it is: idek{S
 ```
 
 ### Chronophobia：
-由于不知道n的分解，我们无法计算出phi，也就无法快速计算出$$2^{2^d}  mod  n$$的值，但是题目提供了一个oracle，可以帮我们计算出给定token的计算结果的高200个十进制位，而低位大概是108个十进制位，于是我们可以通过以下方法求出给定token的低位：
+由于不知道n的分解，我们无法计算出phi，也就无法快速计算出 
+
+$$2^{2^d}  mod  n$$ 
+
+的值，但是题目提供了一个oracle，可以帮我们计算出给定token的计算结果的高200个十进制位，而低位大概是108个十进制位，于是我们可以通过以下方法求出给定token的低位：
+
 $$c_1\equiv token^r mod n$$
 
 $$c_2=(token^2)^r mod n$$
@@ -743,7 +748,11 @@ $$c_1^2-c_2\equiv 0 mod n$$
 $$(c_{1h}+c_{1l})^2-(c_{2h}+c_{2l})\equiv 0 mod n$$
 
 于是我们对两个低位使用二元coppersmith，就可以计算出结果，进而可以恢复整个结果。
-值得注意的地方是，二元coppersmith的参数很重要，一开始我直接用的默认m和d，发现结果虽然会满足$$c_1^2-c_2\equiv 0 mod n$$，但是却并不是我们所需要的解，将参数设置为m=4,d=4，就可以把我们需要的结果copper出来。
+值得注意的地方是，二元coppersmith的参数很重要，一开始我直接用的默认m和d，发现结果虽然会满足 
+
+$$c_1^2-c_2\equiv 0 mod n$$ 
+
+，但是却并不是我们所需要的解，将参数设置为m=4,d=4，就可以把我们需要的结果copper出来。
 
 ```py
 #sage
