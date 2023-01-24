@@ -29,6 +29,7 @@ We are publishing our official writeups here. Please check out [our website](htt
 - [20230119-idek2022-pwn_reverse](20230119-idek2022-pwn_reverse): idek 2022* Pwn && Reverse Writeup
 - [20230119-idek2022-Misc_OSINT_BlockChain](20230119-idek2022-Misc_OSINT_BlockChain): idek 2022* MISC && OSINT && BlockChain Writeup
 - [20230120-idek2022-Web_Crypto](20230120-idek2022-Web_Crypto): idek 2022* Web && Crypto Writeup
+- [20230124-bi0s2022](20230124-bi0s2022): bi0sCTF2022 Writeup
 
 ## Questions
 
