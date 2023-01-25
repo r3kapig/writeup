@@ -103,7 +103,7 @@ sleep(3)
 p.interactive()
 ```
 
-另外官方中给的方法是SROP(https://discord.com/channels/862962550169665568/1063844806977130596/1066734947768999946)，比赛中也想到了用SROP，只不过想用read的返回值来控制rax，忘了可以直接syscall了，先往bss段写一个/bin/sh，然后执行SROP即可.这里脚本参考了部分来自于sAsPeCt的脚本(https://discord.com/channels/862962550169665568/1063844806977130596/1066799179550171237)
+另外官方中给的方法是SROP(`https://discord.com/channels/862962550169665568/1063844806977130596/1066734947768999946`)，比赛中也想到了用SROP，只不过想用read的返回值来控制rax，忘了可以直接syscall了，先往bss段写一个/bin/sh，然后执行SROP即可.这里脚本参考了部分来自于sAsPeCt师傅(`sAsPeCt#8643`)的脚本(`https://discord.com/channels/862962550169665568/1063844806977130596/1066799179550171237`)
 
 exp:
 
