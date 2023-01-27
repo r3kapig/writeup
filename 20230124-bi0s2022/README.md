@@ -1029,7 +1029,7 @@ if solver.check() == z3.sat:
     print(sm4.crypt_cbc(bytes.fromhex('3779304D3639545153636D376D665876'), e))
 ```
 
-### Eerie_jit(crypto):
+### Eerie_jit:
 
 (本题也是看得比较晚了赛后4min出了...比较可惜)
 
