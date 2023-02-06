@@ -1171,7 +1171,7 @@ if __name__ == '__main__':
 
 一开始，我想要去直接LLL出来"e"s(which is in [-10,10]) : $pk_b= pk_A * S+ 257 * e \pmod{q}$
 
-为了让目标向量足够小，我这么做：$new\_pk_b=pk_b*(p^{-1})\pmod{q},new\_pk_A=pk_A*(p^{-1})\pmod{q}$
+为了让目标向量足够小，我这么做: $new\_pk_b=pk_b*(p^{-1})\pmod{q},new\_pk_A=pk_A*(p^{-1})\pmod{q}$
 
 那么 $|new\_pk_A\cdot S-new\_pk_b|<10$, 但是格子规模太大了，同时目标向量不是足够小
 
@@ -1179,13 +1179,13 @@ if __name__ == '__main__':
 
 用了巨久去找一些奇怪的问题， 最后, 我发现每个A 满足线性关系: $c_{i} \cdot pk_A = A$, $pk_A$ 是 612*512的一个矩阵
 
-可以计算 $c\text{fake}_{i}=pk_A.\text{solve\_left}(A)$ , 向量 $c\text{fake}_{i}$ 以 100 个 '0' 结尾
+可以计算  $c\text{fake}_{i}=pk_A.\text{solve\_left}(A)$, 向量  $c\text{fake}_{i}$ 以 100 个 '0' 结尾
 
 **关键点来了:**
 
 $pk_A$ 的最后 100 行可以被前面 512 行线性表示
 
-$pk_{A,i-1}$ : the i-th row of $pk_A$ . $pk_{A,i-1}=pk_{A,i-1},i\in[1,512] $ ; $pk_{A,i-1}=\sum_{j=0}^{511}x_{i,j}\cdot pk_{A,j-1},i\in[513,612]$
+$pk_{A,i-1}$ : the i-th row of $pk_A$. $pk_{A,i-1}=pk_{A,i-1},i\in[1,512] $ ; $pk_{A,i-1}=\sum_{j=0}^{511}x_{i,j}\cdot pk_{A,j-1},i\in[513,612]$
 
 于是用最新的表达方式表示 $pk_A$. $pk_A$ 就只有512个分量了
 新关系式如下
@@ -1194,15 +1194,15 @@ $$c\text{fake}_i = k_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}\Rightarrow�
 
 对于真正的 c, $c_i=k_i\in \set{0,-1,1}$ ,用了100条 (可能50条就够) 关系去构造格子 $\mathcal{L}$ (201*201, like knapsack,SIS)
 
-$$\mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\&&&&&&&...\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\&&&&&q\\&&&&&&q\\&&&&&&&...\\&&&&&&&&q \end{matrix}\right]$$
+$$\mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\\\&&&&&&&...\\\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\&&&&&q\\\\&&&&&&q\\\\&&&&&&&...\\\\&&&&&&&&q \end{matrix}\right]$$
 
 LLL这个格子以后可以得到目标向量 $(k_{512},\dots,k_{611},-1,k_{0},\dots,k_{99})$
 
 接着使用 $(k_{512},\dots,k_{611})$ 计算出来 $(k_{0},\dots,k_{511})$. 就得到了真正的c
 
-$$b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\
-if m>q//2\\
-\ \ \ \ msg=(m-q)\pmod{p}\\
+$$b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\\\
+if m>q//2\\\\
+\ \ \ \ msg=(m-q)\pmod{p}\\\\
 else \\
 \ \ \ \ msg=m\pmod{p}$$
 
@@ -1339,7 +1339,7 @@ $$enc_0=m_0\oplus ss_0,enc_1=m_1\oplus ss_1,flag=m_0\oplus m_1$$
 
 If choose mask=pub0,then 
 
-$$ss_0=[priv0-priv0]mask,\\enc_0=m_0,\\enc_1=m_1\oplus [priv0-priv1]mask$$
+$$ss_0=[priv0-priv0]mask,\\\\enc_0=m_0,\\\\enc_1=m_1\oplus [priv0-priv1]mask$$
 
 为了让题目比较神奇一点，我们使用 mask == libcsidh.base,
 然后 ss = apply_iso(clibcsidh.base,-priv),pub = apply_iso(clibcsidh.base,priv)
