@@ -1203,7 +1203,9 @@ The Lattice is about 1000 dimensions.....XD
 
 I spent 4 hours trying to find something odd.. Finally, I found that every A satisfying this LINEAR RELATIONSHIP: $c_{i} \cdot pk_A = A$ , $pk_A$ is matrix 612*512... 
 
-We can compute $c\text{fake}_{i}=pk_A.\text{solve\_left}(A)$, vector $c\text{fake}_{i}$ is end with 100 '0'.
+We can compute $$c\text{fake}_{i}=pk_A.\text{solve\_left}(A)$$
+
+vector $$c\text{fake}_{i}$$ is end with 100 '0'.
 
 **Here comes the key point.**
 
@@ -1219,13 +1221,13 @@ $$c\text{fake}_i = k_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}\Rightarrow�
 
 For real c, $c_i=k_i\in \set{0,-1,1}$ ,I use 100 (maybe 50 is enough) relationships to build Lattice $\mathcal{L}$ (201*201, like knapsack,SIS).
 
-$$\mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\\\\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\\\\\&&&&&&&...\\\\\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\\\\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\\\\\&&&&&q\\\\\\&&&&&&q\\\\\\&&&&&&&...\\\\\\&&&&&&&&q \end{matrix}\right]$$
+$$\mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\\\&&&&&&&...\\\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\\\&&&&&q\\\\&&&&&&q\\\\&&&&&&&...\\\\&&&&&&&&q \end{matrix}\right]$$
 
 Then we can get the target vector $(k_{512},\dots,k_{611},-1,k_{0},\dots,k_{99})$ . 
 
 Finally, use $(k_{512},\dots,k_{611})$ can compute $(k_{0},\dots,k_{511})$ . So we get the real c.
 
-$$b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\\\\\ if m>q//2\\\\\\ msg=(m-q)\pmod{p}\\\\\\ else \\\\\\ msg=m\pmod{p}$$
+$$b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\\\ if m>q//2\\\\ msg=(m-q)\pmod{p}\\\\ else \\\\ msg=m\pmod{p}$$
 
 Haha, decrypt it and get the flag!(but I spent 3 hours debugging this.. T_T....)
 
@@ -1360,7 +1362,7 @@ $$enc_0=m_0\oplus ss_0,enc_1=m_1\oplus ss_1,flag=m_0\oplus m_1$$
 
 If choose mask=pub0,then 
 
-$$ss_0=[priv0-priv0]mask,\\\\\\enc_0=m_0,\\\\\\enc_1=m_1\oplus [priv0-priv1]mask $$
+$$ss_0=[priv0-priv0]mask,\\\\enc_0=m_0,\\\\enc_1=m_1\oplus [priv0-priv1]mask $$
 
 To find something odd, we choose mask == libcsidh.base,
 then ss = apply_iso(clibcsidh.base,-priv),pub = apply_iso(clibcsidh.base,priv)
