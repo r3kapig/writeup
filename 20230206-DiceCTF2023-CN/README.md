@@ -1179,9 +1179,7 @@ if __name__ == '__main__':
 
 用了巨久去找一些奇怪的问题， 最后, 我发现每个A 满足线性关系: $c_{i} \cdot pk_A = A$, $pk_A$ 是 612*512的一个矩阵
 
-可以计算 $$c\text{fake}_{i}=pk_A.\text{solve\_left}(A)$$
-
-向量 $c\text{fake}_{i}$ 以 100 个 '0' 结尾
+![](https://i.imgur.com/4W3zLbc.png)
 
 **关键点来了:**
 
@@ -1195,13 +1193,13 @@ $$c\text{fake}_i = k_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}\Rightarrow�
 
 对于真正的 c, $c_i=k_i\in \set{0,-1,1}$ ,用了100条 (可能50条就够) 关系去构造格子 $\mathcal{L}$ (201*201, like knapsack,SIS)
 
-$$\mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\\\&&&&&&&...\\\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\\\&&&&&q\\\\&&&&&&q\\\\&&&&&&&...\\\\&&&&&&&&q \end{matrix}\right]$$
+![](https://i.imgur.com/aOxFjOk.png)
 
 LLL这个格子以后可以得到目标向量 $(k_{512},\dots,k_{611},-1,k_{0},\dots,k_{99})$
 
 接着使用 $(k_{512},\dots,k_{611})$ 计算出来 $(k_{0},\dots,k_{511})$. 就得到了真正的c
 
-$$b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\\\ if m>q//2\\\\ msg=(m-q)\pmod{p}\\\\ else \\\\ msg=m\pmod{p}$$
+![](https://i.imgur.com/2Hbwazh.png)
 
 然后即可解密拿到flag:
 
@@ -1336,7 +1334,7 @@ $$enc_0=m_0\oplus ss_0,enc_1=m_1\oplus ss_1,flag=m_0\oplus m_1$$
 
 If choose mask=pub0,then 
 
-$$ss_0=[priv0-priv0]mask,\\\\enc_0=m_0,\\\\enc_1=m_1\oplus [priv0-priv1]mask$$
+![](https://i.imgur.com/qbeRDcO.png)
 
 为了让题目比较神奇一点，我们使用 mask == libcsidh.base,
 然后 ss = apply_iso(clibcsidh.base,-priv),pub = apply_iso(clibcsidh.base,priv)
