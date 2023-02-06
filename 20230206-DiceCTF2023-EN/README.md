@@ -939,7 +939,7 @@ Just like BBB,go to find the fixed point!
 
 #### 1. Get data:
 
-p,b are given. Try to solve $ [rng]^k(11) = 11,rng(x)=a\cdot x+b\pmod{p} $ for *a*. 
+p,b are given. Try to solve $[rng]^k(11) = 11,rng(x)=a\cdot x+b\pmod{p}$ for *a*. 
 
 `53*8*11 < 2048 *k`, we choose k=3. So find the *a* and the probability that the number of randomness is a multiple of 3 is (1/k)^k = 1/27.
 
@@ -956,7 +956,7 @@ a1 = f.roots()[0][0]
 
 #### 2. Get flag
 
-Then we can get $ (m\cdot 2^{128 }+r_i)^{11}=c_i\pmod{n_i} $ ,`m:53*8 bit`,`n:2048 bit`
+Then we can get $(m\cdot 2^{128 }+r_i)^{11}=c_i\pmod{n_i}$ ,`m:53*8 bit`,`n:2048 bit`
 
 `53*8*11 < 2048 *3`,so we crt 3 relationships and coppersmith it to get m, related attack is also fine.
 
@@ -989,7 +989,7 @@ print(ff.small_roots(X=2 ** (8 * (53) ) , epsilon=0.03))
 
 #### 1. To get `'n'`:
 
-$$ kn = gcd(m^2\pmod{n} - (m\pmod{n})^2, m^4\pmod{n} - (m^2\pmod{n})^2) $$
+$$kn = gcd(m^2\pmod{n} - (m\pmod{n})^2, m^4\pmod{n} - (m^2\pmod{n})^2)$$
 
 then check to get `'n'`.
 
@@ -1193,43 +1193,43 @@ if __name__ == '__main__':
 
 ### Membrane:
 
-In the beginning, I wanted to get "e"s(which is in [-10,10]) : $ pk_b= pk_A * S+ 257 * e \pmod{q} $
+In the beginning, I wanted to get "e"s(which is in [-10,10]) : $pk_b= pk_A * S+ 257 * e \pmod{q}$
 
-In order to make the target small, I did this:$ new\_pk_b=pk_b*(p^{-1})\pmod{q},new\_pk_A=pk_A*(p^{-1})\pmod{q} $ Then $ |new\_pk_A\cdot S-new\_pk_b|<10 $
+In order to make the target small, I did this: $new\_pk_b=pk_b*(p^{-1})\pmod{q},new\_pk_A=pk_A*(p^{-1})\pmod{q}$ Then $|new\_pk_A\cdot S-new\_pk_b|<10$
 
 but the Lattice is too large to be LLL & target is not small enough.
 
 The Lattice is about 1000 dimensions.....XD
 
-I spent 4 hours trying to find something odd.. Finally, I found that every A satisfying this LINEAR RELATIONSHIP:$ c_{i} \cdot pk_A = A $,$ pk_A $ is matrix 612*512... 
+I spent 4 hours trying to find something odd.. Finally, I found that every A satisfying this LINEAR RELATIONSHIP: $c_{i} \cdot pk_A = A$ , $pk_A$ is matrix 612*512... 
 
-We can compute $ c\text{fake}_{i}=pk_A.\text{solve\_left}(A) $, vector $ c\text{fake}_{i} $ is end with 100 '0'.
+We can compute $c\text{fake}_{i}=pk_A.\text{solve\_left}(A)$, vector $c\text{fake}_{i}$ is end with 100 '0'.
 
 **Here comes the key point.**
 
 The last 100 rows can be linearly represented by the former 512 rows in matrix $pk_A$.
 
-$ pk_{A,i-1} $: the i-th row of $pk_A$. $pk_{A,i-1}=pk_{A,i-1},i\in[1,512]$; $pk_{A,i-1}=\sum_{j=0}^{511}x_{i,j}\cdot pk_{A,j-1},i\in[513,612]$
+$pk_{A,i-1}$ : the i-th row of $pk_A$. $pk_{A,i-1}=pk_{A,i-1},i\in[1,512]$ ; $pk_{A,i-1}=\sum_{j=0}^{511}x_{i,j}\cdot pk_{A,j-1},i\in[513,612]$
 
-So get new expressions of 100 rows of $pk_A$..$pk_A$ is just 512 components.
+So get new expressions of 100 rows of $pk_A$.. $pk_A$ is just 512 components.
 
 New relationship comes out.
 
 $c\text{fake}_i = k_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}\Rightarrow -k_i = -c\text{fake}_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}$
 
-For real c,$c_i=k_i\in \set{0,-1,1}$,I use 100 (maybe 50 is enough) relationships to build Lattice $\mathcal{L}$ (201*201, like knapsack,SIS).
+For real c, $c_i=k_i\in \set{0,-1,1}$ ,I use 100 (maybe 50 is enough) relationships to build Lattice $\mathcal{L}$ (201*201, like knapsack,SIS).
 
-$$ \mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\&&&&&&&...\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\&&&&&q\\&&&&&&q\\&&&&&&&...\\&&&&&&&&q \end{matrix}\right] $$
+$$\mathcal{L}=\left[\begin{matrix} 1&&...&&&x_{0,0}&x_{1,0}&...&x_{99,0}\\&1&...&&&x_{0,1}&x_{1,1}&...&x_{99,1}\\&&&&&&&...\\&&...&1&&x_{0,99}&x_{1,99}&...&x_{99,99}\\&&...&&1&c\text{fake}_{0}&c\text{fake}_{1}&...&c\text{fake}_{99}\\&&&&&q\\&&&&&&q\\&&&&&&&...\\&&&&&&&&q \end{matrix}\right]$$
 
-Then we can get the target vector $(k_{512},\dots,k_{611},-1,k_{0},\dots,k_{99})$. 
+Then we can get the target vector $(k_{512},\dots,k_{611},-1,k_{0},\dots,k_{99})$ . 
 
-Finally, use $ (k_{512},\dots,k_{611}) $ can compute $ (k_{0},\dots,k_{511}) $. So we get the real c.
+Finally, use $(k_{512},\dots,k_{611})$ can compute $(k_{0},\dots,k_{511})$ . So we get the real c.
 
-$$ b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\
+$$b=c\cdot pk_b+msg+e\cdot p \pmod{q}\Rightarrow m=b-c\cdot pk_b\pmod{q}\\
 if m>q//2\\
 \ \ \ \ msg=(m-q)\pmod{p}\\
 else \\
-\ \ \ \ msg=m\pmod{p} $$
+\ \ \ \ msg=m\pmod{p}$$
 
 Haha, decrypt it and get the flag!(but I spent 3 hours debugging this.. T_T....)
 
@@ -1358,22 +1358,22 @@ enc0, enc1 = alice.encrypt(mask)
 
 **OT-csidh:**
 
-$$ pub_0=[priv0]base,pub1=[priv1]base,ssi=[-privi]mask $$
+$$pub_0=[priv0]base,pub1=[priv1]base,ssi=[-privi]mask$$
 
-$$ enc_0=m_0\oplus ss_0,enc_1=m_1\oplus ss_1,flag=m_0\oplus m_1 $$
+$$enc_0=m_0\oplus ss_0,enc_1=m_1\oplus ss_1,flag=m_0\oplus m_1$$
 
 If choose mask=pub0,then 
 
-$$ ss_0=[priv0-priv0]mask,\\enc_0=m_0,\\enc_1=m_1\oplus [priv0-priv1]mask $$
+$$ss_0=[priv0-priv0]mask,\\enc_0=m_0,\\enc_1=m_1\oplus [priv0-priv1]mask $$
 
 To find something odd, we choose mask == libcsidh.base,
 then ss = apply_iso(clibcsidh.base,-priv),pub = apply_iso(clibcsidh.base,priv)
 
-$$ ss = [a]^{-1}\text{base},pub=[a]\text{base} $$
+$$ss = [a]^{-1}\text{base},pub=[a]\text{base}$$
 
 But idk csidh, so try to guess if ss and pub have any algebraic relationship.
 
-Then find $ ss=-pub\pmod{p} $.
+Then find $ss=-pub\pmod{p}$.
 
 **Note:** The pub and ss are little-endian storage.
 
