@@ -1193,39 +1193,13 @@ if __name__ == '__main__':
 
 ### Membrane:
 
-In the beginning, I wanted to get "e"s(which is in [-10,10]) : $pk_b= pk_A * S+ 257 * e \pmod{q}$
-
-In order to make the target small, I did this: $new\_pk_b=pk_b*(p^{-1})\pmod{q},new\_pk_A=pk_A*(p^{-1})\pmod{q}$ Then $|new\_pk_A\cdot S-new\_pk_b|<10$
-
-but the Lattice is too large to be LLL & target is not small enough.
-
-The Lattice is about 1000 dimensions.....XD
-
-I spent 4 hours trying to find something odd.. Finally, I found that every A satisfying this LINEAR RELATIONSHIP: $c_{i} \cdot pk_A = A$ , $pk_A$ is matrix 612*512... 
-
-![](https://i.imgur.com/rbdPS1h.png)
+![](https://i.imgur.com/yIpffoK.png)
 
 **Here comes the key point.**
 
-The last 100 rows can be linearly represented by the former 512 rows in matrix $pk_A$.
+![](https://i.imgur.com/373pYyo.png)
 
-$pk_{A,i-1}$ : the i-th row of $pk_A$. $pk_{A,i-1}=pk_{A,i-1},i\in[1,512]$ ; $pk_{A,i-1}=\sum_{j=0}^{511}x_{i,j}\cdot pk_{A,j-1},i\in[513,612]$
-
-So get new expressions of 100 rows of $pk_A$.. $pk_A$ is just 512 components.
-
-New relationship comes out.
-
-$$c\text{fake}_i = k_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}\Rightarrow -k_i = -c\text{fake}_i+\sum_{j=512}^{611} k_j\cdot x_{i,j}\pmod{q}$$
-
-For real c, $c_i=k_i\in \set{0,-1,1}$ ,I use 100 (maybe 50 is enough) relationships to build Lattice $\mathcal{L}$ (201*201, like knapsack,SIS).
-
-![](https://i.imgur.com/aOxFjOk.png)
-
-Then we can get the target vector $(k_{512},\dots,k_{611},-1,k_{0},\dots,k_{99})$ . 
-
-Finally, use $(k_{512},\dots,k_{611})$ can compute $(k_{0},\dots,k_{511})$ . So we get the real c.
-
-![](https://i.imgur.com/2Hbwazh.png)
+![](https://i.imgur.com/YeM6SdZ.png)
 
 Haha, decrypt it and get the flag!(but I spent 3 hours debugging this.. T_T....)
 
@@ -1354,22 +1328,7 @@ enc0, enc1 = alice.encrypt(mask)
 
 **OT-csidh:**
 
-$$pub_0=[priv0]base,pub1=[priv1]base,ssi=[-privi]mask$$
-
-$$enc_0=m_0\oplus ss_0,enc_1=m_1\oplus ss_1,flag=m_0\oplus m_1$$
-
-If choose mask=pub0,then 
-
-![](https://i.imgur.com/qbeRDcO.png)
-
-To find something odd, we choose mask == libcsidh.base,
-then ss = apply_iso(clibcsidh.base,-priv),pub = apply_iso(clibcsidh.base,priv)
-
-$$ss = [a]^{-1}\text{base},pub=[a]\text{base}$$
-
-But idk csidh, so try to guess if ss and pub have any algebraic relationship.
-
-Then find $ss=-pub\pmod{p}$.
+![](https://i.imgur.com/5iuhjNY.png)
 
 **Note:** The pub and ss are little-endian storage.
 
