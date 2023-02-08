@@ -1807,7 +1807,7 @@ print(''.join(test))
 
 (由于代码太长,放到github了)
 
-https://gist.githubusercontent.com/crazymanarmy/629a2733baca61d22e1fecd278403681/raw/159b6c5260531caa0920ae11ca0211fed5349cd8/DiceCTF2023_disc-rev_disasm.py
+https://gist.github.com/crazymanarmy/629a2733baca61d22e1fecd278403681#file-dicectf2023_disc-rev_disasm-py
 
 以及其运行后输出的伪代码结果
 
