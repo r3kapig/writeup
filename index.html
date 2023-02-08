@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>Writeups | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for Writeups" />
+    <meta property="og:description" content="Writeup for Writeups" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="./assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="./assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="./assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="./assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="./assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="./assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="./assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="./assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            <!-- toc2html-mobile -->
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div class="col-12 py-3">
+        <article class="markdown-body"><img src=https://r3kapig.com/assets/img/logo.png width=250>
+
+<p>r3kapig is a united CTF Team mostly emerges from Eur3kA and FlappyPig since 2018.<br>
+r3kapig is a delicious dish that can be grilled and fried, and the mission of the team is to provide the most delicious food for the host. :P<br></p>
+<p>We are publishing our official writeups here. Please check out <a href="https://r3kapig.com">our website</a> for more information.</p>
+<h2 id="writeups"><a class="header-link" href="#writeups"></a>Writeups</h2>
+<ul class="list">
+<li><a href="20230206-DiceCTF2023-EN">20230206-DiceCTF2023-EN</a>: DiceCTF 2023 Writeup - EN</li>
+<li><a href="20230206-DiceCTF2023-CN">20230206-DiceCTF2023-CN</a>: DiceCTF 2023 Writeup - CN</li>
+<li><a href="20230124-bi0s2022">20230124-bi0s2022</a>: bi0sCTF2022 Writeup</li>
+<li><a href="20230120-idek2022-Web_Crypto">20230120-idek2022-Web_Crypto</a>: idek 2022* Web &amp;&amp; Crypto Writeup</li>
+<li><a href="20230119-idek2022-pwn_reverse">20230119-idek2022-pwn_reverse</a>: idek 2022* Pwn &amp;&amp; Reverse Writeup</li>
+<li><a href="20230119-idek2022-Misc_OSINT_BlockChain">20230119-idek2022-Misc_OSINT_BlockChain</a>: idek 2022* MISC &amp;&amp; OSINT &amp;&amp; BlockChain Writeup</li>
+<li><a href="20230119-idek2022-Forensics">20230119-idek2022-Forensics</a>: idek 2022* Forensics Writeup</li>
+<li><a href="20220125-rwctf4">20220125-rwctf4</a>: RealWorld CTF 4th Writeup</li>
+<li><a href="20211122-n1ctf">20211122-n1ctf</a>: N1CTF 2021 Writeup</li>
+<li><a href="20211111-n1ctf-web">20211111-n1ctf-web</a>: N1CTF 2021 Writeup (Web)</li>
+<li><a href="20211102-hacklu">20211102-hacklu</a>: Hack.lu CTF 2021 Writeup</li>
+<li><a href="20211011-0ctf-finals">20211011-0ctf-finals</a>: 0CTF/TCTF 2021 Finals Writeup</li>
+<li><a href="20210706-0ctf-quals">20210706-0ctf-quals</a>: 0CTF/TCTF 2021 Quals Writeup</li>
+<li><a href="20210111-rwctf-game2048">20210111-rwctf-game2048</a>: Real World CTF 2020 Game2048 Writeup</li>
+<li><a href="20201020-n1ctf">20201020-n1ctf</a>: N1CTF 2020 Writeup</li>
+<li><a href="20200714-geekpwn">20200714-geekpwn</a>: GeekPwn 云上挑战赛</li>
+<li><a href="20200702-0ctf-quals">20200702-0ctf-quals</a>: 0CTF/TCTF 2020 Quals Writeup</li>
+<li><a href="20200508-de1ctf">20200508-de1ctf</a>: de1ctf 2020 Writeup</li>
+<li><a href="20200507-De1taCTF-BroadcastTest">20200507-De1taCTF-BroadcastTest</a>: BroadcastTest</li>
+<li><a href="20200504-Easy-PHP-UAF">20200504-Easy-PHP-UAF</a>: Easy PHP UAF</li>
+<li><a href="20191018-hitcon-quals">20191018-hitcon-quals</a>: HITCON CTF 2019 Writeup</li>
+<li><a href="20190904-tokyowesterns">20190904-tokyowesterns</a>: TokyoWesterns CTF 5th 2019 Writeup</li>
+<li><a href="20190617-qwbfinal">20190617-qwbfinal</a>: MTP Writeup (0day)</li>
+<li><a href="20190601-defconchina">20190601-defconchina</a>: Defcon China CTF(BCTF) 1.0 Writeup</li>
+<li><a href="20190528-qwb">20190528-qwb</a>: 强网杯线上赛 Writeup</li>
+<li><a href="20190323-0ctf">20190323-0ctf</a>: 0CTF/TCTF 2019 Quals Writeup</li>
+</ul>
+<h2 id="questions"><a class="header-link" href="#questions"></a>Questions</h2>
+<p>If you have any question regarding our writeups, please feel free to <a href="https://github.com/r3kapig/writeup/issues">create an issue</a> in the writeup repository.</p>
+<hr style="margin:10px; width:0; height:0;">
+
+<small style="position:fixed; width:100%; bottom:0; background: #f8f9fa; left:0; padding: 10px; text-align: right;">
+    The writeup page is a modified version of <a href="https://github.com/balsn/ctf_writeup">balsn/ctf_writeup</a>. Respective copyrights apply.
+</small>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->

