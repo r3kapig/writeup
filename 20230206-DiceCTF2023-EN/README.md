@@ -758,7 +758,6 @@ After getting a reverse shell from RCE, we can connect to mongodb to read the fl
 ```
 node -e '(async _ =>{const { MongoClient } = require("mongodb"); const client = new MongoClient("mongodb://mongodb:27017/"); q = await client.db("secret").collection("flag").find().toArray(); console.log(q);})()'
 ```
-```
 
 ### jwtjail:
 
