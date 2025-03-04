@@ -11,14 +11,14 @@ jobs:
 
     ### ENV SETUP ###
     - name: Checkout!
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         ref: writeup
 
-    - name: Setup Node.js 14.x
+    - name: Setup Node.js 22.x
       uses: actions/setup-node@v2
       with:
-        node-version: 14
+        node-version: 22
 
     - name: Setup Latest Stable Python3
       uses: actions/setup-python@v2
